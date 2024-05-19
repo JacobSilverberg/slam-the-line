@@ -5,13 +5,13 @@ const Sidebar = () => {
     <div className='sidebar'>
         <div className="container">
             <div className="links">
-                <Link className='link' to="/league">
+                <Link className='link' to="">
                     <h6>League Home</h6>
                 </Link>
-                <Link className='link' to="/picks">
+                <Link className='link' to="picks">
                     <h6>Picksheet</h6>
                 </Link>
-                <Link className='link' to="/leaguestandings">
+                <Link className='link' to="standings">
                     <h6>League Standings</h6>
                 </Link>
             </div>

@@ -1,27 +1,17 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Route, Outlet } from "react-router-dom";
+import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import League from "./pages/League";
 import Picks from "./pages/Picks";
-import LeagueStandings from './pages/LeagueStandings';
+import Standings from './pages/Standings';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import "./style.scss"
 
-// Used for creating consistent layouts across pages
-// const NavbarLayout = () => {
-//   return(
-//     <>
-//       <Navbar />
-//       <Outlet />
-//     </>
-//   );
-// };
-
-const Layout = () => {
+const NavAndSideLayout = () => {
   return (
     <>
       <Navbar />
@@ -35,39 +25,81 @@ const Layout = () => {
   );
 };
 
+const NavbarOnlyLayout = () => {
+  return (
+    <>
+      <Navbar />
+      <Outlet />
+    </>
+  );
+};
+
+// Layout that includes only Sidebar
+// eslint-disable-next-line no-unused-vars
+const SidebarOnlyLayout = () => {
+  return (
+    <div className="layout">
+      <Sidebar />
+      <div className="content">
+        <Outlet />
+      </div>
+    </div>
+  );
+};
+
+// Layout that includes neither Navbar nor Sidebar
+const NoNavOrSideLayout = () => {
+  return (
+    <div className="content">
+      <Outlet />
+    </div>
+  );
+};
 
 
 // Router handles page navigation
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: <NavbarOnlyLayout />,
     children: [
       {
         path: "/",
         element: <Home />
-      },
+      }
+    ]
+  },
+  {
+    path: "/league",
+    element: <NavAndSideLayout />,
+    children: [
       {
-        path: "/league",
+        path: "",
         element: <League />
       },
       {
-        path: "/picks",
+        path: "picks",
         element: <Picks />
       },
       {
-        path: "/leaguestandings",
-        element: <LeagueStandings />
+        path: "standings",
+        element: <Standings />
       }
     ]
   },
   {
     path: "/login",
-    element: <Login />
-  },
-  {
-    path: "/register",
-    element: <Register />
+    element: <NoNavOrSideLayout />,
+    children: [
+      {
+        path: "",
+        element: <Login />
+      },
+      {
+        path: "register",
+        element: <Register />
+      }
+    ]
   }
 ]);
 
