@@ -16,6 +16,7 @@ console.log("dbHost", dbHost)
 console.log("dbUser", dbUser)
 console.log("dbPass", dbPass)
 console.log("dbName", dbName) 
+console.log("ApiKey", ApiKey) 
 
 const db = mysql.createConnection({
     host:       dbHost,

@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import { createBrowserRouter, RouterProvider, Route, Outlet } from "react-router-dom";
 import Register from "./pages/Register";
@@ -5,24 +6,42 @@ import Home from "./pages/Home";
 import Login from "./pages/Login";
 import League from "./pages/League";
 import Picks from "./pages/Picks";
+import LeagueStandings from './pages/LeagueStandings';
 import Navbar from './components/Navbar';
+import Sidebar from './components/Sidebar';
 import "./style.scss"
 
 // Used for creating consistent layouts across pages
-const NavbarLayout = () => {
-  return(
+// const NavbarLayout = () => {
+//   return(
+//     <>
+//       <Navbar />
+//       <Outlet />
+//     </>
+//   );
+// };
+
+const Layout = () => {
+  return (
     <>
       <Navbar />
-      <Outlet />
+      <div className="layout">
+        <Sidebar />
+        <div className="content">
+          <Outlet />
+        </div>
+      </div>
     </>
   );
 };
+
+
 
 // Router handles page navigation
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <NavbarLayout />,
+    element: <Layout />,
     children: [
       {
         path: "/",
@@ -33,8 +52,12 @@ const router = createBrowserRouter([
         element: <League />
       },
       {
-        path: "/picks/post/:id",
+        path: "/picks",
         element: <Picks />
+      },
+      {
+        path: "/leaguestandings",
+        element: <LeagueStandings />
       }
     ]
   },
@@ -45,14 +68,6 @@ const router = createBrowserRouter([
   {
     path: "/register",
     element: <Register />
-  },
-  {
-    path: "/league",
-    element: <League />
-  },
-  {
-    path: "/picks",
-    element: <Picks />
   }
 ]);
 
