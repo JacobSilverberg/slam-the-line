@@ -33,12 +33,12 @@
               {
                 "name": "Baltimore Ravens",
                 "price": -110,
-                "point": 3
+                "point": 5
               },
               {
                 "name": "Kansas City Chiefs",
                 "price": -110,
-                "point": -3
+                "point": -5
               }
             ]
           },
