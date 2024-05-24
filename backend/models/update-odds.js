@@ -1,7 +1,7 @@
-import express from "express";
-import mysql from "mysql2/promise";
-import cors from "cors";
-import dotenv from "dotenv";
+import express from 'express';
+import mysql from 'mysql2/promise';
+import cors from 'cors';
+import dotenv from 'dotenv';
 import fs from 'fs';
 
 // config
@@ -15,9 +15,9 @@ const dbPass = process.env.DB_PASS;
 const dbName = process.env.DB_NAME;
 
 // Define the start date of the NFL season
-const seasonStartDate = new Date("2024-09-04");
+const seasonStartDate = new Date('2024-09-04');
 
-// handle json formatting
+// handle json formatting, reading from api-data.json
 const rawData = fs.readFileSync('api-data.json');
 const jsonData = JSON.parse(rawData);
 
@@ -27,10 +27,10 @@ async function fetchAndSaveOdds() {
 
     // establish mysql connection
     const connection = await mysql.createConnection({
-      host:     dbHost,
-      user:     dbUser,
+      host: dbHost,
+      user: dbUser,
       password: dbPass,
-      database: dbName
+      database: dbName,
     });
 
     for (const game of data) {
@@ -44,22 +44,32 @@ async function fetchAndSaveOdds() {
       let homeMlOdds, awayMlOdds;
       let gameOpenTotal, gameCurrTotal, gameOverOdds, gameUnderOdds;
 
-
       // Check if the game exists
-      [homeOpenSpread, awayOpenSpread] = await connection.execute('SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?', [game.id]);
+      [homeOpenSpread, awayOpenSpread] = await connection.execute(
+        'SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?',
+        [game.id]
+      );
 
       // Parse JSON into variables
       for (const bookmaker of game.bookmakers) {
         for (const market of bookmaker.markets) {
           switch (market.key) {
             case 'h2h':
-              homeMlOdds = market.outcomes.find(o => o.name === game.home_team)?.price;
-              awayMlOdds = market.outcomes.find(o => o.name === game.away_team)?.price;
+              homeMlOdds = market.outcomes.find(
+                (o) => o.name === game.home_team
+              )?.price;
+              awayMlOdds = market.outcomes.find(
+                (o) => o.name === game.away_team
+              )?.price;
               break;
             case 'spreads':
               last_update_unformatted = market.last_update;
-              const homeSpread = market.outcomes.find(o => o.name === game.home_team);
-              const awaySpread = market.outcomes.find(o => o.name === game.away_team);
+              const homeSpread = market.outcomes.find(
+                (o) => o.name === game.home_team
+              );
+              const awaySpread = market.outcomes.find(
+                (o) => o.name === game.away_team
+              );
               if (!homeOpenSpread) {
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
@@ -69,14 +79,18 @@ async function fetchAndSaveOdds() {
               }
               break;
             case 'totals':
-              const totalOutcome = market.outcomes.find(o => o.name === 'Over');
+              const totalOutcome = market.outcomes.find(
+                (o) => o.name === 'Over'
+              );
               if (!gameOpenTotal) {
                 gameOpenTotal = totalOutcome?.point;
               } else {
                 gameCurrTotal = totalOutcome?.point;
               }
               gameOverOdds = totalOutcome?.price;
-              gameUnderOdds = market.outcomes.find(o => o.name === 'Under')?.price;
+              gameUnderOdds = market.outcomes.find(
+                (o) => o.name === 'Under'
+              )?.price;
               break;
           }
         }
@@ -95,20 +109,30 @@ async function fetchAndSaveOdds() {
       try {
         last_update = dateFormat(last_update_unformatted);
       } catch (error) {
-        console.error('Error parsing last_update_unformatted:', last_update_unformatted, 'Error:', error);
+        console.error(
+          'Error parsing last_update_unformatted:',
+          last_update_unformatted,
+          'Error:',
+          error
+        );
         continue; // Skip this iteration and move to the next game
       }
 
       // Calculate the week number of the NFL season
       const gameDate = new Date(game.commence_time);
-      const weekNumber = Math.floor((gameDate - seasonStartDate) / (7 * 24 * 60 * 60 * 1000)) + 1;
+      const weekNumber =
+        Math.floor((gameDate - seasonStartDate) / (7 * 24 * 60 * 60 * 1000)) +
+        1;
 
       // Check if the game has started
       const gameCommenceTime = new Date(game.commence_time);
       const gameStarted = gameCommenceTime < new Date() ? 1 : 0;
 
       // Check if the game exists
-      const [existingGame] = await connection.execute('SELECT id FROM games WHERE api_id = ?', [game.id]);
+      const [existingGame] = await connection.execute(
+        'SELECT id FROM games WHERE api_id = ?',
+        [game.id]
+      );
 
       if (existingGame.length > 0) {
         // Update the existing game
@@ -147,7 +171,7 @@ async function fetchAndSaveOdds() {
           gameUnderOdds,
           weekNumber,
           gameStarted,
-          game.id
+          game.id,
         ];
         await connection.execute(updateQuery, updateValues);
       } else {
@@ -187,7 +211,7 @@ async function fetchAndSaveOdds() {
           gameOverOdds,
           gameUnderOdds,
           weekNumber,
-          gameStarted
+          gameStarted,
         ];
         await connection.execute(insertQuery, insertValues);
       }
@@ -201,7 +225,10 @@ async function fetchAndSaveOdds() {
 
 async function getTeamId(connection, teamName) {
   try {
-    const [result] = await connection.execute('SELECT id FROM teams WHERE full_name = ?', [teamName]);
+    const [result] = await connection.execute(
+      'SELECT id FROM teams WHERE full_name = ?',
+      [teamName]
+    );
     if (!result || result.length === 0) {
       throw new Error(`Team '${teamName}' not found in the database`);
     }
@@ -217,7 +244,7 @@ function dateFormat(unformatted_date) {
   if (isNaN(interim_date.getTime())) {
     throw new Error(`Invalid date value: ${unformatted_date}`);
   }
-  return interim_date.toISOString().slice(0, 19).replace("T", " ");
+  return interim_date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
 fetchAndSaveOdds();

@@ -1,15 +1,15 @@
 // eslint-disable-next-line no-unused-vars
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
-import Register from "./pages/Register";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import League from "./pages/League";
-import Picks from "./pages/Picks";
+import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom';
+import Register from './pages/Register';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import League from './pages/League';
+import Picks from './pages/Picks';
 import Standings from './pages/Standings';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
-import "./style.scss"
+import './style.scss';
 
 const NavAndSideLayout = () => {
   return (
@@ -56,51 +56,50 @@ const NoNavOrSideLayout = () => {
   );
 };
 
-
 // Router handles page navigation
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <NavbarOnlyLayout />,
     children: [
       {
-        path: "/",
-        element: <Home />
-      }
-    ]
+        path: '/',
+        element: <Home />,
+      },
+    ],
   },
   {
-    path: "/league",
+    path: '/league',
     element: <NavAndSideLayout />,
     children: [
       {
-        path: "",
-        element: <League />
+        path: '',
+        element: <League />,
       },
       {
-        path: "picks",
-        element: <Picks />
+        path: 'picks',
+        element: <Picks />,
       },
       {
-        path: "standings",
-        element: <Standings />
-      }
-    ]
+        path: 'standings',
+        element: <Standings />,
+      },
+    ],
   },
   {
-    path: "/login",
+    path: '/login',
     element: <NoNavOrSideLayout />,
     children: [
       {
-        path: "",
-        element: <Login />
+        path: '',
+        element: <Login />,
       },
       {
-        path: "register",
-        element: <Register />
-      }
-    ]
-  }
+        path: 'register',
+        element: <Register />,
+      },
+    ],
+  },
 ]);
 
 const App = () => {
@@ -110,8 +109,7 @@ const App = () => {
         <RouterProvider router={router} />
       </div>
     </div>
-  )
-}
+  );
+};
 
-
-export default App
+export default App;

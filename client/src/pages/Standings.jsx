@@ -1,9 +1,7 @@
-import React from 'react'
+import React from 'react';
 
 const Standings = () => {
-  return (
-    <div>Standings</div>
-  )
-}
+  return <div>Standings</div>;
+};
 
-export default Standings
+export default Standings;
