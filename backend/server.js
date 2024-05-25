@@ -1,5 +1,6 @@
 import express from 'express';
 import dotenv from 'dotenv';
+import cors from 'cors';
 import indexRoute from './routes/indexRoute.js';
 import gameRoute from './routes/gameRoute.js';
 
@@ -7,12 +8,19 @@ dotenv.config();
 
 const app = express();
 
+// Enable CORS
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+  })
+);
+
 // Middleware
 app.use(express.json());
 
 // Routes
 app.use('/', indexRoute);
-app.use('/api/games', gameRoute);
+app.use('/games', gameRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

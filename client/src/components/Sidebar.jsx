@@ -8,7 +8,7 @@ const Sidebar = () => {
           <Link className="link" to="">
             <h6>League Home</h6>
           </Link>
-          <Link className="link" to="picks">
+          <Link className="link" to="picksheet">
             <h6>Picksheet</h6>
           </Link>
           <Link className="link" to="standings">

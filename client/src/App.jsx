@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import League from './pages/League';
 import Picks from './pages/Picks';
+import Picksheet from './pages/Picksheet';
 import Standings from './pages/Standings';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -77,8 +78,8 @@ const router = createBrowserRouter([
         element: <League />,
       },
       {
-        path: 'picks',
-        element: <Picks />,
+        path: 'picksheet',
+        element: <Picksheet />,
       },
       {
         path: 'standings',

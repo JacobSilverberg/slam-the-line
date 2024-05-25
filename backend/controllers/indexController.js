@@ -7,3 +7,4 @@ export const getIndexMessage = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+87;

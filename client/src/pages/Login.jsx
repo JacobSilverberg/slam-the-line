@@ -21,9 +21,19 @@ const Login = () => {
     <div className="auth">
       <h1>Login</h1>
       <form onSubmit={handleSubmit}>
-      <input type="email" placeholder='email' value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input type="password" placeholder='password' value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button type="submit">Login</button>
+        <input
+          type="email"
+          placeholder="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button type="submit">Login</button>
         <p>Error Text - Not Functional</p>
         <span>
           New User? <Link to="/register">Register</Link>
