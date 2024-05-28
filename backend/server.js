@@ -1,8 +1,10 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 import indexRoute from './routes/indexRoute.js';
 import gameRoute from './routes/gameRoute.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -21,6 +23,7 @@ app.use(express.json());
 // Routes
 app.use('/', indexRoute);
 app.use('/games', gameRoute);
+app.use('/auth', authRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
