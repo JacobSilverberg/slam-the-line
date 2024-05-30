@@ -4,11 +4,11 @@ import axios from 'axios';
 
 const Login = ({ setAuthToken }) => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
 
-  const { username, password } = formData;
+  const { email, password } = formData;
 
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,23 +28,27 @@ const Login = ({ setAuthToken }) => {
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <input
-        type="text"
-        name="username"
-        value={username}
-        onChange={onChange}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        value={password}
-        onChange={onChange}
-        required
-      />
-      <button type="submit">Login</button>
-    </form>
+    <div className="auth">
+      <form onSubmit={onSubmit}>
+        <input
+          type="email"
+          name="email"
+          value={email}
+          placeholder="email"
+          onChange={onChange}
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          value={password}
+          placeholder="password"
+          onChange={onChange}
+          required
+        />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   );
 };
 

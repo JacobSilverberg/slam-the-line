@@ -8,7 +8,6 @@ const router = express.Router();
 router.post(
   '/register',
   [
-    check('username', 'Username is required').not().isEmpty(),
     check('password', 'Password is required').isLength({ min: 6 }),
     check('email', 'Email is required').isEmail(),
   ],
