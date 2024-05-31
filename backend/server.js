@@ -5,7 +5,8 @@ import bodyParser from 'body-parser';
 import indexRoute from './routes/indexRoute.js';
 import gameRoute from './routes/gameRoute.js';
 import authRoutes from './routes/authRoutes.js';
-import createLeagueRoutes from './routes/createLeagueRoutes.js';
+import createLeagueRoutes from './routes/createLeagueRoute.js';
+import leagueRegistrationRoute from './routes/leagueRegistrationRoute.js';
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/', indexRoute);
 app.use('/games', gameRoute);
 app.use('/auth', authRoutes);
 app.use('/createleague', createLeagueRoutes);
+app.use('/leagueregistration', leagueRegistrationRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

@@ -8,6 +8,7 @@ import League from './pages/League';
 import Picksheet from './pages/Picksheet';
 import Standings from './pages/Standings';
 import CreateLeague from './pages/CreateLeague';
+import LeagueRegistration from './pages/LeagueRegistration';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import './style.scss';
@@ -70,6 +71,11 @@ const router = createBrowserRouter([
       {
         path: '/createleague',
         element: <CreateLeague />,
+      },
+      {
+        path: '/leagueregistration/:leagueId/users/:userId',
+        component: { LeagueRegistration },
+        element: <LeagueRegistration />,
       },
     ],
   },
