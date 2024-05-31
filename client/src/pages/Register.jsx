@@ -1,4 +1,3 @@
-// components/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
 import setAuthToken from '../services/setAuthToken';
