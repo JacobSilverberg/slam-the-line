@@ -28,7 +28,6 @@ const CreateLeague = () => {
       year: 2024,
     };
 
-    // NEED TO IMPLEMENT THIS POST REQUEST
     try {
       const res = await axios.post(
         'http://localhost:3000/createleague',

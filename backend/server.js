@@ -1,12 +1,12 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import bodyParser from 'body-parser';
 import indexRoute from './routes/indexRoute.js';
 import gameRoute from './routes/gameRoute.js';
 import authRoutes from './routes/authRoutes.js';
 import createLeagueRoutes from './routes/createLeagueRoute.js';
 import leagueRegistrationRoute from './routes/leagueRegistrationRoute.js';
+import submitPicksRoute from './routes/submitPicksRoute.js';
 
 dotenv.config();
 
@@ -28,6 +28,7 @@ app.use('/games', gameRoute);
 app.use('/auth', authRoutes);
 app.use('/createleague', createLeagueRoutes);
 app.use('/leagueregistration', leagueRegistrationRoute);
+app.use('/submitpicks', submitPicksRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

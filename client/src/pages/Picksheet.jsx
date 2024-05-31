@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const Picksheet = () => {
+  const { leagueId, userId } = useParams();
   const [week, setWeek] = useState(1); // Default week is 1
   const [games, setGames] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState({});
-
-  // set baseURL for axios calls
-  axios.defaults.baseURL = 'http://localhost:3000';
 
   useEffect(() => {
     // Calculate the current week based on the current date
@@ -27,7 +26,7 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(`/games/${week}`);
+        const response = await axios.get(`http://localhost:3000/games/${week}`);
         setGames(response.data);
       } catch (error) {
         console.error('Error fetching game data:', error);
@@ -44,11 +43,40 @@ const Picksheet = () => {
     }));
   };
 
-  const handleSubmitPicks = () => {
-    // Logic to handle submitting the picks
-    console.log('Submitted Picks:', selectedTeam);
-    // You can send the selectedTeam data to your server here if needed
+  const handleSubmitPicks = async (e) => {
+    e.preventDefault();
+
+    const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    const updatedAt = createdAt;
+
+    // Prepare the form data with game_id, created_at, updated_at, and points
+    const formData = games.map((game) => ({
+      gameId: game.id,
+      points: 0,
+      createdAt,
+      updatedAt,
+    }));
+
+    try {
+      const res = await axios.post(
+        `http://localhost:3000/submitpicks/${leagueId}/users/${userId}`,
+        formData
+      );
+    } catch (err) {
+      if (err.response) {
+        console.error(err.response.data); // Log the error message from the server
+      } else {
+        console.error(err.message); // Log a generic error message
+      }
+    }
   };
+return (
+  <div>
+    <h2>Week {week} Picksheet</h2>
+    {Array.isArray(games) && games.length > 0 ? (
+      games.map((game) => (
+        <div key={game.id} style={{ marginBottom: '20px' }}>
+          <div className="team-button" id="home-team"></div>
 
   return (
     <div>
