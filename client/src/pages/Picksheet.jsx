@@ -70,13 +70,6 @@ const Picksheet = () => {
       }
     }
   };
-return (
-  <div>
-    <h2>Week {week} Picksheet</h2>
-    {Array.isArray(games) && games.length > 0 ? (
-      games.map((game) => (
-        <div key={game.id} style={{ marginBottom: '20px' }}>
-          <div className="team-button" id="home-team"></div>
 
   return (
     <div>

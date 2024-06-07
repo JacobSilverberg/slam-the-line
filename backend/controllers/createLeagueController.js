@@ -8,7 +8,7 @@ export const createLeague = async (req, res) => {
     sport,
     type,
     weeklyPoints,
-    year
+    year,
   } = req.body;
 
   try {

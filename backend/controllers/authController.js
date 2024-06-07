@@ -14,11 +14,11 @@ export const register = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { username, password, email, role, created_at, updated_at } = req.body;
+  const { email, password, role, created_at, updated_at } = req.body;
 
   try {
-    const [user] = await pool.query('SELECT * FROM users WHERE username = ?', [
-      username,
+    const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [
+      email,
     ]);
     if (user.length > 0) {
       return res.status(400).json({ msg: 'User already exists' });
@@ -28,12 +28,12 @@ export const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     await pool.query(
-      'INSERT INTO users (username, password, email, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
-      [username, hashedPassword, email, role, created_at, updated_at]
+      'INSERT INTO users (email, password, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+      [email, hashedPassword, role, created_at, updated_at]
     );
 
     const payload = {
-      user: { username },
+      user: { email },
     };
 
     jwt.sign(
@@ -57,11 +57,11 @@ export const login = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const [user] = await pool.query('SELECT * FROM users WHERE username = ?', [
-      username,
+    const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [
+      email,
     ]);
     if (user.length === 0) {
       return res.status(400).json({ msg: 'Invalid credentials' });
@@ -73,7 +73,7 @@ export const login = async (req, res) => {
     }
 
     const payload = {
-      user: { username },
+      user: { email },
     };
 
     jwt.sign(
