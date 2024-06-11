@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '../assets/logo.png';
+import LeagueDropdown from './LeagueDropdown';
 
 const Navbar = () => {
   return (
@@ -10,10 +11,8 @@ const Navbar = () => {
           <img src={Logo} alt="Logo" />
         </div>
         <div className="links">
-          <Link className="link" to="/league">
-            <h6>LEAGUES</h6>
-          </Link>
-          <Link className="link" to="/?cat=tech">
+          <LeagueDropdown />
+          <Link className="link" to="/">
             <h6>SCHEDULE</h6>
           </Link>
           <span>PROFILE</span>

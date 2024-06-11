@@ -4,51 +4,77 @@
   height: 100vh;
 
   .navbar {
-    flex: 0 0 auto; 
+    flex: 0 0 auto;
     .container {
-            padding: 10px 0px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-      
-            .logo {
-              img {
-                width: 120px;
-              }
-            }
-            .links {
-              display: flex;
-              align-items: center;
-              gap: 10px;
-      
-              h6 {
-                font-size: 16px;
-                font-weight: 300;
-              }
-      
-              span {
-                cursor: pointer;
-              }
-      
-              .home {
-                background-color: #b9e7e7;
-                width: 75px;
-                height: 75px;
-                border-radius: 50%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 300;
-                border: 1px solid white;
-      
-                &:hover {
-                  color: teal;
-                  background-color: white;
-                  border: 1px solid teal;
-                }
-              }
-            }
+      padding: 10px 0px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .logo {
+        img {
+          width: 120px;
+        }
+      }
+      .links {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+          z-index: 100;
+
+          a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
           }
+        }
+
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+
+        h6 {
+          font-size: 16px;
+          font-weight: 300;
+        }
+
+        span {
+          cursor: pointer;
+        }
+
+        .home {
+          background-color: #b9e7e7;
+          width: 75px;
+          height: 75px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 300;
+          border: 1px solid white;
+
+          &:hover {
+            color: teal;
+            background-color: white;
+            border: 1px solid teal;
+          }
+        }
+      }
+    }
   }
 
   .content {
@@ -77,6 +103,7 @@
         h6 {
           font-size: 16px;
           font-weight: 300;
+          color: white;
         }
 
         span {
@@ -90,7 +117,6 @@
     }
   }
 }
-
 
 // $lightGreen: #b9e7e7;
 

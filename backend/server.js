@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import createLeagueRoutes from './routes/createLeagueRoute.js';
 import leagueRegistrationRoute from './routes/leagueRegistrationRoute.js';
 import submitPicksRoute from './routes/submitPicksRoute.js';
+import getUserLeaguesRoute from './routes/getUserLeaguesRoute.js';
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/auth', authRoutes);
 app.use('/createleague', createLeagueRoutes);
 app.use('/leagueregistration', leagueRegistrationRoute);
 app.use('/submitpicks', submitPicksRoute);
+app.use('/getuserleagues', getUserLeaguesRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
