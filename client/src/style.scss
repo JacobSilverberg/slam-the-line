@@ -1,149 +1,251 @@
-$lightGreen: #b9e7e7;
-
-.app {
+#root {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   height: 100vh;
 
-  .layout {
-    display: flex;
-  }
-
-  .sidebar {
-    width: 100px;
-    background-color: #333;
-    color: white;
-    padding: 20px;
-    height: 100vh;
-
+  .navbar {
+    flex: 0 0 auto; 
     .container {
-      flex: 1;
-      padding: 10px;
-      // width: 80vw;
-    }
-
-    .links {
-      display: flex;
-      flex-direction: column;
-      align-items: start;
-      gap: 10px;
-
-      h6 {
-        font-size: 16px;
-        font-weight: 300;
-      }
-
-      span {
-        cursor: pointer;
-      }
-    }
+            padding: 10px 0px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+      
+            .logo {
+              img {
+                width: 120px;
+              }
+            }
+            .links {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+      
+              h6 {
+                font-size: 16px;
+                font-weight: 300;
+              }
+      
+              span {
+                cursor: pointer;
+              }
+      
+              .home {
+                background-color: #b9e7e7;
+                width: 75px;
+                height: 75px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: 300;
+                border: 1px solid white;
+      
+                &:hover {
+                  color: teal;
+                  background-color: white;
+                  border: 1px solid teal;
+                }
+              }
+            }
+          }
   }
 
-  .container {
-    flex: 1;
-    padding: 10px;
-    // width: 80vw;
+  .content {
+    flex: 1 1 auto; // Content will grow and shrink as needed and will take up the remaining space
+    display: flex; // Make content a flex container too
 
-    .link {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    //LOGIN & REGISTER
-    .auth {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
+    .sidebar {
+      flex: 0 0 auto;
+      width: 100px;
+      background-color: #333;
+      color: white;
+      padding: 20px;
       height: 100vh;
-      background-color: $lightGreen;
 
-      h1 {
-        font-size: 20px;
-        color: teal;
-        margin-bottom: 20px;
+      .container {
+        flex: 1;
+        padding: 10px;
       }
 
-      form {
+      .links {
         display: flex;
         flex-direction: column;
-        padding: 10px;
-        background-color: white;
-        width: 200px;
-        gap: 20px;
+        align-items: start;
+        gap: 10px;
 
-        input {
-          padding: 10px;
-          border: none;
-          border-bottom: 1px solid grey;
-        }
-
-        button {
-          padding: 10px;
-          border: none;
-          background-color: teal;
-          cursor: pointer;
-          color: white;
-        }
-
-        p {
-          font-size: 12px;
-          color: red;
-          text-align: center;
+        h6 {
+          font-size: 16px;
+          font-weight: 300;
         }
 
         span {
-          font-size: 12px;
-          text-align: center;
+          cursor: pointer;
         }
       }
     }
 
-    .navbar {
-      .container {
-        padding: 10px 0px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .logo {
-          img {
-            width: 120px;
-          }
-        }
-        .links {
-          display: flex;
-          align-items: center;
-          gap: 10px;
-
-          h6 {
-            font-size: 16px;
-            font-weight: 300;
-          }
-
-          span {
-            cursor: pointer;
-          }
-
-          .home {
-            background-color: $lightGreen;
-            width: 75px;
-            height: 75px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 300;
-            border: 1px solid white;
-
-            &:hover {
-              color: teal;
-              background-color: white;
-              border: 1px solid teal;
-            }
-          }
-        }
-      }
+    .main {
+      flex: 1 1 auto; // Main content will grow and shrink as needed and will take up the remaining space
     }
   }
 }
+
+
+// $lightGreen: #b9e7e7;
+
+// #root {
+// .app {
+//   display: flex;
+//   justify-content: center;
+//   height: 100vh;
+
+//   .navbar {
+//     .container {
+//       padding: 10px 0px;
+//       display: flex;
+//       align-items: center;
+//       justify-content: space-between;
+
+//       .logo {
+//         img {
+//           width: 120px;
+//         }
+//       }
+//       .links {
+//         display: flex;
+//         align-items: center;
+//         gap: 10px;
+
+//         h6 {
+//           font-size: 16px;
+//           font-weight: 300;
+//         }
+
+//         span {
+//           cursor: pointer;
+//         }
+
+//         .home {
+//           background-color: $lightGreen;
+//           width: 75px;
+//           height: 75px;
+//           border-radius: 50%;
+//           display: flex;
+//           align-items: center;
+//           justify-content: center;
+//           font-weight: 300;
+//           border: 1px solid white;
+
+//           &:hover {
+//             color: teal;
+//             background-color: white;
+//             border: 1px solid teal;
+//           }
+//         }
+//       }
+//     }
+//   }
+
+//   .content {
+//     display: flex;
+//     flex-grow: 1;
+
+//     .sidebar {
+//       width: 100px;
+//       background-color: #333;
+//       color: white;
+//       padding: 20px;
+//       height: 100vh;
+
+//       .container {
+//         flex: 1;
+//         padding: 10px;
+//         // width: 80vw;
+//       }
+
+//       .links {
+//         display: flex;
+//         flex-direction: column;
+//         align-items: start;
+//         gap: 10px;
+
+//         h6 {
+//           font-size: 16px;
+//           font-weight: 300;
+//         }
+
+//         span {
+//           cursor: pointer;
+//         }
+//       }
+//     }
+
+//     .main-content {
+//       flex-grow: 1;
+
+//   .container {
+//     flex: 1;
+//     padding: 10px;
+//     // width: 80vw;
+
+//     .link {
+//       text-decoration: none;
+//       color: inherit;
+//     }
+
+//     //LOGIN & REGISTER
+//     .auth {
+//       display: flex;
+//       flex-direction: column;
+//       align-items: center;
+//       justify-content: center;
+//       height: 100vh;
+//       background-color: $lightGreen;
+
+//       h1 {
+//         font-size: 20px;
+//         color: teal;
+//         margin-bottom: 20px;
+//       }
+
+//       form {
+//         display: flex;
+//         flex-direction: column;
+//         padding: 10px;
+//         background-color: white;
+//         width: 200px;
+//         gap: 20px;
+
+//         input {
+//           padding: 10px;
+//           border: none;
+//           border-bottom: 1px solid grey;
+//         }
+
+//         button {
+//           padding: 10px;
+//           border: none;
+//           background-color: teal;
+//           cursor: pointer;
+//           color: white;
+//         }
+
+//         p {
+//           font-size: 12px;
+//           color: red;
+//           text-align: center;
+//         }
+
+//         span {
+//           font-size: 12px;
+//           text-align: center;
+//         }
+//       }
+//     }
+
+//   }
+//   }
+// }
+// }
+// }
