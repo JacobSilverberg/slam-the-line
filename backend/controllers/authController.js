@@ -27,14 +27,18 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    await pool.query(
-      'INSERT INTO users (email, password, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)',
+    const result = await pool.query(
+      'INSERT INTO users (email, password, role, created_at, updated_at) VALUES (?, ?, ?, ?, ?)',
       [email, hashedPassword, role, created_at, updated_at]
     );
 
+    const insertId = result[0].insertId;
+
     const payload = {
-      user: { email },
+      user: { id: insertId, email }
     };
+
+    console.log(payload)
 
     jwt.sign(
       payload,
@@ -42,7 +46,7 @@ export const register = async (req, res) => {
       { expiresIn: '1h' },
       (err, token) => {
         if (err) throw err;
-        res.json({ token });
+        res.status(200).json({ token });
       }
     );
   } catch (err) {
@@ -63,6 +67,7 @@ export const login = async (req, res) => {
     const [user] = await pool.query('SELECT * FROM users WHERE email = ?', [
       email,
     ]);
+
     if (user.length === 0) {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
@@ -72,19 +77,33 @@ export const login = async (req, res) => {
       return res.status(400).json({ msg: 'Invalid credentials' });
     }
 
-    const payload = {
-      user: { email },
-    };
+    try {
+      const payload = {
+        user: { id: user[0].id, email },
+      };
 
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' },
-      (err, token) => {
-        if (err) throw err;
-        res.json({ token });
-      }
-    );
+      console.log(payload);
+    
+      const token = await new Promise((resolve, reject) => {
+        jwt.sign(
+          payload,
+          process.env.JWT_SECRET,
+          { expiresIn: '1h' },
+          (err, token) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(token);
+            }
+          }
+        );
+      });
+    
+      res.json({ token });
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

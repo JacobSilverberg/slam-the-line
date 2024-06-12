@@ -1,9 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Logo from '../assets/logo.png';
+
+import { AuthContext } from '../context/AuthContext';
 import LeagueDropdown from './LeagueDropdown';
 
+import Logo from '../assets/logo.png';
+
 const Navbar = () => {
+  const { logout } = React.useContext(AuthContext);
+
   return (
     <div className="navbar">
       <div className="container">
@@ -16,7 +21,7 @@ const Navbar = () => {
             <h6>SCHEDULE</h6>
           </Link>
           <span>PROFILE</span>
-          <span>LOGOUT</span>
+          <span onClick={logout}>LOGOUT</span>
           <span className="home">
             <Link className="link" to="/">
               HOME

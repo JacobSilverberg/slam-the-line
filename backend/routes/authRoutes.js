@@ -17,7 +17,7 @@ router.post(
 router.post(
   '/login',
   [
-    check('username', 'Username is required').not().isEmpty(),
+    check('email', 'Email is required').not().isEmpty(),
     check('password', 'Password is required').exists(),
   ],
   login
