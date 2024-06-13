@@ -35,10 +35,10 @@ export const register = async (req, res) => {
     const insertId = result[0].insertId;
 
     const payload = {
-      user: { id: insertId, email }
+      user: { id: insertId, email },
     };
 
-    console.log(payload)
+    console.log(payload);
 
     jwt.sign(
       payload,
@@ -83,7 +83,7 @@ export const login = async (req, res) => {
       };
 
       console.log(payload);
-    
+
       const token = await new Promise((resolve, reject) => {
         jwt.sign(
           payload,
@@ -98,7 +98,7 @@ export const login = async (req, res) => {
           }
         );
       });
-    
+
       res.json({ token });
     } catch (err) {
       console.error(err.message);

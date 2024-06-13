@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import getUserId from '../services/getUserId';
 
 const Picksheet = () => {
-  const { leagueId, userId } = useParams();
+  const { leagueId } = useParams();
   const [week, setWeek] = useState(1); // Default week is 1
   const [games, setGames] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState({});
+
+  const userId = getUserId();
 
   useEffect(() => {
     // Calculate the current week based on the current date
@@ -58,15 +61,15 @@ const Picksheet = () => {
     }));
 
     try {
-      const res = await axios.post(
+      await axios.post(
         `http://localhost:3000/submitpicks/${leagueId}/users/${userId}`,
         formData
       );
     } catch (err) {
       if (err.response) {
-        console.error(err.response.data); // Log the error message from the server
+        console.error(err.response.data);
       } else {
-        console.error(err.message); // Log a generic error message
+        console.error(err.message);
       }
     }
   };

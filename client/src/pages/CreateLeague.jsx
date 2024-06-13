@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import getUserId from '../services/getUserId';
 
 const CreateLeague = () => {
   const [gamesSelectMax, setGamesSelectMax] = useState('');
   const [gamesSelectMin, setGamesSelectMin] = useState('');
   const [name, setName] = useState('');
   const [weeklyPoints, setWeeklyPoints] = useState('');
+  const [teamName, setTeamName] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+
+  const userId = getUserId();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,12 +37,25 @@ const CreateLeague = () => {
         'http://localhost:3000/createleague',
         formData
       );
-      setRegistrationSuccess(true); // Set registration success to true
+
+      const leagueId = res.data.id; // Assuming the response contains the ID of the created league
+
+      console.log(res);
+      console.log('league id', leagueId);
+
+      await axios.post(
+        `http://localhost:3000/leagueregistration/${leagueId}/users/${userId}`,
+        {
+          league_role: 'owner',
+          team_name: teamName,
+        }
+      );
+      setRegistrationSuccess(true);
     } catch (err) {
       if (err.response) {
-        console.error(err.response.data); // Log the error message from the server
+        console.error(err.response.data);
       } else {
-        console.error(err.message); // Log a generic error message
+        console.error(err.message);
       }
     }
   };
@@ -83,6 +100,17 @@ const CreateLeague = () => {
               type="number"
               value={weeklyPoints}
               onChange={(e) => setWeeklyPoints(e.target.value)}
+            />
+          </label>
+          <br />
+          <label>
+            Team Name:
+            <input
+              type="text"
+              placeholder="Team Name"
+              name="teamName"
+              value={teamName}
+              onChange={(e) => setTeamName(e.target.value)}
             />
           </label>
           <br />

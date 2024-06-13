@@ -19,7 +19,7 @@ import CreateLeague from './pages/CreateLeague.jsx';
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 
-import { AuthContext, AuthProvider } from './context/AuthContext.jsx';
+import { AuthContext } from './context/AuthContext.jsx';
 import { UserContextProvider } from './context/UserContext.jsx';
 
 import PropTypes from 'prop-types';
@@ -58,13 +58,13 @@ const App = () => {
             <Route
               path="/login"
               element={
-                /* isAuthenticated ? <Navigate to="/league" replace /> : */ <Login />
+                isAuthenticated ? <Navigate to="/" replace /> : <Login />
               }
             />
             <Route
               path="/register"
               element={
-                /* isAuthenticated ? <Navigate to="/league" replace /> : */ <Register />
+                isAuthenticated ? <Navigate to="/" replace /> : <Register />
               }
             />
             <Route
@@ -87,12 +87,12 @@ const App = () => {
               path="/league/:leagueId/picksheet"
               element={
                 <ProtectedRoute>
-                  <Picksheet/>
+                  <Picksheet />
                 </ProtectedRoute>
               }
             />
             <Route
-              path="/leagueregistration/:leagueId/users/:userId"
+              path="/leagueregistration/:leagueId"
               element={
                 <ProtectedRoute>
                   <LeagueRegistration />

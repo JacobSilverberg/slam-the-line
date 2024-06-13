@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import getUserId from '../services/getUserId';
 
 const LeagueRegistration = () => {
-  const { leagueId, userId } = useParams();
+  const { leagueId } = useParams();
   const [teamName, setTeamName] = useState('');
+
+  const userId = getUserId();
 
   const handleRegistration = () => {
     axios

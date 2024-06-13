@@ -8,6 +8,7 @@ const Login = () => {
     password: '',
   });
   const { login } = useContext(AuthContext);
+  const [loginSuccess, setLoginSuccess] = useState(false);
 
   const { email, password } = formData;
 
@@ -23,6 +24,7 @@ const Login = () => {
       );
       login(res.data.token);
       console.log('Logged in');
+      setLoginSuccess(true);
     } catch (err) {
       if (err.response) {
         console.error(err.response.data);
@@ -34,28 +36,31 @@ const Login = () => {
 
   return (
     <div className="auth">
-      <form onSubmit={onSubmit}>
-        <input
-          type="email"
-          name="email"
-          value={email}
-          placeholder="email"
-          onChange={onChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          value={password}
-          placeholder="password"
-          onChange={onChange}
-          required
-        />
-        <button type="submit">Login</button>
-      </form>
+      {loginSuccess ? (
+        <div>Logged in successfully!</div>
+      ) : (
+        <form onSubmit={onSubmit}>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            placeholder="email"
+            onChange={onChange}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            value={password}
+            placeholder="password"
+            onChange={onChange}
+            required
+          />
+          <button type="submit">Login</button>
+        </form>
+      )}
     </div>
   );
 };
 
 export default Login;
-

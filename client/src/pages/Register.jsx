@@ -15,6 +15,7 @@ const Register = () => {
   });
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
+  // eslint-disable-next-line no-unused-vars
   const { email, password, role, created_at, updated_at } = formData;
 
   const onChange = (e) =>
@@ -29,12 +30,12 @@ const Register = () => {
       );
       localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
-      setRegistrationSuccess(true); // Set registration success to true
+      setRegistrationSuccess(true);
     } catch (err) {
       if (err.response) {
-        console.error(err.response.data); // Log the error message from the server
+        console.error(err.response.data);
       } else {
-        console.error(err.message); // Log a generic error message
+        console.error(err.message);
       }
     }
   };

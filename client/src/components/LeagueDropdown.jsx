@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import getUserId from '../services/getUserId';
 
 const LeagueDropdown = () => {
   const [leagues, setLeagues] = useState([]);
+
+  const userId = getUserId();
 
   useEffect(() => {
     const fetchGames = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/getuserleagues/9`
+          `http://localhost:3000/getuserleagues/${userId}`
         );
         setLeagues(response.data);
       } catch (error) {
@@ -18,7 +21,7 @@ const LeagueDropdown = () => {
     };
 
     fetchGames(); // call fetchGames
-  }, []);
+  }, [userId]);
 
   return (
     <div className="dropdown">

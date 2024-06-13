@@ -9,15 +9,15 @@ export const UserContext = createContext();
 import PropTypes from 'prop-types';
 
 export const UserContextProvider = ({ children }) => {
-    const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState('');
 
-    return (
-        <UserContext.Provider value={{ userId, setUserId }}>
-            {children}
-        </UserContext.Provider>
-    );
+  return (
+    <UserContext.Provider value={{ userId, setUserId }}>
+      {children}
+    </UserContext.Provider>
+  );
 };
 
 UserContextProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };
