@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    setAuthToken(null);
+    // setAuthToken(null);
     localStorage.removeItem('token');
     console.log('Logged out');
   };

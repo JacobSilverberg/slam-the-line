@@ -20,7 +20,6 @@ import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
 
 import { AuthContext } from './context/AuthContext.jsx';
-import { UserContextProvider } from './context/UserContext.jsx';
 
 import PropTypes from 'prop-types';
 import './style.scss';
@@ -50,67 +49,63 @@ const App = () => {
   const { isAuthenticated } = useContext(AuthContext);
 
   return (
-    <UserContextProvider>
-      <Router>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route
-              path="/login"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Login />
-              }
-            />
-            <Route
-              path="/register"
-              element={
-                isAuthenticated ? <Navigate to="/" replace /> : <Register />
-              }
-            />
-            <Route
-              path="/league/:leagueId"
-              element={
-                <ProtectedRoute>
-                  <League />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/league/:leagueId/standings"
-              element={
-                <ProtectedRoute>
-                  <Standings />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/league/:leagueId/picksheet"
-              element={
-                <ProtectedRoute>
-                  <Picksheet />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/leagueregistration/:leagueId"
-              element={
-                <ProtectedRoute>
-                  <LeagueRegistration />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/createleague"
-              element={
-                <ProtectedRoute>
-                  <CreateLeague />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </Layout>
-      </Router>
-    </UserContextProvider>
+    <Router>
+      <Layout>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route
+            path="/login"
+            element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
+          />
+          <Route
+            path="/register"
+            element={
+              isAuthenticated ? <Navigate to="/" replace /> : <Register />
+            }
+          />
+          <Route
+            path="/league/:leagueId"
+            element={
+              <ProtectedRoute>
+                <League />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/league/:leagueId/standings"
+            element={
+              <ProtectedRoute>
+                <Standings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/league/:leagueId/picksheet"
+            element={
+              <ProtectedRoute>
+                <Picksheet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/leagueregistration/:leagueId"
+            element={
+              <ProtectedRoute>
+                <LeagueRegistration />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/createleague"
+            element={
+              <ProtectedRoute>
+                <CreateLeague />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Layout>
+    </Router>
   );
 };
 

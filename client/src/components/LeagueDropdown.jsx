@@ -10,6 +10,10 @@ const LeagueDropdown = () => {
 
   useEffect(() => {
     const fetchGames = async () => {
+      if (!userId) {
+        return;
+      }
+
       try {
         const response = await axios.get(
           `http://localhost:3000/getuserleagues/${userId}`
@@ -27,11 +31,15 @@ const LeagueDropdown = () => {
     <div className="dropdown">
       <span>LEAGUES</span>
       <div className="dropdown-content">
-        {leagues.map((league) => (
-          <Link key={league.league_id} to={`/league/${league.league_id}`}>
-            {league.league_name}
-          </Link>
-        ))}
+        {leagues.length > 0 ? (
+          leagues.map((league) => (
+            <Link key={league.league_id} to={`/league/${league.league_id}`}>
+              {league.league_name}
+            </Link>
+          ))
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
       </div>
     </div>
   );

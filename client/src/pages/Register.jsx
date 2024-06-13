@@ -28,7 +28,6 @@ const Register = () => {
         'http://localhost:3000/auth/register',
         formData
       );
-      localStorage.setItem('token', res.data.token);
       setAuthToken(res.data.token);
       setRegistrationSuccess(true);
     } catch (err) {
