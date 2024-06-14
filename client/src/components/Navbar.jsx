@@ -8,7 +8,7 @@ import Logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { logout } = React.useContext(AuthContext);
-
+  
   return (
     <div className="navbar">
       <div className="container">
@@ -20,7 +20,9 @@ const Navbar = () => {
           <Link className="link" to="/">
             <h6>SCHEDULE</h6>
           </Link>
-          <span>PROFILE</span>
+          <Link className="link" to="/userprofile">
+            <h6>PROFILE</h6>
+          </Link>
           <span onClick={logout}>LOGOUT</span>
           <span className="home">
             <Link className="link" to="/">

@@ -1,30 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
+import { WeekContext } from '../context/WeekContext';
 
 const Picksheet = () => {
   const { leagueId } = useParams();
-  const [week, setWeek] = useState(1); // Default week is 1
+  const { week } = useContext(WeekContext);
   const [games, setGames] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState({});
+  const [selectedCount, setSelectedCount] = useState(0);
 
   const userId = getUserId();
-
-  useEffect(() => {
-    // Calculate the current week based on the current date
-    const currentDate = new Date();
-    // Adjust the start date of the NFL season as needed
-    const startDate = new Date('2024-09-04'); // Example: Start date of the NFL season
-    const timeDiff = currentDate.getTime() - startDate.getTime();
-    const currentWeek = Math.ceil(timeDiff / (1000 * 3600 * 24 * 7));
-
-    if (currentWeek >= 1 && currentWeek <= 18) {
-      setWeek(currentWeek);
-    } else {
-      setWeek(1);
-    }
-  }, []);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -35,15 +22,24 @@ const Picksheet = () => {
         console.error('Error fetching game data:', error);
       }
     };
-
     fetchGames();
   }, [week]);
 
   const handleSelectTeam = (gameId, teamId) => {
-    setSelectedTeam((prev) => ({
-      ...prev,
-      [gameId]: teamId,
-    }));
+    setSelectedTeam((prev) => {
+      // If the team is already selected, deselect it
+      if (prev[gameId] === teamId) {
+        const updatedSelection = { ...prev };
+        delete updatedSelection[gameId];
+        setSelectedCount(Object.keys(updatedSelection).length); 
+        return updatedSelection;
+      }
+  
+      // Otherwise, select the team
+      const updatedSelection = { ...prev, [gameId]: teamId };
+      setSelectedCount(Object.keys(updatedSelection).length); 
+      return updatedSelection;
+    });
   };
 
   const handleSubmitPicks = async (e) => {
@@ -75,53 +71,39 @@ const Picksheet = () => {
   };
 
   return (
-    <div>
+    <div className='main-container'>
       <h2>Week {week} Picksheet</h2>
+      <p>Selected {selectedCount} games</p>
       {Array.isArray(games) && games.length > 0 ? (
         games.map((game) => (
-          <div key={game.id} style={{ marginBottom: '20px' }}>
-            <div className="team-button" id="home-team">
-              <span>
-                {game.home_team_name} ({game.home_open_spread} /{' '}
-                {game.home_curr_spread})
-              </span>
-              <button
-                onClick={() => handleSelectTeam(game.id, game.home_team_id)}
-                style={{
-                  backgroundColor:
-                    selectedTeam[game.id] === game.home_team_id
-                      ? 'lightgreen'
-                      : '',
-                }}
-              >
-                Select {game.home_team_name}
-              </button>
-            </div>
-            <div className="team-button" id="away-team">
-              <span>
-                {game.away_team_name} ({game.away_open_spread} /{' '}
-                {game.away_curr_spread})
-              </span>
-              <button
-                onClick={() => handleSelectTeam(game.id, game.away_team_id)}
-                style={{
-                  backgroundColor:
-                    selectedTeam[game.id] === game.away_team_id
-                      ? 'lightgreen'
-                      : '',
-                }}
-              >
-                Select {game.away_team_name}
-              </button>
-            </div>
+          <div className="game-container" key={game.id}>
+        {/* Home team */}
+        <div
+          className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''}`}
+          id='home'
+          onClick={() => handleSelectTeam(game.id, game.home_team_id)}
+        >
+        <span className="team-name">{game.home_team_name}</span>
+        <span className="open-spread" id='home'>(Open: {game.home_open_spread}</span> <span className="curr-spread" id='home'>Current: {game.home_curr_spread})</span>
+        </div>
+
+        {/* Away team */}
+        <div
+          className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''}`}
+          id='away'
+          onClick={() => handleSelectTeam(game.id, game.away_team_id)}
+        >
+        <span className="team-name">{game.away_team_name}</span>
+        <span className="open-spread"  id='away'>(Open: {game.away_open_spread}</span> <span className="curr-spread" id='away'>Current: {game.away_curr_spread})</span>
+        </div>
+      </div>
+              ))
+            ) : (
+              <p>No games available for this week.</p>
+            )}
+            <button onClick={handleSubmitPicks}>Submit Picks</button>
           </div>
-        ))
-      ) : (
-        <p>No games available for week {week}.</p>
-      )}
-      <button onClick={handleSubmitPicks}>Submit Picks</button>
-    </div>
-  );
+        );
 };
 
 export default Picksheet;

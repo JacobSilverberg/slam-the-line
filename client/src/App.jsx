@@ -15,6 +15,7 @@ import Standings from './pages/Standings.jsx';
 import Picksheet from './pages/Picksheet.jsx';
 import LeagueRegistration from './pages/LeagueRegistration.jsx';
 import CreateLeague from './pages/CreateLeague.jsx';
+import UserProfile from './pages/UserProfile.jsx';
 
 import Navbar from './components/Navbar.jsx';
 import Sidebar from './components/Sidebar.jsx';
@@ -100,6 +101,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <CreateLeague />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/userprofile"
+            element={
+              <ProtectedRoute>
+                <UserProfile />
               </ProtectedRoute>
             }
           />
