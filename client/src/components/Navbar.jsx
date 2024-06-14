@@ -8,7 +8,7 @@ import Logo from '../assets/logo.png';
 
 const Navbar = () => {
   const { logout } = React.useContext(AuthContext);
-  
+
   return (
     <div className="navbar">
       <div className="container">

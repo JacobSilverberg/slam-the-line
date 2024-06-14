@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 
 export const WeekContext = createContext();
 
-
 export const WeekProvider = ({ children }) => {
   const [week, setWeek] = useState(1); // Default week is 1
 
@@ -27,10 +26,8 @@ export const WeekProvider = ({ children }) => {
       {children}
     </WeekContext.Provider>
   );
-
-  
 };
 
 WeekProvider.propTypes = {
-    children: PropTypes.node.isRequired,
+  children: PropTypes.node.isRequired,
 };

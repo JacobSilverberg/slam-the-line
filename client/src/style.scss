@@ -78,8 +78,8 @@
   }
 
   .content {
-    flex: 1 1 auto; 
-    display: flex; 
+    flex: 1 1 auto;
+    display: flex;
 
     .sidebar {
       flex: 0 0 auto;
@@ -113,7 +113,7 @@
     }
 
     .main {
-      flex: 1 1 auto; 
+      flex: 1 1 auto;
 
       .main-container {
         padding: 20px;
@@ -124,19 +124,19 @@
           display: flex;
           justify-content: space-between;
           margin-bottom: 20px;
-        
+
           .team-button {
             flex: 1;
             margin: 0 10px;
             padding: 10px;
             border: 1px solid white;
             text-align: center;
-        
+
             &.selected {
               background-color: teal;
               color: white;
             }
-        
+
             &:hover {
               color: teal;
               background-color: white;
@@ -147,12 +147,12 @@
               font-size: 1.5em; // Larger font size
               font-weight: bold;
             }
-            
+
             .open-spread {
               font-size: 0.8em; // Smaller font size
               color: gray;
             }
-            
+
             .curr-spread {
               font-size: 1.2em; // Distinct font size
               color: teal;
