@@ -3,6 +3,6 @@ import { submitPicks } from '../controllers/submitPicksController.js';
 
 const router = express.Router();
 
-router.post('/:leagueId/users/:userId', [], submitPicks);
+router.post('/', [], submitPicks);
 
 export default router;
