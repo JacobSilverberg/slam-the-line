@@ -8,15 +8,15 @@
     "home_team": "Kansas City Chiefs",
     "away_team": "Baltimore Ravens",
     "scores": [
-      {
+        {
           "name": "Kansas City Chiefs",
           "score": "40"
-      },
-      {
+        },
+        {
           "name": "Baltimore Ravens",
           "score": "37"
-      }
-  ],
+        }
+      ],
     "last_update": "2022-02-07T02:47:23Z"
   },
   {

@@ -20,13 +20,6 @@ const bookmakers = 'draftkings';
 // API endpoint
 const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?regions=${regions}&markets=${markets}&oddsFormat=${oddsFormat}&bookmakers=${bookmakers}&apiKey=${API_KEY}`;
 
-const dbConfig = {
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASS,
-  database: process.env.DB_NAME,
-};
-
 export async function getOddsFromAPI() {
   try {
     const response = await fetch(apiUrl);
@@ -47,3 +40,4 @@ export async function getOddsFromAPI() {
     console.error('Error fetching data:', error);
   }
 }
+
