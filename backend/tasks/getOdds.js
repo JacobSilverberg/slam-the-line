@@ -29,7 +29,7 @@ export async function getOddsFromAPI() {
     const data = await response.json();
 
     // Optionally, write data to a file for debugging purposes
-    fs.writeFile('api-data-odds.json', JSON.stringify(data, null, 2), (err) => {
+    fs.writeFile('data/api-data-odds.json', JSON.stringify(data, null, 2), (err) => {
       if (err) {
         console.error('Error writing file:', err);
       } else {
@@ -40,4 +40,3 @@ export async function getOddsFromAPI() {
     console.error('Error fetching data:', error);
   }
 }
-

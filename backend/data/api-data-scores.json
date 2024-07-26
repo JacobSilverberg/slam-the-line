@@ -4,20 +4,11 @@
     "sport_key": "americanfootball_nfl",
     "sport_title": "NFL",
     "commence_time": "2024-09-06T00:20:00Z",
-    "completed": true,
+    "completed": false,
     "home_team": "Kansas City Chiefs",
     "away_team": "Baltimore Ravens",
-    "scores": [
-        {
-          "name": "Kansas City Chiefs",
-          "score": "40"
-        },
-        {
-          "name": "Baltimore Ravens",
-          "score": "37"
-        }
-      ],
-    "last_update": "2022-02-07T02:47:23Z"
+    "scores": null,
+    "last_update": null
   },
   {
     "id": "eca3b71919531e7ae0b4f3f501157e6c",

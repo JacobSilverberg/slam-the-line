@@ -17,7 +17,7 @@ const daysFrom = '1';
 // API endpoint
 const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/scores/?daysFrom=${daysFrom}&apiKey=${API_KEY}`;
 
-export async function getOddsFromAPI() {
+export async function getScoresFromAPI() {
   try {
     const response = await fetch(apiUrl);
     if (!response.ok) {
@@ -26,7 +26,7 @@ export async function getOddsFromAPI() {
     const data = await response.json();
 
     // Optionally, write data to a file for debugging purposes
-    fs.writeFile('api-data-scores.json', JSON.stringify(data, null, 2), (err) => {
+    fs.writeFile('data/api-data-scores.json', JSON.stringify(data, null, 2), (err) => {
       if (err) {
         console.error('Error writing file:', err);
       } else {

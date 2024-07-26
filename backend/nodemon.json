@@ -1,0 +1,5 @@
+{
+    "watch": [],
+    "ignore": ["api-data-odds.json", "api-data-scores.json"],
+    "ext": "js,json"
+  }
