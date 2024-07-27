@@ -8,14 +8,14 @@
     "home_team": "Kansas City Chiefs",
     "away_team": "Baltimore Ravens",
     "scores": [
-        {
-            "name": "Kansas City Chiefs",
-            "score": "45"
-        },
-        {
-            "name": "Baltimore Ravens",
-            "score": "43"
-        }
+      {
+        "name": "Kansas City Chiefs",
+        "score": "45"
+      },
+      {
+        "name": "Baltimore Ravens",
+        "score": "43"
+      }
     ],
     "last_update": "2024-09-07T05:18:19Z"
   },
@@ -24,18 +24,18 @@
     "sport_key": "americanfootball_nfl",
     "sport_title": "NFL",
     "commence_time": "2024-09-07T00:20:00Z",
-    "completed": false,
+    "completed": true,
     "home_team": "Philadelphia Eagles",
     "away_team": "Green Bay Packers",
     "scores": [
-        {
-            "name": "Philadelphia Eagles",
-            "score": "17"
-        },
-        {
-            "name": "Green Bay Packers",
-            "score": "14"
-        }
+      {
+        "name": "Philadelphia Eagles",
+        "score": "17"
+      },
+      {
+        "name": "Green Bay Packers",
+        "score": "14"
+      }
     ],
     "last_update": "2024-09-07T05:18:19Z"
   },

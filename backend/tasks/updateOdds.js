@@ -39,7 +39,7 @@ export async function fetchAndSaveOdds() {
         [game.id]
       );
 
-      console.log('home open spread 41: ', homeOpenSpread)
+      console.log('home open spread 41: ', homeOpenSpread);
 
       // Parse JSON into variables
       for (const bookmaker of game.bookmakers) {
@@ -61,7 +61,10 @@ export async function fetchAndSaveOdds() {
               const awaySpread = market.outcomes.find(
                 (o) => o.name === game.away_team
               );
-              if (!homeOpenSpread || (Array.isArray(homeOpenSpread) && homeOpenSpread.length === 0)) {
+              if (
+                !homeOpenSpread ||
+                (Array.isArray(homeOpenSpread) && homeOpenSpread.length === 0)
+              ) {
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
               } else {
@@ -166,7 +169,7 @@ export async function fetchAndSaveOdds() {
         ];
         await pool.execute(updateQuery, updateValues);
       } else {
-        console.log('home open spread:', homeOpenSpread)
+        console.log('home open spread:', homeOpenSpread);
 
         // Insert a new game
         const insertQuery = `
@@ -210,7 +213,7 @@ export async function fetchAndSaveOdds() {
       }
     }
 
-    // await pool.end();
+    console.log('Odds updated successfully');
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -231,12 +234,3 @@ async function getTeamId(pool, teamName) {
     throw error; // Rethrow the error to be caught in the fetchAndSaveOdds function
   }
 }
-
-// function dateFormat(unformatted_date) {
-//   const interim_date = new Date(unformatted_date);
-//   if (isNaN(interim_date.getTime())) {
-//     throw new Error(`Invalid date value: ${unformatted_date}`);
-//   }
-//   return interim_date.toISOString().slice(0, 19).replace('T', ' ');
-// }
-

@@ -21,28 +21,27 @@ const data = JSON.parse(rawData);
 export async function fetchAndSaveScores() {
   try {
     for (const game of data) {
-
       // Initialize variables for SQL update
-        let homeScore, awayScore;
-        let gameCompleted = false;
-        let last_update_unformatted, last_update;
+      let homeScore, awayScore;
+      let gameCompleted = false;
+      let last_update_unformatted, last_update;
 
-        // Skip games that have not completed
-        if (game.completed === false) {
-            continue;
-        } else {gameCompleted = true;}
+      // Skip games that have not completed
+      if (game.completed === false) {
+        continue;
+      } else {
+        gameCompleted = true;
+      }
 
       // Parse JSON into variables
       for (const score of game.scores) {
         if (score.name === game.home_team) {
-            homeScore = score.score;
-            console.log('homescore', homeScore);
+          homeScore = score.score;
         } else if (score.name === game.away_team) {
-            awayScore = score.score;
-            console.log('awaycore', awayScore);
+          awayScore = score.score;
         }
-    }
-    last_update_unformatted = game.last_update;
+      }
+      last_update_unformatted = game.last_update;
 
       // Ensure last_update_unformatted is valid
       if (!last_update_unformatted) {
@@ -88,23 +87,12 @@ export async function fetchAndSaveScores() {
         ];
         await pool.execute(updateQuery, updateValues);
       } else {
-        console.log('game does not exist in db');
+        console.error('game does not exist in db');
       }
-
-      console.log('Game updated:', game.id);
     }
 
-    // await pool.end();
+    console.log('Scores updated');
   } catch (error) {
     console.error('Error fetching data:', error);
   }
 }
-
-// function dateFormat(unformatted_date) {
-//   const interim_date = new Date(unformatted_date);
-//   if (isNaN(interim_date.getTime())) {
-//     throw new Error(`Invalid date value: ${unformatted_date}`);
-//   }
-//   return interim_date.toISOString().slice(0, 19).replace('T', ' ');
-// }
-

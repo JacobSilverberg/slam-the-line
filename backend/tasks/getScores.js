@@ -26,13 +26,17 @@ export async function getScoresFromAPI() {
     const data = await response.json();
 
     // Optionally, write data to a file for debugging purposes
-    fs.writeFile('data/api-data-scores.json', JSON.stringify(data, null, 2), (err) => {
-      if (err) {
-        console.error('Error writing file:', err);
-      } else {
-        console.log('Data successfully written to api-data-scores.json');
+    fs.writeFile(
+      'data/api-data-scores.json',
+      JSON.stringify(data, null, 2),
+      (err) => {
+        if (err) {
+          console.error('Error writing file:', err);
+        } else {
+          console.log('Data successfully written to api-data-scores.json');
+        }
       }
-    });
+    );
   } catch (error) {
     console.error('Error fetching data:', error);
   }

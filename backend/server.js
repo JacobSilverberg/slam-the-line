@@ -15,7 +15,6 @@ import updateOddsRoute from './routes/updateOddsRoute.js';
 import updateScoresRoute from './routes/updateScoresRoute.js';
 import evaluateSpreadsRoute from './routes/evaluateSpreadsRoute.js';
 
-
 dotenv.config();
 
 const app = express();
