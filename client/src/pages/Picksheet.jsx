@@ -16,7 +16,7 @@ const Picksheet = () => {
 
   const userId = getUserId();
 
-  console.log(userId);
+  console.log('user id:', userId);
 
   useEffect(() => {
     const fetchGames = async () => {
@@ -104,7 +104,7 @@ const Picksheet = () => {
       updatedAt,
     }));
 
-    console.log(formData);
+    console.log('form data:', formData);
 
     try {
       await axios.post(`http://localhost:3000/submitpicks/`, {
