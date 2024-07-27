@@ -27,27 +27,18 @@ export async function fetchAndSaveOdds() {
       const awayTeamId = await getTeamId(pool, game.away_team);
 
       // Initialize variables for SQL update
-      let game_in_db = false;
       let db_id;
       let last_update, last_update_unformatted;
       let homeOpenSpread, awayOpenSpread, homeCurrSpread, awayCurrSpread;
       let homeMlOdds, awayMlOdds;
       let gameOpenTotal, gameCurrTotal, gameOverOdds, gameUnderOdds;
 
-      // Check if the game exists
-      db_id = await pool.execute('SELECT id FROM games WHERE api_id = ?', [game.id]);
-      if (db_id[0].length > 0) {game_in_db = true;}
-      else {console.log(game.id, 'Game not in db');}
-
-      if (!game_in_db) {
-        // Insert a new game
-      }
-      
-
       [homeOpenSpread, awayOpenSpread] = await pool.execute(
         'SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?',
         [game.id]
       );
+
+      console.log('home open spread 41: ', homeOpenSpread)
 
       // Parse JSON into variables
       for (const bookmaker of game.bookmakers) {
@@ -69,7 +60,7 @@ export async function fetchAndSaveOdds() {
               const awaySpread = market.outcomes.find(
                 (o) => o.name === game.away_team
               );
-              if (!homeOpenSpread) {
+              if (!homeOpenSpread || (Array.isArray(homeOpenSpread) && homeOpenSpread.length === 0)) {
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
               } else {
@@ -174,6 +165,8 @@ export async function fetchAndSaveOdds() {
         ];
         await pool.execute(updateQuery, updateValues);
       } else {
+        console.log('home open spread:', homeOpenSpread)
+
         // Insert a new game
         const insertQuery = `
           INSERT INTO games (api_id, 
