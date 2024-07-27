@@ -1,14 +1,23 @@
 import fs from 'fs';
 import pool from '../config/db.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Define the start date of the NFL season
 const seasonStartDate = new Date('2024-09-04');
 
+// Get the current file path and directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Resolve the absolute path to the JSON file
+const filePath = path.resolve(__dirname, '../data/api-data-odds.json');
+
 // handle json formatting, reading from api-data.json
-const rawData = fs.readFileSync('api-data-odds.json');
+const rawData = fs.readFileSync(filePath);
 const data = JSON.parse(rawData);
 
-async function fetchAndSaveOdds() {
+export async function fetchAndSaveOdds() {
   try {
     // const data = jsonData;
 
@@ -18,12 +27,23 @@ async function fetchAndSaveOdds() {
       const awayTeamId = await getTeamId(pool, game.away_team);
 
       // Initialize variables for SQL update
+      let game_in_db = false;
+      let db_id;
       let last_update, last_update_unformatted;
       let homeOpenSpread, awayOpenSpread, homeCurrSpread, awayCurrSpread;
       let homeMlOdds, awayMlOdds;
       let gameOpenTotal, gameCurrTotal, gameOverOdds, gameUnderOdds;
 
       // Check if the game exists
+      db_id = await pool.execute('SELECT id FROM games WHERE api_id = ?', [game.id]);
+      if (db_id[0].length > 0) {game_in_db = true;}
+      else {console.log(game.id, 'Game not in db');}
+
+      if (!game_in_db) {
+        // Insert a new game
+      }
+      
+
       [homeOpenSpread, awayOpenSpread] = await pool.execute(
         'SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?',
         [game.id]
@@ -226,4 +246,3 @@ function dateFormat(unformatted_date) {
   return interim_date.toISOString().slice(0, 19).replace('T', ' ');
 }
 
-fetchAndSaveOdds();

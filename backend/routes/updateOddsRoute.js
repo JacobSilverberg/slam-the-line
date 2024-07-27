@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { getScoresFromAPI } from '../tasks/getScores.js';
+import { fetchAndSaveOdds } from '../tasks/updateOdds.js';
 
 const router = Router();
 
 // Define routes
-router.get('/', getScoresFromAPI);
+router.get('/', fetchAndSaveOdds);
 
 export default router;
