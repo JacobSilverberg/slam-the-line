@@ -2,7 +2,7 @@ import fs from 'fs';
 import pool from '../config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import dateFormat from './dateFormat.js';
+import dateFormat from '../utils/dateFormat.js';
 
 // Define the start date of the NFL season
 const seasonStartDate = new Date('2024-09-04');
@@ -94,7 +94,7 @@ export async function fetchAndSaveScores() {
       console.log('Game updated:', game.id);
     }
 
-    await pool.end();
+    // await pool.end();
   } catch (error) {
     console.error('Error fetching data:', error);
   }
