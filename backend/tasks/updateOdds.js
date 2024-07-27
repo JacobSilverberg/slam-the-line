@@ -39,8 +39,6 @@ export async function fetchAndSaveOdds() {
         [game.id]
       );
 
-      console.log('home open spread 41: ', homeOpenSpread);
-
       // Parse JSON into variables
       for (const bookmaker of game.bookmakers) {
         for (const market of bookmaker.markets) {
@@ -169,8 +167,6 @@ export async function fetchAndSaveOdds() {
         ];
         await pool.execute(updateQuery, updateValues);
       } else {
-        console.log('home open spread:', homeOpenSpread);
-
         // Insert a new game
         const insertQuery = `
           INSERT INTO games (api_id, 
