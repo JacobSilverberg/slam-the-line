@@ -18,7 +18,7 @@ import CreateLeague from './pages/CreateLeague.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 
 import Navbar from './components/Navbar.jsx';
-import Sidebar from './components/Sidebar.jsx';
+// import Sidebar from './components/Sidebar.jsx';
 
 import { AuthContext } from './context/AuthContext.jsx';
 
@@ -31,15 +31,15 @@ const Layout = ({ children }) => {
   const showNavbar = ['/', '/league'].some((path) =>
     location.pathname.startsWith(path)
   );
-  const showSidebar = ['/league'].some((path) =>
-    location.pathname.startsWith(path)
-  );
+  // const showSidebar = ['/league'].some((path) =>
+  //   location.pathname.startsWith(path)
+  // );
 
   return (
     <>
       {showNavbar && <Navbar />}
       <div className="content">
-        {showSidebar && <Sidebar />}
+        {/* {showSidebar && <Sidebar />} */}
         <div className="main">{children}</div>
       </div>
     </>
