@@ -2,6 +2,7 @@ import fs from 'fs';
 import pool from '../config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dateFormat from './dateFormat.js';
 
 // Define the start date of the NFL season
 const seasonStartDate = new Date('2024-09-04');
@@ -231,11 +232,11 @@ async function getTeamId(pool, teamName) {
   }
 }
 
-function dateFormat(unformatted_date) {
-  const interim_date = new Date(unformatted_date);
-  if (isNaN(interim_date.getTime())) {
-    throw new Error(`Invalid date value: ${unformatted_date}`);
-  }
-  return interim_date.toISOString().slice(0, 19).replace('T', ' ');
-}
+// function dateFormat(unformatted_date) {
+//   const interim_date = new Date(unformatted_date);
+//   if (isNaN(interim_date.getTime())) {
+//     throw new Error(`Invalid date value: ${unformatted_date}`);
+//   }
+//   return interim_date.toISOString().slice(0, 19).replace('T', ' ');
+// }
 

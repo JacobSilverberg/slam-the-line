@@ -12,6 +12,7 @@ import leagueInfoRoute from './routes/leagueInfoRoute.js';
 import getOddsRoute from './routes/getOddsRoute.js';
 import getScoresRoute from './routes/getScoresRoute.js';
 import updateOddsRoute from './routes/updateOddsRoute.js';
+import updateScoresRoute from './routes/updateScoresRoute.js';
 
 
 dotenv.config();
@@ -40,6 +41,7 @@ app.use('/leagueinfo', leagueInfoRoute);
 app.use('/getodds', getOddsRoute);
 app.use('/getscores', getScoresRoute);
 app.use('/updateodds', updateOddsRoute);
+app.use('/updatescores', updateScoresRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
