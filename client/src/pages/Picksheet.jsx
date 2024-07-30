@@ -9,6 +9,7 @@ const Picksheet = () => {
   const { week } = useContext(WeekContext);
   const [games, setGames] = useState([]);
   const [leagueInfo, setLeagueInfo] = useState({});
+  const [userSelections, setUserSelections] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState({});
   const [selectedCount, setSelectedCount] = useState(0);
   const [weeklyPoints, setWeeklyPoints] = useState({});
@@ -42,6 +43,33 @@ const Picksheet = () => {
     };
     fetchLeagueInfo();
   }, [leagueId]);
+
+  useEffect(() => {
+    const fetchUserSelections = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/userselections/${leagueId}/${userId}`
+        );
+        console.log('response data:', response.data);
+  
+        const selections = response.data.league.reduce(
+          (acc, selection) => {
+            acc.selectedTeam[selection.game_id] = selection.team_id;
+            acc.weeklyPoints[selection.game_id] = selection.points;
+            return acc;
+          },
+          { selectedTeam: {}, weeklyPoints: {} }
+        );
+  
+        setSelectedTeam(selections.selectedTeam);
+        setWeeklyPoints(selections.weeklyPoints);
+        setSelectedCount(Object.keys(selections.selectedTeam).length);
+      } catch (error) {
+        console.error('Error fetching user selections:', error);
+      }
+    };
+    fetchUserSelections();
+  }, [leagueId, userId]);
 
   if (isLoading) {
     return <div>Loading...</div>;
