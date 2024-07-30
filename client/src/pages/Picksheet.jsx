@@ -14,6 +14,7 @@ const Picksheet = () => {
   const [selectedCount, setSelectedCount] = useState(0);
   const [weeklyPoints, setWeeklyPoints] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [hasExistingSelections, setHasExistingSelections] = useState(false); // New state
 
   const userId = getUserId();
 
@@ -50,20 +51,24 @@ const Picksheet = () => {
         const response = await axios.get(
           `http://localhost:3000/userselections/${leagueId}/${userId}`
         );
-        console.log('response data:', response.data);
-  
-        const selections = response.data.league.reduce(
-          (acc, selection) => {
-            acc.selectedTeam[selection.game_id] = selection.team_id;
-            acc.weeklyPoints[selection.game_id] = selection.points;
-            return acc;
-          },
-          { selectedTeam: {}, weeklyPoints: {} }
-        );
-  
-        setSelectedTeam(selections.selectedTeam);
-        setWeeklyPoints(selections.weeklyPoints);
-        setSelectedCount(Object.keys(selections.selectedTeam).length);
+        if (response.data && response.data.length > 0) {
+          setHasExistingSelections(true); // Set flag if there are existing selections
+
+          // Map the response to the appropriate state formats
+          const selections = response.data.reduce(
+            (acc, selection) => {
+              acc.selectedTeam[selection.game_id] = selection.team_id;
+              acc.weeklyPoints[selection.game_id] = selection.points;
+              console.log(acc);
+              return acc;
+            },
+            { selectedTeam: {}, weeklyPoints: {} }
+          );
+
+          setSelectedTeam(selections.selectedTeam);
+          setWeeklyPoints(selections.weeklyPoints);
+          setSelectedCount(Object.keys(selections.selectedTeam).length);
+        }
       } catch (error) {
         console.error('Error fetching user selections:', error);
       }
@@ -136,11 +141,19 @@ const Picksheet = () => {
     }));
 
     try {
+      // Delete previous picks if they exist
+      if (hasExistingSelections) {
+        await axios.delete(`http://localhost:3000/removeuserselections/${leagueId}/${userId}`);
+      }
+
+      // Post new picks
       await axios.post(`http://localhost:3000/submitpicks/`, {
         picks: formData,
         userId: userId,
         leagueId: leagueId,
       });
+
+      alert('Picks submitted successfully!');
     } catch (err) {
       if (err.response) {
         console.error(err.response.data);
