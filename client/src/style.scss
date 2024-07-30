@@ -157,13 +157,14 @@
 
             &:hover {
               color: teal;
-              background-color: white;
+              // background-color: white;
               border: 1px solid teal;
             }
 
             .team-name {
               font-size: 1.5em; // Larger font size
               font-weight: bold;
+              color: black;
             }
 
             .open-spread {
@@ -173,7 +174,7 @@
 
             .curr-spread {
               font-size: 1.2em; // Distinct font size
-              color: teal;
+              color: black;
             }
           }
         }

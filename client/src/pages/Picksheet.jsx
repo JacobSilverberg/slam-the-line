@@ -16,8 +16,6 @@ const Picksheet = () => {
 
   const userId = getUserId();
 
-  console.log('user id:', userId);
-
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -29,8 +27,6 @@ const Picksheet = () => {
     };
     fetchGames();
   }, [week]);
-
-  console.log(games);
 
   useEffect(() => {
     const fetchLeagueInfo = async () => {
@@ -57,7 +53,7 @@ const Picksheet = () => {
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
         delete updatedSelection[gameId];
-        setSelectedCount(Object.keys(updatedSelection).length); // Update the count
+        setSelectedCount(Object.keys(updatedSelection).length);
         return updatedSelection;
       }
 
@@ -68,8 +64,16 @@ const Picksheet = () => {
 
       // Otherwise, select the team
       const updatedSelection = { ...prev, [gameId]: teamId };
-      setSelectedCount(Object.keys(updatedSelection).length); // Update the count
+      setSelectedCount(Object.keys(updatedSelection).length);
       return updatedSelection;
+    });
+  };
+
+  const handleInputChange = (gameId, event) => {
+    event.stopPropagation(); // Prevent click event from bubbling up to the parent
+    setWeeklyPoints({
+      ...weeklyPoints,
+      [gameId]: parseInt(event.target.value) || 0,
     });
   };
 
@@ -95,7 +99,6 @@ const Picksheet = () => {
       (game) => weeklyPoints[game.id] !== undefined
     );
 
-    // Prepare the form data with game_id, created_at, updated_at, and points
     const formData = selectedGames.map((game) => ({
       gameId: game.id,
       teamId: selectedTeam[game.id],
@@ -103,8 +106,6 @@ const Picksheet = () => {
       createdAt,
       updatedAt,
     }));
-
-    console.log('form data:', formData);
 
     try {
       await axios.post(`http://localhost:3000/submitpicks/`, {
@@ -128,7 +129,7 @@ const Picksheet = () => {
         Select between {leagueInfo.games_select_min} and{' '}
         {leagueInfo.games_select_max} games
       </p>
-      <p>You have {leagueInfo.weekly_points} to distribute.</p>
+      <p>You have {leagueInfo.weekly_points} points to distribute.</p>
       <p>
         You have distributed{' '}
         {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
@@ -150,16 +151,15 @@ const Picksheet = () => {
               <span className="curr-spread" id="home">
                 Current: {game.home_curr_spread})
               </span>
-              <input
-                type="number"
-                value={weeklyPoints[game.id] || ''}
-                onChange={(e) =>
-                  setWeeklyPoints({
-                    ...weeklyPoints,
-                    [game.id]: parseInt(e.target.value),
-                  })
-                }
-              />
+              {/* Show input only if the team is selected */}
+              {selectedTeam[game.id] === game.home_team_id && (
+                <input
+                  type="number"
+                  value={weeklyPoints[game.id] || ''}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => handleInputChange(game.id, e)}
+                />
+              )}
             </div>
 
             {/* Away team */}
@@ -175,16 +175,15 @@ const Picksheet = () => {
               <span className="curr-spread" id="away">
                 Current: {game.away_curr_spread})
               </span>
-              <input
-                type="number"
-                value={weeklyPoints[game.id] || ''}
-                onChange={(e) =>
-                  setWeeklyPoints({
-                    ...weeklyPoints,
-                    [game.id]: parseInt(e.target.value),
-                  })
-                }
-              />
+              {/* Show input only if the team is selected */}
+              {selectedTeam[game.id] === game.away_team_id && (
+                <input
+                  type="number"
+                  value={weeklyPoints[game.id] || ''}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => handleInputChange(game.id, e)}
+                />
+              )}
             </div>
           </div>
         ))
