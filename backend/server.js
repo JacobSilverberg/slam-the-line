@@ -9,6 +9,7 @@ import leagueRegistrationRoute from './routes/leagueRegistrationRoute.js';
 import submitPicksRoute from './routes/submitPicksRoute.js';
 import getUserLeaguesRoute from './routes/getUserLeaguesRoute.js';
 import leagueInfoRoute from './routes/leagueInfoRoute.js';
+import userSelectionsRoute from './routes/userSelectionsRoute.js'
 import getOddsRoute from './routes/getOddsRoute.js';
 import getScoresRoute from './routes/getScoresRoute.js';
 import updateOddsRoute from './routes/updateOddsRoute.js';
@@ -38,6 +39,7 @@ app.use('/leagueregistration', leagueRegistrationRoute);
 app.use('/submitpicks', submitPicksRoute);
 app.use('/getuserleagues', getUserLeaguesRoute);
 app.use('/leagueinfo', leagueInfoRoute);
+app.use('/userselections', userSelectionsRoute);
 app.use('/getodds', getOddsRoute);
 app.use('/getscores', getScoresRoute);
 app.use('/updateodds', updateOddsRoute);
