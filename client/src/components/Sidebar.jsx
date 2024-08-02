@@ -7,7 +7,7 @@ const Sidebar = () => {
     <div className="sidebar">
       <div className="container">
         <div className="links">
-          <Link className="link" to={`/league/${leagueId}/home`}>
+          <Link className="link" to={`/league/${leagueId}`}>
             <h6>League Home</h6>
           </Link>
           <Link className="link" to={`/league/${leagueId}/picksheet`}>
