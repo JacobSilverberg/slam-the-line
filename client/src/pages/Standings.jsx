@@ -47,7 +47,7 @@ const Standings = () => {
         <table>
           <thead>
             <tr>
-              <th onClick={() => requestSort('user_email')}>User</th>
+              <th onClick={() => requestSort('team_name')}>Team Name</th>
               <th onClick={() => requestSort('total_points')}>Total Points</th>
               <th onClick={() => requestSort('perfect_weeks')}>Perfect Weeks</th>
               <th onClick={() => requestSort('overdog_correct')}>Overdog Correct</th>
@@ -59,7 +59,7 @@ const Standings = () => {
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
-                <td>{standing.user_email}</td>
+                <td>{standing.team_name}</td>
                 <td>{standing.total_points}</td>
                 <td>{standing.perfect_weeks}</td>
                 <td>{standing.overdog_correct}</td>

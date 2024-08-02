@@ -13,12 +13,14 @@ export const getLeagueStandings = async (req, res) => {
       MAX(uhs.curr_streak) AS curr_streak,
       MAX(uhs.max_streak) AS max_streak,
       u.email AS user_email,
-      l.name AS league_name
+      l.name AS league_name,
+      lhu.team_name AS team_name
     FROM users_have_scores uhs
     JOIN users u ON uhs.user_id = u.id
     JOIN leagues l ON uhs.league_id = l.id
+    JOIN leagues_have_users lhu ON uhs.user_id = lhu.user_id AND uhs.league_id = lhu.league_id
     WHERE uhs.league_id = ?
-    GROUP BY uhs.user_id, uhs.league_id, u.email, l.name
+    GROUP BY uhs.user_id, uhs.league_id, u.email, l.name, lhu.team_name
     ORDER BY total_points DESC;
   `;
 
