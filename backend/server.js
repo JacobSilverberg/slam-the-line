@@ -17,6 +17,7 @@ import updateOddsRoute from './routes/updateOddsRoute.js';
 import updateScoresRoute from './routes/updateScoresRoute.js';
 import evaluateSpreadsRoute from './routes/evaluateSpreadsRoute.js';
 import evaluateUserScoresRoute from './routes/evaluateUserScoresRoute.js';
+import getLeagueStandingsRoute from './routes/getLeagueStandingsRoute.js';
 
 dotenv.config();
 
@@ -49,6 +50,7 @@ app.use('/updateodds', updateOddsRoute);
 app.use('/updatescores', updateScoresRoute);
 app.use('/evaluatespreads', evaluateSpreadsRoute);
 app.use('/evaluateuserscores', evaluateUserScoresRoute);
+app.use('/getleaguestandings', getLeagueStandingsRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
