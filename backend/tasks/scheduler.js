@@ -7,12 +7,14 @@ const getScores = 'http://localhost:3000/getscores';
 const updateOdds = 'http://localhost:3000/updateodds';
 const updateScores = 'http://localhost:3000/updatescores';
 const evaluateSpreads = 'http://localhost:3000/evaluatespreads';
+const evaluateUserScores = 'http://localhost:3000/evaluateuserscores';
 
 // List of routes to trigger
 const ROUTE_URLS = [
     updateOdds,
     updateScores,
-    evaluateSpreads
+    evaluateSpreads,
+    evaluateUserScores
   ];
 
 // Function to trigger the route

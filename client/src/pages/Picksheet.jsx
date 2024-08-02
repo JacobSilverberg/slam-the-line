@@ -14,7 +14,7 @@ const Picksheet = () => {
   const [selectedCount, setSelectedCount] = useState(0);
   const [weeklyPoints, setWeeklyPoints] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const [hasExistingSelections, setHasExistingSelections] = useState(false); // New state
+  const [hasExistingSelections, setHasExistingSelections] = useState(false);
 
   const userId = getUserId();
 
@@ -51,15 +51,14 @@ const Picksheet = () => {
         const response = await axios.get(
           `http://localhost:3000/userselections/${leagueId}/${userId}`
         );
-        if (response.data && response.data.length > 0) {
-          setHasExistingSelections(true); // Set flag if there are existing selections
 
-          // Map the response to the appropriate state formats
+        if (response.data && response.data.length > 0) {
+          setHasExistingSelections(true);
+
           const selections = response.data.reduce(
             (acc, selection) => {
               acc.selectedTeam[selection.game_id] = selection.team_id;
               acc.weeklyPoints[selection.game_id] = selection.points;
-              console.log(acc);
               return acc;
             },
             { selectedTeam: {}, weeklyPoints: {} }
@@ -76,13 +75,17 @@ const Picksheet = () => {
     fetchUserSelections();
   }, [leagueId, userId]);
 
+  useEffect(() => {
+    console.log('Selected team:', selectedTeam);
+    console.log('Weekly points:', weeklyPoints);
+  }, [selectedTeam, weeklyPoints]);
+
   if (isLoading) {
     return <div>Loading...</div>;
   }
 
   const handleSelectTeam = (gameId, teamId) => {
     setSelectedTeam((prev) => {
-      // If the team is already selected, deselect it
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
         delete updatedSelection[gameId];
@@ -90,12 +93,10 @@ const Picksheet = () => {
         return updatedSelection;
       }
 
-      // If the maximum number of selections has been reached, return the current state
       if (Object.keys(prev).length >= leagueInfo.games_select_max) {
         return prev;
       }
 
-      // Otherwise, select the team
       const updatedSelection = { ...prev, [gameId]: teamId };
       setSelectedCount(Object.keys(updatedSelection).length);
       return updatedSelection;
@@ -103,7 +104,7 @@ const Picksheet = () => {
   };
 
   const handleInputChange = (gameId, event) => {
-    event.stopPropagation(); // Prevent click event from bubbling up to the parent
+    event.stopPropagation();
     setWeeklyPoints({
       ...weeklyPoints,
       [gameId]: parseInt(event.target.value) || 0,
@@ -141,12 +142,10 @@ const Picksheet = () => {
     }));
 
     try {
-      // Delete previous picks if they exist
       if (hasExistingSelections) {
         await axios.delete(`http://localhost:3000/removeuserselections/${leagueId}/${userId}`);
       }
 
-      // Post new picks
       await axios.post(`http://localhost:3000/submitpicks/`, {
         picks: formData,
         userId: userId,
@@ -179,7 +178,6 @@ const Picksheet = () => {
       {Array.isArray(games) && games.length > 0 ? (
         games.map((game) => (
           <div className="game-container" key={game.id}>
-            {/* Home team */}
             <div
               className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''}`}
               id="home"
@@ -187,12 +185,11 @@ const Picksheet = () => {
             >
               <span className="team-name">{game.home_team_name}</span>
               <span className="open-spread" id="home">
-                (Open: {game.home_open_spread}
+                (Open: {game.home_open_spread})
               </span>{' '}
               <span className="curr-spread" id="home">
                 Current: {game.home_curr_spread})
               </span>
-              {/* Show input only if the team is selected */}
               {selectedTeam[game.id] === game.home_team_id && (
                 <input
                   type="number"
@@ -203,7 +200,6 @@ const Picksheet = () => {
               )}
             </div>
 
-            {/* Away team */}
             <div
               className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''}`}
               id="away"
@@ -211,12 +207,11 @@ const Picksheet = () => {
             >
               <span className="team-name">{game.away_team_name}</span>
               <span className="open-spread" id="away">
-                (Open: {game.away_open_spread}
+                (Open: {game.away_open_spread})
               </span>{' '}
               <span className="curr-spread" id="away">
                 Current: {game.away_curr_spread})
               </span>
-              {/* Show input only if the team is selected */}
               {selectedTeam[game.id] === game.away_team_id && (
                 <input
                   type="number"
