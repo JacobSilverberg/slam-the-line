@@ -115,7 +115,7 @@
     .main {
       flex: 1 1 auto;
 
-      .league-page {
+      .main-container {
         display: flex; // Use flexbox to lay out sidebar and content side by side
         flex: 1 1 auto;
         height: 100vh; // Make sure the league-page takes up the full viewport height
@@ -125,7 +125,7 @@
           flex-shrink: 0; // Prevent the sidebar from shrinking
         }
       
-        .league-content {
+        .page-content {
           flex: 1; // Take up the remaining space
           padding: 20px; // Optional: add padding to the content
           overflow-y: auto; // Optional: enable scrolling for content overflow

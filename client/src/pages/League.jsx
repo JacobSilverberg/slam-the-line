@@ -6,9 +6,9 @@ const League = () => {
   const { leagueId } = useParams();
 
   return (
-    <div className="league-page">
+    <div className="main-container">
       <Sidebar leagueId={leagueId} />
-      <div className="league-content">
+      <div className="page-content">
         <h1>League ID: {leagueId}</h1>
         <div>League</div>
       </div>

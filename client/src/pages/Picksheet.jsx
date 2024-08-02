@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
 import { WeekContext } from '../context/WeekContext';
+import Sidebar from '../components/Sidebar.jsx';
 
 const Picksheet = () => {
   const { leagueId } = useParams();
@@ -164,6 +165,8 @@ const Picksheet = () => {
 
   return (
     <div className="main-container">
+      <Sidebar leagueId={leagueId} />
+      <div className="page-content">
       <h2>Week {week} Picksheet</h2>
       <p>
         Select between {leagueInfo.games_select_min} and{' '}
@@ -227,6 +230,7 @@ const Picksheet = () => {
         <p>No games available for this week.</p>
       )}
       <button onClick={handleSubmitPicks}>Submit Picks</button>
+      </div>
     </div>
   );
 };
