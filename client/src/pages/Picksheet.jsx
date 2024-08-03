@@ -34,9 +34,7 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchLeagueInfo = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/leagueinfo/${leagueId}`
-        );
+        const response = await axios.get(`http://localhost:3000/leagueinfo/${leagueId}`);
         setLeagueInfo(response.data.league[0]);
         setIsLoading(false);
       } catch (error) {
@@ -49,14 +47,12 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchUserSelections = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:3000/userselections/${leagueId}/${userId}`
-        );
+        const response = await axios.get(`http://localhost:3000/userselections/${leagueId}/${userId}`);
 
-        if (response.data && response.data.length > 0) {
+        if (response.data.league && response.data.league.length > 0) {
           setHasExistingSelections(true);
 
-          const selections = response.data.reduce(
+          const selections = response.data.league.reduce(
             (acc, selection) => {
               acc.selectedTeam[selection.game_id] = selection.team_id;
               acc.weeklyPoints[selection.game_id] = selection.points;
@@ -75,11 +71,6 @@ const Picksheet = () => {
     };
     fetchUserSelections();
   }, [leagueId, userId]);
-
-  useEffect(() => {
-    console.log('Selected team:', selectedTeam);
-    console.log('Weekly points:', weeklyPoints);
-  }, [selectedTeam, weeklyPoints]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -115,24 +106,17 @@ const Picksheet = () => {
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
 
-    const totalWeeklyPoints = Object.values(weeklyPoints).reduce(
-      (a, b) => a + b,
-      0
-    );
+    const totalWeeklyPoints = Object.values(weeklyPoints).reduce((a, b) => a + b, 0);
 
     if (totalWeeklyPoints !== leagueInfo.weekly_points) {
-      alert(
-        `Total weekly points must be equal to ${leagueInfo.weekly_points}.`
-      );
+      alert(`Total weekly points must be equal to ${leagueInfo.weekly_points}.`);
       return;
     }
 
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
 
-    const selectedGames = games.filter(
-      (game) => weeklyPoints[game.id] !== undefined
-    );
+    const selectedGames = games.filter((game) => weeklyPoints[game.id] !== undefined);
 
     const formData = selectedGames.map((game) => ({
       gameId: game.id,
@@ -144,9 +128,7 @@ const Picksheet = () => {
 
     try {
       if (hasExistingSelections) {
-        await axios.delete(
-          `http://localhost:3000/removeuserselections/${leagueId}/${userId}`
-        );
+        await axios.delete(`http://localhost:3000/removeuserselections/${leagueId}/${userId}`);
       }
 
       await axios.post(`http://localhost:3000/submitpicks/`, {
@@ -171,14 +153,10 @@ const Picksheet = () => {
       <div className="page-content">
         <h2>Week {week} Picksheet</h2>
         <p>
-          Select between {leagueInfo.games_select_min} and{' '}
-          {leagueInfo.games_select_max} games
+          Select between {leagueInfo.games_select_min} and {leagueInfo.games_select_max} games
         </p>
         <p>You have {leagueInfo.weekly_points} points to distribute.</p>
-        <p>
-          You have distributed{' '}
-          {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
-        </p>
+        <p>You have distributed {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.</p>
         <p>You have selected {selectedCount} games</p>
         {Array.isArray(games) && games.length > 0 ? (
           games.map((game) => (
