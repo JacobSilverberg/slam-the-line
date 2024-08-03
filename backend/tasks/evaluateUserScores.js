@@ -40,7 +40,10 @@ export async function evaluateUserScores() {
           const isAwayTeam = selection.team_id === away_team_id;
           let pointsAwarded = 0;
 
-          if ((isHomeTeam && spread_winner === 'home') || (isAwayTeam && spread_winner === 'away')) {
+          if (
+            (isHomeTeam && spread_winner === 'home') ||
+            (isAwayTeam && spread_winner === 'away')
+          ) {
             pointsAwarded = selection.points;
           } else if (spread_winner === 'push') {
             pointsAwarded = selection.points / 2;
@@ -68,11 +71,23 @@ export async function evaluateUserScores() {
           if (isHomeTeam || isAwayTeam) {
             if (isHomeTeam && isHomeOverdog && spread_winner === 'home') {
               userScore.overdog_correct++;
-            } else if (isAwayTeam && isAwayOverdog && spread_winner === 'away') {
+            } else if (
+              isAwayTeam &&
+              isAwayOverdog &&
+              spread_winner === 'away'
+            ) {
               userScore.overdog_correct++;
-            } else if (isHomeTeam && !isHomeOverdog && spread_winner === 'home') {
+            } else if (
+              isHomeTeam &&
+              !isHomeOverdog &&
+              spread_winner === 'home'
+            ) {
               userScore.underdog_correct++;
-            } else if (isAwayTeam && !isAwayOverdog && spread_winner === 'away') {
+            } else if (
+              isAwayTeam &&
+              !isAwayOverdog &&
+              spread_winner === 'away'
+            ) {
               userScore.underdog_correct++;
             }
           }

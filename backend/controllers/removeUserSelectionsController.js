@@ -10,9 +10,15 @@ export const removeUserSelections = async (req, res) => {
     );
 
     if (result.affectedRows > 0) {
-      res.status(200).json({ message: 'User selections deleted successfully.' });
+      res
+        .status(200)
+        .json({ message: 'User selections deleted successfully.' });
     } else {
-      res.status(404).json({ message: 'No selections found for the given user and league.' });
+      res
+        .status(404)
+        .json({
+          message: 'No selections found for the given user and league.',
+        });
     }
   } catch (err) {
     console.error('Error deleting user selections:', err.message);

@@ -8,8 +8,6 @@ export const useLeague = () => {
 
 export const LeagueProvider = ({ leagueId, children }) => {
   return (
-    <LeagueContext.Provider value={leagueId}>
-      {children}
-    </LeagueContext.Provider>
+    <LeagueContext.Provider value={leagueId}>{children}</LeagueContext.Provider>
   );
 };

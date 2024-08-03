@@ -11,7 +11,9 @@ const League = () => {
   useEffect(() => {
     const fetchLeagueInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/leagueinfo/${leagueId}`);
+        const response = await axios.get(
+          `http://localhost:3000/leagueinfo/${leagueId}`
+        );
         setLeagueInfo(response.data.league[0]);
       } catch (error) {
         console.error('Error fetching league data:', error);
@@ -32,11 +34,21 @@ const League = () => {
       <Sidebar leagueId={leagueId} />
       <div className="page-content">
         <h1>{leagueInfo.name}</h1>
-        <p><strong>Sport:</strong> {leagueInfo.sport}</p>
-        <p><strong>Year:</strong> {leagueInfo.year}</p>
-        <p><strong>Weekly Points:</strong> {leagueInfo.weekly_points}</p>
-        <p><strong>Minimum Game Selection:</strong> {leagueInfo.games_select_min}</p>
-        <p><strong>Maximum Game Selection:</strong> {leagueInfo.games_select_max}</p>
+        <p>
+          <strong>Sport:</strong> {leagueInfo.sport}
+        </p>
+        <p>
+          <strong>Year:</strong> {leagueInfo.year}
+        </p>
+        <p>
+          <strong>Weekly Points:</strong> {leagueInfo.weekly_points}
+        </p>
+        <p>
+          <strong>Minimum Game Selection:</strong> {leagueInfo.games_select_min}
+        </p>
+        <p>
+          <strong>Maximum Game Selection:</strong> {leagueInfo.games_select_max}
+        </p>
       </div>
     </div>
   );

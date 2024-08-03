@@ -119,19 +119,18 @@
         display: flex; // Use flexbox to lay out sidebar and content side by side
         flex: 1 1 auto;
         height: 100vh; // Make sure the league-page takes up the full viewport height
-      
+
         .sidebar {
           width: 200px; // Adjust the width as needed
           flex-shrink: 0; // Prevent the sidebar from shrinking
         }
-      
+
         .page-content {
           flex: 1; // Take up the remaining space
           padding: 20px; // Optional: add padding to the content
           overflow-y: auto; // Optional: enable scrolling for content overflow
         }
       }
-      
 
       .main-container {
         padding: 20px;

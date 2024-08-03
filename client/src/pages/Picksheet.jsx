@@ -144,7 +144,9 @@ const Picksheet = () => {
 
     try {
       if (hasExistingSelections) {
-        await axios.delete(`http://localhost:3000/removeuserselections/${leagueId}/${userId}`);
+        await axios.delete(
+          `http://localhost:3000/removeuserselections/${leagueId}/${userId}`
+        );
       }
 
       await axios.post(`http://localhost:3000/submitpicks/`, {
@@ -167,69 +169,69 @@ const Picksheet = () => {
     <div className="main-container">
       <Sidebar leagueId={leagueId} />
       <div className="page-content">
-      <h2>Week {week} Picksheet</h2>
-      <p>
-        Select between {leagueInfo.games_select_min} and{' '}
-        {leagueInfo.games_select_max} games
-      </p>
-      <p>You have {leagueInfo.weekly_points} points to distribute.</p>
-      <p>
-        You have distributed{' '}
-        {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
-      </p>
-      <p>You have selected {selectedCount} games</p>
-      {Array.isArray(games) && games.length > 0 ? (
-        games.map((game) => (
-          <div className="game-container" key={game.id}>
-            <div
-              className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''}`}
-              id="home"
-              onClick={() => handleSelectTeam(game.id, game.home_team_id)}
-            >
-              <span className="team-name">{game.home_team_name}</span>
-              <span className="open-spread" id="home">
-                (Open: {game.home_open_spread})
-              </span>{' '}
-              <span className="curr-spread" id="home">
-                Current: {game.home_curr_spread})
-              </span>
-              {selectedTeam[game.id] === game.home_team_id && (
-                <input
-                  type="number"
-                  value={weeklyPoints[game.id] || ''}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleInputChange(game.id, e)}
-                />
-              )}
-            </div>
+        <h2>Week {week} Picksheet</h2>
+        <p>
+          Select between {leagueInfo.games_select_min} and{' '}
+          {leagueInfo.games_select_max} games
+        </p>
+        <p>You have {leagueInfo.weekly_points} points to distribute.</p>
+        <p>
+          You have distributed{' '}
+          {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
+        </p>
+        <p>You have selected {selectedCount} games</p>
+        {Array.isArray(games) && games.length > 0 ? (
+          games.map((game) => (
+            <div className="game-container" key={game.id}>
+              <div
+                className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''}`}
+                id="home"
+                onClick={() => handleSelectTeam(game.id, game.home_team_id)}
+              >
+                <span className="team-name">{game.home_team_name}</span>
+                <span className="open-spread" id="home">
+                  (Open: {game.home_open_spread})
+                </span>{' '}
+                <span className="curr-spread" id="home">
+                  Current: {game.home_curr_spread})
+                </span>
+                {selectedTeam[game.id] === game.home_team_id && (
+                  <input
+                    type="number"
+                    value={weeklyPoints[game.id] || ''}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleInputChange(game.id, e)}
+                  />
+                )}
+              </div>
 
-            <div
-              className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''}`}
-              id="away"
-              onClick={() => handleSelectTeam(game.id, game.away_team_id)}
-            >
-              <span className="team-name">{game.away_team_name}</span>
-              <span className="open-spread" id="away">
-                (Open: {game.away_open_spread})
-              </span>{' '}
-              <span className="curr-spread" id="away">
-                Current: {game.away_curr_spread})
-              </span>
-              {selectedTeam[game.id] === game.away_team_id && (
-                <input
-                  type="number"
-                  value={weeklyPoints[game.id] || ''}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) => handleInputChange(game.id, e)}
-                />
-              )}
+              <div
+                className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''}`}
+                id="away"
+                onClick={() => handleSelectTeam(game.id, game.away_team_id)}
+              >
+                <span className="team-name">{game.away_team_name}</span>
+                <span className="open-spread" id="away">
+                  (Open: {game.away_open_spread})
+                </span>{' '}
+                <span className="curr-spread" id="away">
+                  Current: {game.away_curr_spread})
+                </span>
+                {selectedTeam[game.id] === game.away_team_id && (
+                  <input
+                    type="number"
+                    value={weeklyPoints[game.id] || ''}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={(e) => handleInputChange(game.id, e)}
+                  />
+                )}
+              </div>
             </div>
-          </div>
-        ))
-      ) : (
-        <p>No games available for this week.</p>
-      )}
-      <button onClick={handleSubmitPicks}>Submit Picks</button>
+          ))
+        ) : (
+          <p>No games available for this week.</p>
+        )}
+        <button onClick={handleSubmitPicks}>Submit Picks</button>
       </div>
     </div>
   );

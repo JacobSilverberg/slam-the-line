@@ -9,8 +9,8 @@ import leagueRegistrationRoute from './routes/leagueRegistrationRoute.js';
 import submitPicksRoute from './routes/submitPicksRoute.js';
 import getUserLeaguesRoute from './routes/getUserLeaguesRoute.js';
 import leagueInfoRoute from './routes/leagueInfoRoute.js';
-import userSelectionsRoute from './routes/userSelectionsRoute.js'
-import removeUserSelectionsRoute from './routes/removeUserSelectionsRoute.js'
+import userSelectionsRoute from './routes/userSelectionsRoute.js';
+import removeUserSelectionsRoute from './routes/removeUserSelectionsRoute.js';
 import getOddsRoute from './routes/getOddsRoute.js';
 import getScoresRoute from './routes/getScoresRoute.js';
 import updateOddsRoute from './routes/updateOddsRoute.js';

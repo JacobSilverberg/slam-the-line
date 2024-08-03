@@ -11,24 +11,24 @@ const evaluateUserScores = 'http://localhost:3000/evaluateuserscores';
 
 // List of routes to trigger
 const ROUTE_URLS = [
-    updateOdds,
-    updateScores,
-    evaluateSpreads,
-    evaluateUserScores
-  ];
+  updateOdds,
+  updateScores,
+  evaluateSpreads,
+  evaluateUserScores,
+];
 
 // Function to trigger the route
 const triggerRoute = async () => {
-    for (const url of ROUTE_URLS) {
-        console.log(`Triggering ${url}...`);
-        try {
-            await axios.get(url, { timeout: 5000 }); // 5 seconds timeout, no need to log response
-            // console.log(`Route ${url} triggered successfully.`);
-        } catch (error) {
-            continue;
-        }
+  for (const url of ROUTE_URLS) {
+    console.log(`Triggering ${url}...`);
+    try {
+      await axios.get(url, { timeout: 5000 }); // 5 seconds timeout, no need to log response
+      // console.log(`Route ${url} triggered successfully.`);
+    } catch (error) {
+      continue;
     }
-    console.log('All routes triggered successfully.');
+  }
+  console.log('All routes triggered successfully.');
 };
 
 // Schedule the task to run every 30 seconds

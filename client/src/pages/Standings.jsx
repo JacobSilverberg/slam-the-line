@@ -6,12 +6,17 @@ import Sidebar from '../components/Sidebar.jsx';
 const Standings = () => {
   const { leagueId } = useParams();
   const [standings, setStandings] = useState([]);
-  const [sortConfig, setSortConfig] = useState({ key: 'total_points', direction: 'descending' });
+  const [sortConfig, setSortConfig] = useState({
+    key: 'total_points',
+    direction: 'descending',
+  });
 
   useEffect(() => {
     const fetchStandings = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/getleaguestandings/${leagueId}`);
+        const response = await axios.get(
+          `http://localhost:3000/getleaguestandings/${leagueId}`
+        );
         setStandings(response.data);
       } catch (error) {
         console.error('Error fetching league standings:', error);
@@ -40,7 +45,7 @@ const Standings = () => {
   };
 
   return (
-    <div className='main-container'>
+    <div className="main-container">
       <Sidebar leagueId={leagueId} />
       <div className="page-content">
         <h1>League Standings</h1>
@@ -49,9 +54,15 @@ const Standings = () => {
             <tr>
               <th onClick={() => requestSort('team_name')}>Team Name</th>
               <th onClick={() => requestSort('total_points')}>Total Points</th>
-              <th onClick={() => requestSort('perfect_weeks')}>Perfect Weeks</th>
-              <th onClick={() => requestSort('overdog_correct')}>Overdog Correct</th>
-              <th onClick={() => requestSort('underdog_correct')}>Underdog Correct</th>
+              <th onClick={() => requestSort('perfect_weeks')}>
+                Perfect Weeks
+              </th>
+              <th onClick={() => requestSort('overdog_correct')}>
+                Overdog Correct
+              </th>
+              <th onClick={() => requestSort('underdog_correct')}>
+                Underdog Correct
+              </th>
               <th onClick={() => requestSort('curr_streak')}>Current Streak</th>
               <th onClick={() => requestSort('max_streak')}>Max Streak</th>
             </tr>
