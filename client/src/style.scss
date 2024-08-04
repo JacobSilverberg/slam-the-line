@@ -1,3 +1,16 @@
+// Define color variables
+$color-primary: #eaebe8;
+$color-accent: #033664;
+$color-highlight: #e04237;
+
+body, html {
+  background-color: $color-primary;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto; // Allow scrolling for the entire page
+}
+
 #root {
   display: flex;
   flex-direction: column;
@@ -29,13 +42,13 @@
         .dropdown-content {
           display: none;
           position: absolute;
-          background-color: #f9f9f9;
+          background-color: $color-primary;
           min-width: 160px;
           box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
           z-index: 100;
 
           a {
-            color: black;
+            color: $color-accent;
             padding: 12px 16px;
             text-decoration: none;
             display: block;
@@ -57,7 +70,7 @@
         }
 
         .home {
-          background-color: #b9e7e7;
+          background-color: $color-highlight;
           width: 75px;
           height: 75px;
           border-radius: 50%;
@@ -68,9 +81,9 @@
           border: 1px solid white;
 
           &:hover {
-            color: teal;
+            color: $color-highlight;
             background-color: white;
-            border: 1px solid teal;
+            border: 1px solid $color-highlight;
           }
         }
       }
@@ -78,64 +91,60 @@
   }
 
   .content {
-    flex: 1 1 auto;
+    flex: 1;
     display: flex;
 
-    .sidebar {
-      flex: 0 0 auto;
-      width: 100px;
-      background-color: #333;
-      color: white;
-      padding: 20px;
-      height: 100vh;
-
-      .container {
-        flex: 1;
-        padding: 10px;
-      }
-
-      .links {
-        display: flex;
-        flex-direction: column;
-        align-items: start;
-        gap: 10px;
-
-        h6 {
-          font-size: 16px;
-          font-weight: 300;
-          color: white;
-        }
-
-        span {
-          cursor: pointer;
-        }
-      }
-    }
-
     .main {
-      flex: 1 1 auto;
+      flex: 1;
+      display: flex;
 
       .main-container {
-        display: flex; // Use flexbox to lay out sidebar and content side by side
-        flex: 1 1 auto;
-        height: 100vh; // Make sure the league-page takes up the full viewport height
+        display: flex;
+        flex: 1;
+        padding-left: 0 !important; // Ensure padding-left is 0
 
         .sidebar {
-          width: 200px; // Adjust the width as needed
+          width: 100px;
+          background-color: $color-accent;
+          color: white;
+          padding: 20px;
           flex-shrink: 0; // Prevent the sidebar from shrinking
+          box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); // Adding shadow
+          border-right: 1px solid rgba(0, 0, 0, 0.1); // Adding border
+        }
+
+        .container {
+          flex: 1;
+          padding: 10px;
+        }
+
+        .links {
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          gap: 10px;
+
+          h6 {
+            font-size: 16px;
+            font-weight: 300;
+            color: white;
+          }
+
+          span {
+            cursor: pointer;
+          }
         }
 
         .page-content {
-          flex: 1; // Take up the remaining space
+          flex: 1;
           padding: 20px; // Optional: add padding to the content
-          overflow-y: auto; // Optional: enable scrolling for content overflow
         }
       }
 
       .main-container {
         padding: 20px;
         flex: 1;
-        overflow-y: auto;
+        padding: 0 20px 20px 0 !important; // Ensure padding-left is 0
 
         .game-container {
           display: flex;
@@ -145,19 +154,26 @@
           .team-button {
             flex: 1;
             margin: 0 10px;
-            padding: 10px;
-            border: 1px solid white;
+            padding: 15px;
+            border: none;
             text-align: center;
+            border-radius: 8px;
+            background-color: white;
+            transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; // Allow positioning of child elements
+            height: 60px; // Set a fixed height to prevent resizing
 
             &.selected {
-              background-color: teal;
+              background-color: $color-highlight;
               color: white;
+              box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
             }
 
             &:hover {
-              color: teal;
-              // background-color: white;
-              border: 1px solid teal;
+              color: $color-accent;
+              background-color: lighten($color-primary, 5%);
+              box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
             }
 
             .team-name {
@@ -174,6 +190,23 @@
             .curr-spread {
               font-size: 1.2em; // Distinct font size
               color: black;
+            }
+
+            .point-input {
+              position: absolute;
+              bottom: 10px;
+              left: 50%;
+              transform: translateX(-50%);
+              width: 50px;
+              padding: 5px;
+              border: 1px solid $color-accent;
+              border-radius: 4px;
+              text-align: center;
+              display: none;
+            }
+
+            &.selected .point-input {
+              display: block;
             }
           }
         }

@@ -175,6 +175,7 @@ const Picksheet = () => {
                 </span>
                 {selectedTeam[game.id] === game.home_team_id && (
                   <input
+                    className='point-input'
                     type="number"
                     value={weeklyPoints[game.id] || ''}
                     onClick={(e) => e.stopPropagation()}
@@ -197,6 +198,7 @@ const Picksheet = () => {
                 </span>
                 {selectedTeam[game.id] === game.away_team_id && (
                   <input
+                    className='point-input'
                     type="number"
                     value={weeklyPoints[game.id] || ''}
                     onClick={(e) => e.stopPropagation()}

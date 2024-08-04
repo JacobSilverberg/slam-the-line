@@ -8,13 +8,13 @@ const Sidebar = () => {
       <div className="container">
         <div className="links">
           <Link className="link" to={`/league/${leagueId}`}>
-            <h6>League Home</h6>
+            <h6>League</h6>
           </Link>
           <Link className="link" to={`/league/${leagueId}/picksheet`}>
             <h6>Picksheet</h6>
           </Link>
           <Link className="link" to={`/league/${leagueId}/standings`}>
-            <h6>League Standings</h6>
+            <h6>Standings</h6>
           </Link>
         </div>
       </div>
