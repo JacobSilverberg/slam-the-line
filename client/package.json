@@ -9,7 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "start": "npm run dev",
-    "start_prod": "vite preview",
+    "start_prod": "vite preview --host --port $PORT",
     "format": "prettier --write ."
   },
   "dependencies": {
