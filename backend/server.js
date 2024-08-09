@@ -27,7 +27,7 @@ const app = express();
 // List of allowed origins
 const allowedOrigins = [
   'http://localhost:5173',  // Localhost for development
-  'https://slam-the-line.vercel.app/'  // Vercel domain for production
+  'https://slam-the-line.vercel.app'  // Vercel domain for production
 ];
 
 // Enable CORS
