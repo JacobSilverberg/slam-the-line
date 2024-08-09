@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const apiUrl = "nodejs-production-c255.up.railway.app"; // || 'http://localhost:3000';
+const apiUrl = process.env.REACT_APP_TEST || 'http://localhost:3000';
 
 console.log("APIURL:", apiUrl)
 
