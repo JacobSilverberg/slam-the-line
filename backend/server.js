@@ -24,12 +24,28 @@ dotenv.config();
 
 const app = express();
 
+// List of allowed origins
+const allowedOrigins = [
+  'http://localhost:5173',  // Localhost for development
+  'https://slam-the-line.vercel.app/'  // Vercel domain for production
+];
+
 // Enable CORS
-app.use(
-  cors({
-    origin: 'http://localhost:5173',
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      // Origin is allowed
+      callback(null, true);
+    } else {
+      // Origin is not allowed
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
+}));
 
 // Middleware
 app.use(express.json());

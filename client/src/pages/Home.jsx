@@ -6,7 +6,6 @@ const Home = () => {
     <div className="home">
       <h1>Want to kick your friend&apos;s asses?</h1>
       <h2>Season-long ATS and Pick &apos;em fantasy leagues.</h2>
-      <h3>{process.env.REACT_APP_API_URL}</h3>
       <span>
         Want to join the fun? <Link to="/register">Register now!</Link>
       </span>
