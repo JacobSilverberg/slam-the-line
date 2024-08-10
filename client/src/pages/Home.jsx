@@ -1,10 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
-let apiUrl = process.env.VITE_API_URL || 'http://localhost:3000';
-
-console.log("APIURL:", apiUrl)
-
+import apiUrl from '../services/serverConfig';
 
 const Home = () => {
   return (
