@@ -2,12 +2,12 @@ let apiUrl;
 
 console.log('mode', import.meta.env.MODE);
 
-if (import.meta.env.MODE === 'development') {
-  // When running in development mode (npm run dev)
-  apiUrl = 'http://localhost:3000';
+if (import.meta.env.MODE === 'production') {
+  // When running in production mode (vite preview)
+  apiUrl = 'https://nodejs-production-c255.up.railway.app'
 } else {
-  // When running in production or preview mode (vite preview)
-  apiUrl = import.meta.env.VITE_API_URL;
+  // When running in dev mode (npm run dev)
+  apiUrl = 'http://localhost:3000';
 }
 
 console.log('apiUrl at serverConfig:', apiUrl);
