@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
+import apiUrl from '../services/serverConfig';
 
 const LeagueRegistration = () => {
   const { leagueId } = useParams();
@@ -12,7 +13,7 @@ const LeagueRegistration = () => {
   const handleRegistration = () => {
     axios
       .post(
-        `http://localhost:3000/leagueregistration/${leagueId}/users/${userId}`,
+        `${apiUrl}/leagueregistration/${leagueId}/users/${userId}`,
         {
           league_role: 'owner',
           team_name: teamName,

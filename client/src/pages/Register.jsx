@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import setAuthToken from '../services/setAuthToken';
+import apiUrl from '../services/serverConfig';
 
 const Register = () => {
   const date = new Date();
@@ -25,7 +26,7 @@ const Register = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        'http://localhost:3000/auth/register',
+        `${apiUrl}/auth/register`,
         formData
       );
       setAuthToken(res.data.token);
