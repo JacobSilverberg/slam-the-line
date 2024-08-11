@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import LeagueDropdown from './LeagueDropdown';
 
-import Logo from '../assets/logo.png';
+import Logo from '../assets/STL_Logo.webp';
 
 const Navbar = () => {
   const { logout } = React.useContext(AuthContext);
@@ -17,12 +17,12 @@ const Navbar = () => {
         </div>
         <div className="links">
           <LeagueDropdown />
-          <Link className="link" to="/">
+          {/* <Link className="link" to="/">
             <h6>SCHEDULE</h6>
           </Link>
           <Link className="link" to="/userprofile">
             <h6>PROFILE</h6>
-          </Link>
+          </Link> */}
           <span onClick={logout}>LOGOUT</span>
           <span className="home">
             <Link className="link" to="/">
