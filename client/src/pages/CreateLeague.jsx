@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
+import apiUrl from '../services/serverConfig';
 
 const CreateLeague = () => {
   const [gamesSelectMax, setGamesSelectMax] = useState('');
@@ -34,7 +35,7 @@ const CreateLeague = () => {
 
     try {
       const res = await axios.post(
-        'http://localhost:3000/createleague',
+        `${apiUrl}/createleague`,
         formData
       );
 
@@ -44,7 +45,7 @@ const CreateLeague = () => {
       console.log('league id', leagueId);
 
       await axios.post(
-        `http://localhost:3000/leagueregistration/${leagueId}/users/${userId}`,
+        `${apiUrl}/leagueregistration/${leagueId}/users/${userId}`,
         {
           league_role: 'owner',
           team_name: teamName,

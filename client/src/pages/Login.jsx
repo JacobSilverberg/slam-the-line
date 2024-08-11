@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
+import apiUrl from '../services/serverConfig';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +20,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await axios.post(
-        'http://localhost:3000/auth/login',
+        `${apiUrl}/auth/login`,
         formData
       );
       login(res.data.token);

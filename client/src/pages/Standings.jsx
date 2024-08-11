@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar.jsx';
+import apiUrl from '../services/serverConfig';
 
 const Standings = () => {
   const { leagueId } = useParams();
@@ -15,7 +16,7 @@ const Standings = () => {
     const fetchStandings = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/getleaguestandings/${leagueId}`
+          `${apiUrl}/getleaguestandings/${leagueId}`
         );
         setStandings(response.data);
       } catch (error) {

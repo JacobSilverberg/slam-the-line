@@ -4,6 +4,7 @@ import axios from 'axios';
 import getUserId from '../services/getUserId';
 import { WeekContext } from '../context/WeekContext';
 import Sidebar from '../components/Sidebar.jsx';
+import apiUrl from '../services/serverConfig';
 
 const Picksheet = () => {
   const { leagueId } = useParams();
@@ -22,7 +23,7 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/games/${week}`);
+        const response = await axios.get(`${apiUrl}/games/${week}`);
         setGames(response.data);
       } catch (error) {
         console.error('Error fetching game data:', error);
@@ -34,7 +35,7 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchLeagueInfo = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/leagueinfo/${leagueId}`);
+        const response = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
         setLeagueInfo(response.data.league[0]);
         setIsLoading(false);
       } catch (error) {
@@ -47,7 +48,7 @@ const Picksheet = () => {
   useEffect(() => {
     const fetchUserSelections = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/userselections/${leagueId}/${userId}`);
+        const response = await axios.get(`${apiUrl}/userselections/${leagueId}/${userId}`);
 
         if (response.data.league && response.data.league.length > 0) {
           setHasExistingSelections(true);
@@ -128,10 +129,10 @@ const Picksheet = () => {
 
     try {
       if (hasExistingSelections) {
-        await axios.delete(`http://localhost:3000/removeuserselections/${leagueId}/${userId}`);
+        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${userId}`);
       }
 
-      await axios.post(`http://localhost:3000/submitpicks/`, {
+      await axios.post(`${apiUrl}/submitpicks/`, {
         picks: formData,
         userId: userId,
         leagueId: leagueId,
