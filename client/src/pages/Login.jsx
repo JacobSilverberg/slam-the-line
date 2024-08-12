@@ -56,7 +56,7 @@ const Login = () => {
             placeholder="password"
             onChange={onChange}
             required
-            autocomplete="current-password"
+            autoComplete="current-password"
           />
           <button type="submit">Login</button>
         </form>
