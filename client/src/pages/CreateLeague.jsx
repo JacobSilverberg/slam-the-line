@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
 import apiUrl from '../services/serverConfig';
@@ -12,46 +13,53 @@ const CreateLeague = () => {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
 
   const userId = getUserId();
+  const navigate = useNavigate(); // Initialize the useNavigate hook
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Convert gamesSelectMax and gamesSelectMin to numbers for comparison
+    const max = Number(gamesSelectMax);
+    const min = Number(gamesSelectMin);
+  
     // Validate gamesSelectMax and gamesSelectMin
-    if (gamesSelectMax < gamesSelectMin) {
+    if (max < min) {
       alert('gamesSelectMax must be greater than or equal to gamesSelectMin');
       return;
     }
-
+  
     // Send the form data to the backend
     const formData = {
-      gamesSelectMax,
-      gamesSelectMin,
+      gamesSelectMax: max,
+      gamesSelectMin: min,
       name,
       sport: 'nfl',
       type: 'league',
       weeklyPoints,
       year: 2024,
     };
-
+  
     try {
       const res = await axios.post(
         `${apiUrl}/createleague`,
         formData
       );
-
+  
       const leagueId = res.data.id; // Assuming the response contains the ID of the created league
-
+  
       console.log(res);
       console.log('league id', leagueId);
-
+  
       await axios.post(
         `${apiUrl}/leagueregistration/${leagueId}/users/${userId}`,
         {
-          league_role: 'owner',
+          league_role: 'commish',
           team_name: teamName,
         }
       );
-      setRegistrationSuccess(true);
+  
+      alert('League Created Successfully!');
+      navigate(`/league/${leagueId}`); // Redirect to the league home page
     } catch (err) {
       if (err.response) {
         console.error(err.response.data);
