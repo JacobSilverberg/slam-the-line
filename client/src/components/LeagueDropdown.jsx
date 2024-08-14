@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import getUserId from '../services/getUserId';
-import fetchLeagues from '../services/fetchLeagues';
+import fetchUserLeagues from '../services/fetchUserLeagues';
 
 const LeagueDropdown = ({ renderType = 'dropdown' }) => {
   const [leagues, setLeagues] = useState([]);
@@ -9,7 +9,7 @@ const LeagueDropdown = ({ renderType = 'dropdown' }) => {
 
   useEffect(() => {
     const getLeagues = async () => {
-      const leaguesData = await fetchLeagues(userId);
+      const leaguesData = await fetchUserLeagues(userId);
       setLeagues(leaguesData);
     };
 

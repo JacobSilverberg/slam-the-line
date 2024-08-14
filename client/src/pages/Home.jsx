@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import getUserId from '../services/getUserId';
-import fetchLeagues from '../services/fetchLeagues';
+import fetchUserLeagues from '../services/fetchUserLeagues';
 
 const Home = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -12,7 +12,7 @@ const Home = () => {
     const userId = getUserId();
 
     const getLeagues = async () => {
-      const leaguesData = await fetchLeagues(userId);
+      const leaguesData = await fetchUserLeagues(userId);
       setLeagues(leaguesData);
     };
 
@@ -37,9 +37,19 @@ const Home = () => {
             <p>You are not currently in any leagues. <Link to="/createleague">Create one now!</Link></p>
           )}
         </ul>
+        <div className="league-options">
+          <h3>Want to create your own league?</h3>
+          <p>You can create a custom league with your own rules and invite your friends to join.</p>
+          <Link to="/createleague" className="cta-button">Create a League</Link>
+  
+          <h3>Looking to join an existing league?</h3>
+          <p>Search for a league using a league code provided by your friends and join the competition.</p>
+          <Link to="/joinleague" className="cta-button">Join a League</Link>
+        </div>
       </div>
     );
   }
+  
 
   return (
     <div className="home">

@@ -13,7 +13,7 @@ import Register from './pages/Register.jsx';
 import League from './pages/League.jsx';
 import Standings from './pages/Standings.jsx';
 import Picksheet from './pages/Picksheet.jsx';
-import LeagueRegistration from './pages/LeagueRegistration.jsx';
+import JoinLeague from './pages/JoinLeague.jsx';
 import CreateLeague from './pages/CreateLeague.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 
@@ -89,10 +89,10 @@ const App = () => {
             }
           />
           <Route
-            path="/leagueregistration/:leagueId"
+            path="/joinleague/"
             element={
               <ProtectedRoute>
-                <LeagueRegistration />
+                <JoinLeague />
               </ProtectedRoute>
             }
           />

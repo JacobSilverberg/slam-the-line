@@ -1,7 +1,7 @@
 import axios from 'axios';
 import apiUrl from './serverConfig';
 
-const fetchLeagues = async (userId) => {
+const fetchUserLeagues = async (userId) => {
   if (!userId) {
     return [];
   }
@@ -15,4 +15,4 @@ const fetchLeagues = async (userId) => {
   }
 };
 
-export default fetchLeagues;
+export default fetchUserLeagues;
