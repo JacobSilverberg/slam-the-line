@@ -17,6 +17,8 @@ body, html {
   padding: 0;
   height: 100%;
   overflow: auto;
+  color: $color-dark;
+  line-height: 1.6;
 }
 
 // Root container
@@ -90,6 +92,7 @@ body, html {
           &:hover {
             background-color: $color-highlight;
             color: $color-white;
+            transform: translateY(-2px); // Subtle hover animation
           }
         }
       }
@@ -160,6 +163,75 @@ body, html {
         }
       }
     }
+
+    .main-container {
+      display: flex;
+      flex: 1;
+      padding: 20px;
+      gap: 20px;
+  
+      .sidebar {
+        width: 250px;
+        background-color: $color-accent;
+        color: $color-white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        flex-shrink: 0;
+  
+        .container {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+  
+          .links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+  
+            .link {
+              color: $color-white;
+              text-decoration: none;
+              font-weight: 500;
+              padding: 10px 15px;
+              border-radius: 5px;
+              transition: background-color 0.3s, transform 0.3s;
+  
+              &:hover {
+                background-color: lighten($color-accent, 10%);
+                transform: translateY(-2px); // Subtle hover animation
+              }
+  
+              h6 {
+                margin: 0;
+                font-size: 1rem;
+              }
+            }
+          }
+        }
+      }
+  
+      .page-content {
+        flex: 1;
+        background-color: $color-white;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  
+        h1 {
+          font-size: 2rem;
+          font-weight: 600;
+          margin-bottom: 20px;
+          color: $color-primary;
+        }
+  
+        p {
+          font-size: 1.1rem;
+          margin-bottom: 10px;
+          line-height: 1.6;
+        }
+      }
+    }
   }
 
   .auth {
@@ -216,5 +288,32 @@ body, html {
       color: $color-primary;
       text-align: center;
     }
+  }
+}
+
+// Media queries for responsiveness
+@media (max-width: 768px) {
+  .navbar .container {
+    flex-direction: column;
+    align-items: flex-start;
+
+    .logo {
+      margin-bottom: 10px;
+    }
+
+    .links {
+      justify-content: center;
+      margin-left: 0;
+      gap: 10px;
+    }
+  }
+
+  .content .home {
+    padding: 20px;
+  }
+
+  .auth {
+    padding: 20px;
+    margin: 20px auto;
   }
 }
