@@ -4,9 +4,6 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import dateFormat from '../utils/dateFormat.js';
 
-// Define the start date of the NFL season
-const seasonStartDate = new Date('2024-09-04');
-
 // Get the current file path and directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

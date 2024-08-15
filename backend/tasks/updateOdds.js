@@ -3,9 +3,7 @@ import pool from '../config/db.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import dateFormat from '../utils/dateFormat.js';
-
-// Define the start date of the NFL season
-const seasonStartDate = new Date('2024-09-04');
+import { calculateNFLWeekAndDay } from '../utils/nflWeekCalculator.js';
 
 // Get the current file path and directory
 const __filename = fileURLToPath(import.meta.url);
@@ -20,21 +18,27 @@ const data = JSON.parse(rawData);
 
 export async function fetchAndSaveOdds() {
   try {
-    // const data = jsonData;
+    const today = new Date();
+    const { day: currentDay } = calculateNFLWeekAndDay(today);
+    const isTuesday = currentDay === 1; // Tuesday is the first day of the NFL week
 
     for (const game of data) {
+      // Get the game commence time and calculate the NFL week for the game
+      const gameCommenceTime = new Date(game.commence_time);
+      const { week: gameWeek, day: gameDay } = calculateNFLWeekAndDay(gameCommenceTime);
+
       // Get home and away team id's
       const homeTeamId = await getTeamId(pool, game.home_team);
       const awayTeamId = await getTeamId(pool, game.away_team);
 
       // Initialize variables for SQL update
-      let db_id;
       let last_update, last_update_unformatted;
       let homeOpenSpread, awayOpenSpread, homeCurrSpread, awayCurrSpread;
       let homeMlOdds, awayMlOdds;
       let gameOpenTotal, gameCurrTotal, gameOverOdds, gameUnderOdds;
 
-      [homeOpenSpread, awayOpenSpread] = await pool.execute(
+      // Fetch existing spreads from the database
+      const [existingSpreads] = await pool.execute(
         'SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?',
         [game.id]
       );
@@ -59,13 +63,15 @@ export async function fetchAndSaveOdds() {
               const awaySpread = market.outcomes.find(
                 (o) => o.name === game.away_team
               );
-              if (
-                !homeOpenSpread ||
-                (Array.isArray(homeOpenSpread) && homeOpenSpread.length === 0)
-              ) {
+
+              if (isTuesday || (!existingSpreads.home_open_spread && !existingSpreads.away_open_spread)) {
+                // Set both open and current spreads on Tuesday or if no open spread exists
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
+                homeCurrSpread = homeOpenSpread;
+                awayCurrSpread = awayOpenSpread;
               } else {
+                // Otherwise, only update the current spread
                 homeCurrSpread = homeSpread?.point;
                 awayCurrSpread = awaySpread?.point;
               }
@@ -88,9 +94,6 @@ export async function fetchAndSaveOdds() {
         }
       }
 
-      // Debugging log to check the value of last_update_unformatted
-      // console.log('last_update_unformatted:', last_update_unformatted);
-
       // Ensure last_update_unformatted is valid
       if (!last_update_unformatted) {
         console.error('Missing last_update_unformatted for game:', game.id);
@@ -110,14 +113,7 @@ export async function fetchAndSaveOdds() {
         continue; // Skip this iteration and move to the next game
       }
 
-      // Calculate the week number of the NFL season
-      const gameDate = new Date(game.commence_time);
-      const weekNumber =
-        Math.floor((gameDate - seasonStartDate) / (7 * 24 * 60 * 60 * 1000)) +
-        1;
-
       // Check if the game has started
-      const gameCommenceTime = new Date(game.commence_time);
       const gameStarted = gameCommenceTime < new Date() ? 1 : 0;
 
       // Check if the game exists
@@ -161,7 +157,7 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          weekNumber,
+          gameWeek,  // Use gameWeek calculated based on commence_time
           gameStarted,
           game.id,
         ];
@@ -202,7 +198,7 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          weekNumber,
+          gameWeek,  // Use gameWeek calculated based on commence_time
           gameStarted,
         ];
         await pool.execute(insertQuery, insertValues);

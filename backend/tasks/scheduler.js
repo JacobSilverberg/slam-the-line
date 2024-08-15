@@ -11,6 +11,8 @@ const evaluateUserScores = 'http://localhost:3000/evaluateuserscores';
 
 // List of routes to trigger
 const ROUTE_URLS = [
+  // getOdds,
+  // getScores,
   updateOdds,
   updateScores,
   evaluateSpreads,
@@ -31,7 +33,7 @@ const triggerRoute = async () => {
   console.log('All routes triggered successfully.');
 };
 
-// Schedule the task to run every 30 seconds
-cron.schedule('*/20 * * * * *', triggerRoute);
+// Schedule the task to run every 20 seconds
+cron.schedule('*/25 * * * * *', triggerRoute);
 
 console.log('Scheduler is running...');
