@@ -1,5 +1,11 @@
 import cron from 'node-cron';
 import axios from 'axios';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const API_KEY = process.env.API_KEY;
+console.log('APIKEY', API_KEY);
 
 // URL of the route you want to trigger
 const getOdds = 'http://localhost:3000/getodds';
