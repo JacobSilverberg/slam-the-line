@@ -22,6 +22,7 @@ const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?regions=${
 
 export async function getOddsFromAPI() {
   try {
+    console.log('API_KEY at getOdds:', API_KEY);
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
