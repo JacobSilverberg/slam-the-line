@@ -1,13 +1,15 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import fs from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+// import { fileURLToPath } from 'url';
+// import { dirname, resolve } from 'path';
 
-// dotenv setup
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: resolve(__dirname, '../.env') });
+// // dotenv setup
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = dirname(__filename);
+// dotenv.config({ path: resolve(__dirname, '../.env') });
+
+dotenv.config();
 
 const API_KEY = process.env.API_KEY;
 
