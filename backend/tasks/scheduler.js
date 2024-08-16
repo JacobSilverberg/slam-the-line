@@ -1,6 +1,5 @@
 import cron from 'node-cron';
 import axios from 'axios';
-import dotenv from 'dotenv';
 
 
 // URL of the route you want to trigger
@@ -36,6 +35,6 @@ const triggerRoute = async () => {
 };
 
 // Schedule the task to run every 20 seconds
-cron.schedule('*/60 * * * * *', triggerRoute);
+cron.schedule('*/25 * * * * *', triggerRoute);
 
 console.log('Scheduler is running...');

@@ -1,15 +1,13 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import fs from 'fs';
-// import { fileURLToPath } from 'url';
-// import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+import { dirname, resolve } from 'path';
 
-// // dotenv setup
-// const __filename = fileURLToPath(import.meta.url);
-// const __dirname = dirname(__filename);
-// dotenv.config({ path: resolve(__dirname, '../.env') });
-
-dotenv.config();
+// dotenv setup
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+dotenv.config({ path: resolve(__dirname, '../.env') });
 
 const API_KEY = process.env.API_KEY;
 
@@ -27,9 +25,10 @@ export async function getScoresFromAPI() {
     }
     const data = await response.json();
 
-    // Optionally, write data to a file for debugging purposes
+    // Write data to a file in the same directory as this .js file
+    const filePath = resolve(__dirname, 'api-data-scores.json');
     fs.writeFile(
-      'data/api-data-scores.json',
+      filePath,
       JSON.stringify(data, null, 2),
       (err) => {
         if (err) {

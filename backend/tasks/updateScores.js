@@ -9,11 +9,31 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Resolve the absolute path to the JSON file
-const filePath = path.resolve(__dirname, '../data/api-data-scores.json');
+const filePath = path.resolve(__dirname, 'api-data-scores.json');
 
-// handle json formatting, reading from api-data.json
-const rawData = fs.readFileSync(filePath);
-const data = JSON.parse(rawData);
+let data;
+try {
+  // Read and parse the JSON file
+  const rawData = fs.readFileSync(filePath, 'utf-8');
+  
+  // Check if the file is empty
+  if (rawData) {
+    data = JSON.parse(rawData);
+  } else {
+    console.error('Error: The JSON file is empty.');
+    data = null; // or set a default value
+  }
+  
+} catch (error) {
+  if (error.code === 'ENOENT') {
+    console.error('Error: JSON file not found:', filePath);
+  } else if (error instanceof SyntaxError) {
+    console.error('Error: Invalid JSON format:', error.message);
+  } else {
+    console.error('An unexpected error occurred:', error);
+  }
+  data = null; // Handle the absence of valid data gracefully
+}
 
 export async function fetchAndSaveScores() {
   try {
