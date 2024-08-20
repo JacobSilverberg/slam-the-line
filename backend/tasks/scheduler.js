@@ -6,12 +6,12 @@ const BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 console.log("base_url", BASE_URL);
 
 // URL of the route you want to trigger
-const getOdds = `${BASE_URL}/getodds`;
-const getScores = `${BASE_URL}/getscores`;
-const updateOdds = `${BASE_URL}/updateodds`;
-const updateScores = `${BASE_URL}/updatescores`;
-const evaluateSpreads = `${BASE_URL}/evaluatespreads`;
-const evaluateUserScores = `${BASE_URL}/evaluateuserscores`;
+const getOdds = `http://${BASE_URL}/getodds`;
+const getScores = `http://${BASE_URL}/getscores`;
+const updateOdds = `http://${BASE_URL}/updateodds`;
+const updateScores = `http://${BASE_URL}/updatescores`;
+const evaluateSpreads = `http://${BASE_URL}/evaluatespreads`;
+const evaluateUserScores = `http://${BASE_URL}/evaluateuserscores`;
 
 // List of routes to trigger
 console.log("URLS:",
