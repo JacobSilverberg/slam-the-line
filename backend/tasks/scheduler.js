@@ -1,14 +1,17 @@
 import cron from 'node-cron';
 import axios from 'axios';
 
+const BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
+
+console.log("base_url", BASE_URL);
 
 // URL of the route you want to trigger
-const getOdds = 'http://localhost:3000/getodds';
-const getScores = 'http://localhost:3000/getscores';
-const updateOdds = 'http://localhost:3000/updateodds';
-const updateScores = 'http://localhost:3000/updatescores';
-const evaluateSpreads = 'http://localhost:3000/evaluatespreads';
-const evaluateUserScores = 'http://localhost:3000/evaluateuserscores';
+const getOdds = `${BASE_URL}/getodds`;
+const getScores = `${BASE_URL}/getscores`;
+const updateOdds = `${BASE_URL}/updateodds`;
+const updateScores = `${BASE_URL}/updatescores`;
+const evaluateSpreads = `${BASE_URL}/evaluatespreads`;
+const evaluateUserScores = `${BASE_URL}/evaluateuserscores`;
 
 // List of routes to trigger
 const ROUTE_URLS = [
@@ -35,6 +38,6 @@ const triggerRoute = async () => {
 };
 
 // Schedule the task to run every 20 seconds
-cron.schedule('*/25 * * * * *', triggerRoute);
+cron.schedule('*/40 * * * * *', triggerRoute);
 
 console.log('Scheduler is running...');
