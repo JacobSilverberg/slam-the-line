@@ -14,6 +14,16 @@ const evaluateSpreads = `${BASE_URL}/evaluatespreads`;
 const evaluateUserScores = `${BASE_URL}/evaluateuserscores`;
 
 // List of routes to trigger
+console.log("URLS:",
+  getOdds,
+  getScores,
+  updateOdds,
+  updateScores,
+  evaluateSpreads,
+  evaluateUserScores,
+)
+
+// List of routes to trigger
 const ROUTE_URLS = [
   getOdds,
   getScores,
@@ -31,6 +41,7 @@ const triggerRoute = async () => {
       await axios.get(url, { timeout: 5000 }); // 5 seconds timeout, no need to log response
       // console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
+      console.log(error);
       continue;
     }
   }
