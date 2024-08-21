@@ -54,3 +54,15 @@ const triggerRoute = async () => {
 cron.schedule('0 7,12,15 * * *', triggerRoute);
 
 console.log('Scheduler is running...');
+
+/* Odds Update Schedule:
+Sun: Noon
+Mon:
+Tue:
+Wed:
+Thu:
+Fri:
+Sat:
+Sun:
+
+*/

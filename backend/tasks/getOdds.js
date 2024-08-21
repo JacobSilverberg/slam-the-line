@@ -20,11 +20,11 @@ const bookmakers = 'draftkings';
 // API endpoint
 const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?regions=${regions}&markets=${markets}&oddsFormat=${oddsFormat}&bookmakers=${bookmakers}&apiKey=${API_KEY}`;
 
-console.log('get odds api URL', apiUrl)
+// console.log('get odds api URL', apiUrl)
 
 export async function getOddsFromAPI() {
   try {
-    console.log('API_KEY at getOdds:', API_KEY);
+    // console.log('API_KEY at getOdds:', API_KEY);
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
