@@ -15,15 +15,15 @@ const updateScores = `http://${BASE_URL}:${PORT}/updatescores`;
 const evaluateSpreads = `http://${BASE_URL}:${PORT}/evaluatespreads`;
 const evaluateUserScores = `http://${BASE_URL}:${PORT}/evaluateuserscores`;
 
-// List of routes to trigger
-console.log("URLS:",
-  getOdds,
-  getScores,
-  updateOdds,
-  updateScores,
-  evaluateSpreads,
-  evaluateUserScores,
-)
+// Log of routes to trigger
+// console.log("URLS:",
+//   getOdds,
+//   getScores,
+//   updateOdds,
+//   updateScores,
+//   evaluateSpreads,
+//   evaluateUserScores,
+// )
 
 // List of routes to trigger
 const ROUTE_URLS = [
@@ -40,8 +40,8 @@ const triggerRoute = async () => {
   for (const url of ROUTE_URLS) {
     console.log(`Triggering ${url}...`);
     try {
-      await axios.get(url, { timeout: 5000 }); // 5 seconds timeout, no need to log response
-      // console.log(`Route ${url} triggered successfully.`);
+      await axios.get(url, { timeout: 5000 }); // 5 seconds timeout
+      console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
       console.log(error);
       continue;
@@ -50,7 +50,7 @@ const triggerRoute = async () => {
   console.log('All routes triggered successfully.');
 };
 
-// Schedule the task to run every 20 seconds
-cron.schedule('*/40 * * * * *', triggerRoute);
+// Schedule the task to run at 7 AM, 12 PM, and 3 PM every day
+cron.schedule('0 7,12,15 * * *', triggerRoute);
 
 console.log('Scheduler is running...');

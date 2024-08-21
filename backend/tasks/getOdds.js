@@ -11,8 +11,6 @@ dotenv.config({ path: resolve(__dirname, '../.env') });
 
 const API_KEY = process.env.API_KEY;
 
-console.log('get odds api key', API_KEY);
-
 const sport = 'americanfootball_nfl';
 const regions = 'us';
 const markets = 'h2h,spreads,totals';
