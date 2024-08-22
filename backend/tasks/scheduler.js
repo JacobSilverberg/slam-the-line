@@ -20,7 +20,7 @@ const triggerRoutes = async (routes) => {
   for (const url of routes) {
     console.log(`Triggering ${url}...`);
     try {
-      await axios.get(url, { timeout: 10000 });
+      await axios.get(url, { timeout: 15000 });
       console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
       console.error(`Error triggering ${url}:`, error.message);
@@ -30,37 +30,37 @@ const triggerRoutes = async (routes) => {
 };
 
 // Testing runs every 40 seconds.
-cron.schedule('*/40 * * * * *', () => {
-  triggerRoutes([updateScores, updateOdds]);
-});
+// cron.schedule('*/40 * * * * *', () => {
+//   triggerRoutes([updateScores, updateOdds]);
+// });
 
 // REAL SCHEDULE IS HERE
 
-// // Odds Update Schedule: Tue-Mon at 8am
-// cron.schedule('0 8 * * 2-1', () => {
-//   triggerRoutes([getOdds, updateOdds]);
-// });
+// Odds Update Schedule: Tue-Mon at 8am EST (which is 1pm UTC)
+cron.schedule('0 13 * * 2-1', () => {
+  triggerRoutes([getOdds, updateOdds]);
+});
 
-// // Scores Update Schedule:
-// // Thu at Midnight
-// cron.schedule('0 0 * * 4', () => {
-//   triggerRoutes([getScores, updateScores]);
-// });
+// Scores Update Schedule:
+// Thu at Midnight EST (which is 5am UTC)
+cron.schedule('0 5 * * 4', () => {
+  triggerRoutes([getScores, updateScores]);
+});
 
-// // Sun at 5pm, 8pm, and Midnight
-// cron.schedule('0 17,20,0 * * 7', () => {
-//   triggerRoutes([getScores, updateScores]);
-// });
+// Sun at 5pm, 8pm, and Midnight EST (which are 10pm, 1am, 5am UTC)
+cron.schedule('0 22,1,5 * * 7', () => {
+  triggerRoutes([getScores, updateScores]);
+});
 
-// // Mon at Midnight
-// cron.schedule('0 0 * * 1', () => {
-//   triggerRoutes([getScores, updateScores]);
-// });
+// Mon at Midnight EST (which is 5am UTC)
+cron.schedule('0 5 * * 1', () => {
+  triggerRoutes([getScores, updateScores]);
+});
 
-// // Results Update Schedule: Hourly from Tue-Mon
-// cron.schedule('0 * * * 2-1', () => {
-//   triggerRoutes([evaluateSpreads, evaluateUserScores]);
-// });
+// Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)
+cron.schedule('0 0-23 * * 2-1', () => {
+  triggerRoutes([evaluateSpreads, evaluateUserScores]);
+});
 
 console.log('Scheduler is running...');
 
