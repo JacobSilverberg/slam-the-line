@@ -4,9 +4,6 @@ import axios from 'axios';
 const BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
 const PORT = process.env.BACKEND_PORT || '3000';
 
-console.log("base_url", BASE_URL);
-console.log('port', PORT);
-
 // URL of the route you want to trigger
 const getOdds = `http://${BASE_URL}:${PORT}/getodds`;
 const getScores = `http://${BASE_URL}:${PORT}/getscores`;

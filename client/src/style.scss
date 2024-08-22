@@ -308,8 +308,22 @@ body, html {
     }
   }
 
-  .content .home {
+  .content {
     padding: 20px;
+  }
+
+  .home {
+    padding: 20px;
+
+    .league-list {
+      list-style-type: none; // Removes bullet points from the list items
+      padding: 0; // Removes default padding
+      margin: 0; // Removes default margin
+    
+      li {
+        padding: 10px 0; // Optional: add padding for spacing between items
+      }
+    }
   }
 
   .auth {
