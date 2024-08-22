@@ -20,7 +20,7 @@ const triggerRoutes = async (routes) => {
   for (const url of routes) {
     console.log(`Triggering ${url}...`);
     try {
-      await axios.get(url, { timeout: 5000 });
+      await axios.get(url, { timeout: 10000 });
       console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
       console.error(`Error triggering ${url}:`, error.message);
