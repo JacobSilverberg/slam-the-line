@@ -15,54 +15,81 @@ const updateScores = `http://${BASE_URL}:${PORT}/updatescores`;
 const evaluateSpreads = `http://${BASE_URL}:${PORT}/evaluatespreads`;
 const evaluateUserScores = `http://${BASE_URL}:${PORT}/evaluateuserscores`;
 
-// Log of routes to trigger
-// console.log("URLS:",
-//   getOdds,
-//   getScores,
-//   updateOdds,
-//   updateScores,
-//   evaluateSpreads,
-//   evaluateUserScores,
-// )
-
-// List of routes to trigger
-const ROUTE_URLS = [
-  getOdds,
-  getScores,
-  updateOdds,
-  updateScores,
-  evaluateSpreads,
-  evaluateUserScores,
-];
-
 // Function to trigger the route
-const triggerRoute = async () => {
-  for (const url of ROUTE_URLS) {
+const triggerRoutes = async (routes) => {
+  for (const url of routes) {
     console.log(`Triggering ${url}...`);
     try {
-      await axios.get(url, { timeout: 5000 }); // 5 seconds timeout
+      await axios.get(url, { timeout: 5000 });
       console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
-      console.log(error);
+      console.error(`Error triggering ${url}:`, error.message);
       continue;
     }
   }
-  console.log('All routes triggered successfully.');
 };
 
-// Schedule the task to run at 7 AM, 12 PM, and 3 PM every day
-cron.schedule('0 7,12,15 * * *', triggerRoute);
+// Testing runs every 40 seconds.
+cron.schedule('*/40 * * * * *', () => {
+  triggerRoutes([updateScores, updateOdds]);
+});
+
+// REAL SCHEDULE IS HERE
+
+// // Odds Update Schedule: Tue-Mon at 8am
+// cron.schedule('0 8 * * 2-1', () => {
+//   triggerRoutes([getOdds, updateOdds]);
+// });
+
+// // Scores Update Schedule:
+// // Thu at Midnight
+// cron.schedule('0 0 * * 4', () => {
+//   triggerRoutes([getScores, updateScores]);
+// });
+
+// // Sun at 5pm, 8pm, and Midnight
+// cron.schedule('0 17,20,0 * * 7', () => {
+//   triggerRoutes([getScores, updateScores]);
+// });
+
+// // Mon at Midnight
+// cron.schedule('0 0 * * 1', () => {
+//   triggerRoutes([getScores, updateScores]);
+// });
+
+// // Results Update Schedule: Hourly from Tue-Mon
+// cron.schedule('0 * * * 2-1', () => {
+//   triggerRoutes([evaluateSpreads, evaluateUserScores]);
+// });
 
 console.log('Scheduler is running...');
 
 /* Odds Update Schedule:
-Sun: Noon
-Mon:
-Tue:
-Wed:
-Thu:
-Fri:
-Sat:
-Sun:
+Tue: 8am
+Wed: 8am
+Thu: 8am
+Fri: 8am
+Sat: 8am
+Sun: 8am
+Mon: 8am
+*/
 
+/* Scores Update Schedule:
+Tue: 
+Wed: 
+Thu: Midnight
+Fri: 
+Sat: 
+Sun: 5pm, 8pm, Midnight
+Mon: Midnight
+*/
+
+/* Results Update Schedule:
+Tue: Hourly
+Wed: Hourly
+Thu: Hourly
+Fri: Hourly
+Sat: Hourly
+Sun: Hourly
+Mon: Hourly
 */
