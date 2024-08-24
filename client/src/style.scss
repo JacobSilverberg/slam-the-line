@@ -156,12 +156,12 @@ body, html {
           line-height: 1.6;
         }
 
-        .cta-input {
+        input {
           display: inline-block;
           width: 180px;
           padding: 15px 30px;
           margin: 15px;
-          background-color: $color-background;
+          background-color: $color-white;
           color: $color-dark;
           font-weight: 500;
           font-size: 1.1rem;
@@ -215,7 +215,40 @@ body, html {
           margin: 0;
     
           li {
-            padding: 10px 0;
+            padding: 10px 20px; // Adjusted for consistent padding
+            margin: 10px 0; // Similar margin to create space between list items
+            background-color: $color-background;
+            color: $color-dark;
+            font-weight: 500;
+            font-size: 1rem;
+            border: 2px solid $color-primary;
+            border-radius: 30px; // Slightly smaller border-radius for a subtle effect
+            list-style-type: none; // Removes the default bullet points
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            
+            &:hover {
+              background-color: lighten($color-background, 10%);
+              transform: translateY(-3px);
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            }
+
+            button {
+              width: 100%;
+              padding: 10px;
+              background-color: transparent;
+              color: inherit;
+              font-weight: inherit;
+              font-size: inherit;
+              border: none;
+              border-radius: inherit;
+              cursor: pointer;
+              transition: background-color 0.3s, transform 0.3s;
+          
+              &:hover {
+                background-color: lighten($color-background, 15%);
+                transform: translateY(-3px);
+              }
+            }
           }
         }
       }
