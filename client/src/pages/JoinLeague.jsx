@@ -61,18 +61,19 @@ const JoinLeague = () => {
   };
 
   return (
-    <div>
+    <div className='home'>
       <h1>Join a League</h1>
       {selectedLeagueId ? (
         <>
           <h2>League Selected: {leagues.find(league => league.id === selectedLeagueId)?.name}</h2>
           <input
+          className='cta-input'
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             placeholder="Enter your team name"
           />
-          <button onClick={handleRegistration}>Register</button>
+          <button className='cta-button' onClick={handleRegistration}>Register</button>
         </>
       ) : (
         <>
@@ -82,10 +83,10 @@ const JoinLeague = () => {
             onChange={handleSearchChange}
             placeholder="Search for a league"
           />
-          <ul>
+          <ul className='league-list'>
             {leagues.length > 0 ? (
               leagues.map((league) => (
-                <li key={league.id}>
+                <li className='league-li' key={league.id}>
                   <button onClick={() => handleLeagueSelection(league.id)}>
                     {league.name}
                   </button>
