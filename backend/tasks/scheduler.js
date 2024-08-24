@@ -19,7 +19,7 @@ const triggerRoutes = async (routes) => {
     console.log(`Triggering ${url}...`);
     try {
       await axios.get(url, { timeout: 15000 });
-      console.log(`Route ${url} triggered successfully.`);
+      // console.log(`Route ${url} triggered successfully.`);
     } catch (error) {
       console.error(`Error triggering ${url}:`, error.message);
       continue;
@@ -57,7 +57,12 @@ cron.schedule('0 5 * * 1', () => {
 
 // Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)
 cron.schedule('1 0-23 * * 2-1', () => {
-  triggerRoutes([evaluateSpreads, evaluateUserScores, evaluateGameStart]);
+  triggerRoutes([evaluateSpreads, evaluateUserScores]);
+});
+
+// GameStart Update Schedule: Every 5 minutes.
+cron.schedule('*/5 * * * *', () => {
+  triggerRoutes([evaluateGameStart]);
 });
 
 console.log('Scheduler is running...');
