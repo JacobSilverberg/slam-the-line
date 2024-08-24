@@ -14,21 +14,33 @@ const Register = () => {
     created_at: date_formatted,
     updated_at: date_formatted,
   });
+  
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+  const [passwordsMatch, setPasswordsMatch] = useState(true);
 
-  // eslint-disable-next-line no-unused-vars
-  const { email, password, role, created_at, updated_at } = formData;
+  const { email, password } = formData;
 
-  const onChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onChange = (e) => {
+    if (e.target.name === 'confirmPassword') {
+      setConfirmPassword(e.target.value);
+      setPasswordsMatch(e.target.value === formData.password);
+    } else {
+      setFormData({ ...formData, [e.target.name]: e.target.value });
+      if (e.target.name === 'password') {
+        setPasswordsMatch(e.target.value === confirmPassword);
+      }
+    }
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
+    if (!passwordsMatch) {
+      return;
+    }
+
     try {
-      const res = await axios.post(
-        `${apiUrl}/auth/register`,
-        formData
-      );
+      const res = await axios.post(`${apiUrl}/auth/register`, formData);
       setAuthToken(res.data.token);
       setRegistrationSuccess(true);
     } catch (err) {
@@ -62,7 +74,16 @@ const Register = () => {
             placeholder="password"
             required
           />
-          <button type="submit">Register</button>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={onChange}
+            placeholder="confirm password"
+            required
+          />
+          {!passwordsMatch && <p style={{ color: 'red' }}>Passwords do not match</p>}
+          <button type="submit" disabled={!passwordsMatch}>Register</button>
         </form>
       )}
     </div>

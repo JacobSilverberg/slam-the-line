@@ -79,30 +79,39 @@ const Picksheet = () => {
 
   const handleSelectTeam = (gameId, teamId) => {
     const game = games.find((g) => g.id === gameId);
-
+  
     // Check if the game has already started
     if (game.game_started) {
       alert('This game has already started, and you cannot make changes.');
       return;
     }
-
+  
     setSelectedTeam((prev) => {
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
         delete updatedSelection[gameId];
+  
+        // Remove the associated points when the game is deselected
+        setWeeklyPoints((prevPoints) => {
+          const updatedPoints = { ...prevPoints };
+          delete updatedPoints[gameId];
+          return updatedPoints;
+        });
+  
         setSelectedCount(Object.keys(updatedSelection).length);
         return updatedSelection;
       }
-
+  
       if (Object.keys(prev).length >= leagueInfo.games_select_max) {
         return prev;
       }
-
+  
       const updatedSelection = { ...prev, [gameId]: teamId };
       setSelectedCount(Object.keys(updatedSelection).length);
       return updatedSelection;
     });
   };
+  
 
   const handleInputChange = (gameId, event) => {
     const game = games.find((g) => g.id === gameId);
@@ -175,59 +184,60 @@ const Picksheet = () => {
         <p>You have {leagueInfo.weekly_points} points to distribute.</p>
         <p>You have distributed {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.</p>
         <p>You have selected {selectedCount} games</p>
-        {Array.isArray(games) && games.length > 0 ? (
-          games.map((game) => (
-            <div className="game-container" key={game.id}>
-              <div
-                className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
-                id="home"
-                onClick={() => handleSelectTeam(game.id, game.home_team_id)}
-              >
-                <span className="team-name">{game.home_team_name}</span>
-                <span className="open-spread" id="home">
-                  (Open: {game.home_open_spread})
-                </span>{' '}
-                <span className="curr-spread" id="home">
-                  Current: {game.home_curr_spread})
-                </span>
-                {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
-                  <input
-                    className='point-input'
-                    type="number"
-                    value={weeklyPoints[game.id] || ''}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => handleInputChange(game.id, e)}
-                  />
-                )}
+        <div className="game-container-wrapper">
+          {Array.isArray(games) && games.length > 0 ? (
+            games.map((game) => (
+              <div className="game-container" key={game.id}>
+                <div
+                  className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
+                  id="home"
+                  onClick={() => handleSelectTeam(game.id, game.home_team_id)}
+                >
+                  <span className="team-name">{game.home_team_name}</span>
+                  <span className="open-spread" id="home">
+                    (Open: {game.home_open_spread})
+                  </span>{' '}
+                  <span className="curr-spread" id="home">
+                    Current: {game.home_curr_spread}
+                  </span>
+                  {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
+                    <input
+                      className='point-input'
+                      type="number"
+                      value={weeklyPoints[game.id] || ''}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => handleInputChange(game.id, e)}
+                    />
+                  )}
+                </div>
+                <div
+                  className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
+                  id="away"
+                  onClick={() => handleSelectTeam(game.id, game.away_team_id)}
+                >
+                  <span className="team-name">{game.away_team_name}</span>
+                  <span className="open-spread" id="away">
+                    (Open: {game.away_open_spread})
+                  </span>{' '}
+                  <span className="curr-spread" id="away">
+                    Current: {game.away_curr_spread}
+                  </span>
+                  {selectedTeam[game.id] === game.away_team_id && !game.game_started && (
+                    <input
+                      className='point-input'
+                      type="number"
+                      value={weeklyPoints[game.id] || ''}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={(e) => handleInputChange(game.id, e)}
+                    />
+                  )}
+                </div>
               </div>
-
-              <div
-                className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
-                id="away"
-                onClick={() => handleSelectTeam(game.id, game.away_team_id)}
-              >
-                <span className="team-name">{game.away_team_name}</span>
-                <span className="open-spread" id="away">
-                  (Open: {game.away_open_spread})
-                </span>{' '}
-                <span className="curr-spread" id="away">
-                  Current: {game.away_curr_spread})
-                </span>
-                {selectedTeam[game.id] === game.away_team_id && !game.game_started && (
-                  <input
-                    className='point-input'
-                    type="number"
-                    value={weeklyPoints[game.id] || ''}
-                    onClick={(e) => e.stopPropagation()}
-                    onChange={(e) => handleInputChange(game.id, e)}
-                  />
-                )}
-              </div>
-            </div>
-          ))
-        ) : (
+            ))
+          )
+         : (
           <p>No games available for this week.</p>
-        )}
+        )}</div>
         <button onClick={handleSubmitPicks}>Submit Picks</button>
       </div>
     </div>
