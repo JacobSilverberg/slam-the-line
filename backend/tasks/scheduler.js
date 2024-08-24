@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import axios from 'axios';
 
-const BASE_URL = process.env.BACKEND_URL || 'http://localhost:3000';
+const BASE_URL = process.env.BACKEND_URL || 'localhost';
 const PORT = process.env.BACKEND_PORT || '3000';
 
 // URL of the route you want to trigger
@@ -11,6 +11,7 @@ const updateOdds = `http://${BASE_URL}:${PORT}/updateodds`;
 const updateScores = `http://${BASE_URL}:${PORT}/updatescores`;
 const evaluateSpreads = `http://${BASE_URL}:${PORT}/evaluatespreads`;
 const evaluateUserScores = `http://${BASE_URL}:${PORT}/evaluateuserscores`;
+const evaluateGameStart = `http://${BASE_URL}:${PORT}/evaluategamestart`;
 
 // Function to trigger the route
 const triggerRoutes = async (routes) => {
@@ -26,9 +27,9 @@ const triggerRoutes = async (routes) => {
   }
 };
 
-// Testing runs every 40 seconds.
-// cron.schedule('*/40 * * * * *', () => {
-//   triggerRoutes([updateScores, updateOdds]);
+// Testing runs every 20 seconds.
+// cron.schedule('*/20 * * * * *', () => {
+//   triggerRoutes([updateScores, updateOdds, evaluateGameStart]);
 // });
 
 // REAL SCHEDULE IS HERE
@@ -55,8 +56,8 @@ cron.schedule('0 5 * * 1', () => {
 });
 
 // Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)
-cron.schedule('0 0-23 * * 2-1', () => {
-  triggerRoutes([evaluateSpreads, evaluateUserScores]);
+cron.schedule('1 0-23 * * 2-1', () => {
+  triggerRoutes([evaluateSpreads, evaluateUserScores, evaluateGameStart]);
 });
 
 console.log('Scheduler is running...');
