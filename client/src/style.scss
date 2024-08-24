@@ -420,6 +420,16 @@ body, html {
               width: 60%; // Increase width for better visibility
               text-align: center;
               display: none;
+
+              /* Remove arrows in Chrome, Safari, Edge, Opera */
+              &::-webkit-outer-spin-button,
+              &::-webkit-inner-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+              }
+            
+              /* Remove arrows in Firefox */
+              -moz-appearance: textfield;
             }
           }
           

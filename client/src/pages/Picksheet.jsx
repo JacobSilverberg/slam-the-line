@@ -79,30 +79,39 @@ const Picksheet = () => {
 
   const handleSelectTeam = (gameId, teamId) => {
     const game = games.find((g) => g.id === gameId);
-
+  
     // Check if the game has already started
     if (game.game_started) {
       alert('This game has already started, and you cannot make changes.');
       return;
     }
-
+  
     setSelectedTeam((prev) => {
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
         delete updatedSelection[gameId];
+  
+        // Remove the associated points when the game is deselected
+        setWeeklyPoints((prevPoints) => {
+          const updatedPoints = { ...prevPoints };
+          delete updatedPoints[gameId];
+          return updatedPoints;
+        });
+  
         setSelectedCount(Object.keys(updatedSelection).length);
         return updatedSelection;
       }
-
+  
       if (Object.keys(prev).length >= leagueInfo.games_select_max) {
         return prev;
       }
-
+  
       const updatedSelection = { ...prev, [gameId]: teamId };
       setSelectedCount(Object.keys(updatedSelection).length);
       return updatedSelection;
     });
   };
+  
 
   const handleInputChange = (gameId, event) => {
     const game = games.find((g) => g.id === gameId);
