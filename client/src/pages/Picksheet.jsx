@@ -78,6 +78,14 @@ const Picksheet = () => {
   }
 
   const handleSelectTeam = (gameId, teamId) => {
+    const game = games.find((g) => g.id === gameId);
+
+    // Check if the game has already started
+    if (game.game_started) {
+      alert('This game has already started, and you cannot make changes.');
+      return;
+    }
+
     setSelectedTeam((prev) => {
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
@@ -97,6 +105,14 @@ const Picksheet = () => {
   };
 
   const handleInputChange = (gameId, event) => {
+    const game = games.find((g) => g.id === gameId);
+
+    // Check if the game has already started
+    if (game.game_started) {
+      alert('This game has already started, and you cannot make changes.');
+      return;
+    }
+
     event.stopPropagation();
     setWeeklyPoints({
       ...weeklyPoints,
@@ -163,7 +179,7 @@ const Picksheet = () => {
           games.map((game) => (
             <div className="game-container" key={game.id}>
               <div
-                className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''}`}
+                className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
                 id="home"
                 onClick={() => handleSelectTeam(game.id, game.home_team_id)}
               >
@@ -174,7 +190,7 @@ const Picksheet = () => {
                 <span className="curr-spread" id="home">
                   Current: {game.home_curr_spread})
                 </span>
-                {selectedTeam[game.id] === game.home_team_id && (
+                {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
                   <input
                     className='point-input'
                     type="number"
@@ -186,7 +202,7 @@ const Picksheet = () => {
               </div>
 
               <div
-                className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''}`}
+                className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
                 id="away"
                 onClick={() => handleSelectTeam(game.id, game.away_team_id)}
               >
@@ -197,7 +213,7 @@ const Picksheet = () => {
                 <span className="curr-spread" id="away">
                   Current: {game.away_curr_spread})
                 </span>
-                {selectedTeam[game.id] === game.away_team_id && (
+                {selectedTeam[game.id] === game.away_team_id && !game.game_started && (
                   <input
                     className='point-input'
                     type="number"
