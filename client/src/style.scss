@@ -31,20 +31,22 @@ body, html {
     flex: 0 0 auto;
     background-color: $color-white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    height: 100px; // Fixed height for the navbar
+    height: 100px;
   
     .container {
-      padding: 0 20px 0 0; // Adjusted padding to maintain consistent height
+      padding-right: 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 100%; // Ensure the container takes up the full height of the navbar
+      height: 100%;
+      flex-wrap: nowrap; 
   
       .logo {
+        flex-shrink: 0; 
         img {
-          width: 100px; // Set both width and height to maintain a square shape
-          height: 100px; 
-          object-fit: contain; // Ensure the image scales properly within the square
+          width: 100px;
+          height: 100px;
+          object-fit: contain;
         }
       }
   
@@ -97,12 +99,22 @@ body, html {
           &:hover {
             background-color: $color-highlight;
             color: $color-white;
-            transform: translateY(-2px); // Subtle hover animation
+            transform: translateY(-2px);
           }
         }
       }
     }
+  
+    @media (max-width: 768px) {
+      .links {
+        display: none; // Hide links when the screen width is below 768px
+      }
+    }
   }
+  
+  
+  
+
 
   .content {
     flex: 1;

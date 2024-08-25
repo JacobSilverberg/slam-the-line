@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { AuthContext } from '../context/AuthContext';
@@ -13,16 +13,13 @@ const Navbar = () => {
     <div className="navbar">
       <div className="container">
         <div className="logo">
-          <img src={Logo} alt="Logo" />
+          <Link to="/">
+            <img src={Logo} alt="Logo" />
+          </Link>
         </div>
+
         <div className="links">
           <LeagueDropdown />
-          {/* <Link className="link" to="/">
-            <h6>SCHEDULE</h6>
-          </Link>
-          <Link className="link" to="/userprofile">
-            <h6>PROFILE</h6>
-          </Link> */}
           <span onClick={logout}>LOGOUT</span>
           <span className="home">
             <Link className="link" to="/">
