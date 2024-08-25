@@ -103,14 +103,13 @@ body, html {
           }
         }
       }
-    }
+    }}
   
     @media (max-width: 768px) {
-      .links {
-        display: none; // Hide links when the screen width is below 768px
+      .navbar .container .links {
+        display: none; // Hide the links under 768px width
       }
     }
-  }
   
   
   
