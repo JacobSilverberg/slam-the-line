@@ -1,15 +1,17 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import getUserId from '../services/getUserId';
 import fetchUserLeagues from '../services/fetchUserLeagues';
 import axios from 'axios';
 import apiUrl from '../services/serverConfig';
 
+
 const Home = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [leagues, setLeagues] = useState([]);
   const [teamName, setTeamName] = useState('');
+  const navigate = useNavigate();
   const userId = getUserId();
 
   useEffect(() => {
