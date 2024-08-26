@@ -9,9 +9,10 @@ import apiUrl from '../services/serverConfig';
 const Home = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [leagues, setLeagues] = useState([]);
+  const [teamName, setTeamName] = useState('');
+  const userId = getUserId();
 
   useEffect(() => {
-    const userId = getUserId();
 
     const getLeagues = async () => {
       const leaguesData = await fetchUserLeagues(userId);
@@ -61,7 +62,14 @@ const Home = () => {
         </ul>
         <div className="league-options">
           <h3>Joining the Betting League Year 6?</h3>
-          <p>Click the link below to register!</p>
+          <p>Enter your team name and click the link below to register!</p>
+
+          <input
+            type="text"
+            value={teamName}
+            onChange={(e) => setTeamName(e.target.value)} // Update the teamName state on input change
+            placeholder="Enter your team name"
+          />
           <button className='cta-button' onClick={handleBettingLeague}>Join the Betting League!</button>
 
           <h3>Want to create your own league?</h3>
