@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import getUserId from '../services/getUserId';
 import fetchUserLeagues from '../services/fetchUserLeagues';
+import axios from 'axios';
+import apiUrl from '../services/serverConfig';
 
 const Home = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -21,6 +23,26 @@ const Home = () => {
     }
   }, [isAuthenticated]);
 
+  const handleBettingLeague = () => {
+    axios
+      .post(
+        `${apiUrl}/leagueregistration/77/users/${userId}`,
+        {
+          league_role: 'owner',
+          team_name: teamName,
+        }
+      )
+      .then((res) => {
+        console.log(res.data);
+        alert('Successfully registered for the league!');
+        navigate(`/league/${selectedLeagueId}`); // Redirect to the league home page
+      })
+      .catch((err) => {
+        console.error(err);
+        alert('Error registering for the league.');
+      });
+  };
+
   if (isAuthenticated) {
     return (
       <div className="home">
@@ -38,6 +60,10 @@ const Home = () => {
           )}
         </ul>
         <div className="league-options">
+          <h3>Joining the Betting League Year 6?</h3>
+          <p>Click the link below to register!</p>
+          <button className='cta-button' onClick={handleBettingLeague}>Join the Betting League!</button>
+
           <h3>Want to create your own league?</h3>
           <p>You can create a custom league with your own rules and invite your friends to join.</p>
           <Link to="/createleague" className="cta-button">Create a League</Link>
@@ -58,7 +84,7 @@ const Home = () => {
       <p>Join "Slam The Line" and dive into a thrilling season-long adventure where you pick against the spread every week. Challenge your friends, track your progress, and see who reigns supreme.</p>
       <p>No more juggling multiple apps and spreadsheets. "Slam The Line" brings everything you need into one seamless experience. Ready to start?</p>
       <Link to="/login" className="cta-button">Log in</Link>
-      <Link to="/register" className="cta-button">Join the Competition</Link>
+      <Link to="/register" className="cta-button">Register</Link>
     </div>
   );
 };

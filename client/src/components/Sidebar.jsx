@@ -1,10 +1,11 @@
+import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-const Sidebar = () => {
+const TopBar = () => {
   const { leagueId } = useParams();
 
   return (
-    <div className="sidebar">
+    <div className="top-bar">
       <div className="container">
         <div className="links">
           <Link className="link" to={`/league/${leagueId}`}>
@@ -22,4 +23,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default TopBar;
