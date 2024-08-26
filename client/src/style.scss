@@ -32,6 +32,7 @@ body, html {
     background-color: $color-white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     height: 100px;
+    z-index: 200;
   
     .container {
       padding-right: 20px;
