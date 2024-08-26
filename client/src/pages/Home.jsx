@@ -38,7 +38,7 @@ const Home = () => {
       .then((res) => {
         console.log(res.data);
         alert('Successfully registered for the league!');
-        navigate(`/league/${selectedLeagueId}`); // Redirect to the league home page
+        navigate(`/league/77`); // Redirect to the league home page
       })
       .catch((err) => {
         console.error(err);
