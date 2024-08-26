@@ -6,7 +6,6 @@ import fetchUserLeagues from '../services/fetchUserLeagues';
 import axios from 'axios';
 import apiUrl from '../services/serverConfig';
 
-
 const Home = () => {
   const { isAuthenticated } = useContext(AuthContext);
   const [leagues, setLeagues] = useState([]);
@@ -15,7 +14,6 @@ const Home = () => {
   const userId = getUserId();
 
   useEffect(() => {
-
     const getLeagues = async () => {
       const leaguesData = await fetchUserLeagues(userId);
       setLeagues(leaguesData);
@@ -27,6 +25,11 @@ const Home = () => {
   }, [isAuthenticated]);
 
   const handleBettingLeague = () => {
+    if (!teamName.trim()) {
+      alert('Please enter a team name before registering.');
+      return;
+    }
+
     axios
       .post(
         `${apiUrl}/leagueregistration/77/users/${userId}`,
@@ -72,7 +75,13 @@ const Home = () => {
             onChange={(e) => setTeamName(e.target.value)} // Update the teamName state on input change
             placeholder="Enter your team name"
           />
-          <button className='cta-button' onClick={handleBettingLeague}>Join the Betting League!</button>
+          <button
+            className='cta-button'
+            onClick={handleBettingLeague}
+            disabled={!teamName.trim()} // Disable the button if the team name is blank
+          >
+            Join the Betting League!
+          </button>
 
           <h3>Want to create your own league?</h3>
           <p>You can create a custom league with your own rules and invite your friends to join.</p>
