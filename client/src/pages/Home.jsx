@@ -25,19 +25,16 @@ const Home = () => {
   }, [isAuthenticated]);
 
   const handleBettingLeague = () => {
-    if (!teamName.trim()) {
-      alert('Please enter a team name before registering.');
+    if (teamName.trim() === '') {
+      alert('Please enter a team name before joining the league.');
       return;
     }
 
     axios
-      .post(
-        `${apiUrl}/leagueregistration/77/users/${userId}`,
-        {
-          league_role: 'owner',
-          team_name: teamName,
-        }
-      )
+      .post(`${apiUrl}/leagueregistration/77/users/${userId}`, {
+        league_role: 'owner',
+        team_name: teamName,
+      })
       .then((res) => {
         console.log(res.data);
         alert('Successfully registered for the league!');
@@ -75,11 +72,7 @@ const Home = () => {
             onChange={(e) => setTeamName(e.target.value)} // Update the teamName state on input change
             placeholder="Enter your team name"
           />
-          <button
-            className='cta-button'
-            onClick={handleBettingLeague}
-            disabled={!teamName.trim()} // Disable the button if the team name is blank
-          >
+          <button className='cta-button' onClick={handleBettingLeague} disabled={teamName.trim() === ''}>
             Join the Betting League!
           </button>
 
@@ -94,7 +87,6 @@ const Home = () => {
       </div>
     );
   }
-  
 
   return (
     <div className="home">
