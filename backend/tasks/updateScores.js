@@ -1,42 +1,12 @@
-import fs from 'fs';
 import pool from '../config/db.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import dateFormat from '../utils/dateFormat.js';
-
-// Get the current file path and directory
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Resolve the absolute path to the JSON file
-const filePath = path.resolve(__dirname, 'api-data-scores.json');
-
-let data;
-try {
-  // Read and parse the JSON file
-  const rawData = fs.readFileSync(filePath, 'utf-8');
-  
-  // Check if the file is empty
-  if (rawData) {
-    data = JSON.parse(rawData);
-  } else {
-    console.error('Error: The JSON file is empty.');
-    data = null; // or set a default value
-  }
-  
-} catch (error) {
-  if (error.code === 'ENOENT') {
-    console.error('Error: JSON file not found:', filePath);
-  } else if (error instanceof SyntaxError) {
-    console.error('Error: Invalid JSON format:', error.message);
-  } else {
-    console.error('An unexpected error occurred:', error);
-  }
-  data = null; // Handle the absence of valid data gracefully
-}
+import { getScoresFromAPI } from './getScores.js';
 
 export async function fetchAndSaveScores() {
   try {
+    // Fetch scores from the API
+    const data = await getScoresFromAPI();
+
     for (const game of data) {
       // Initialize variables for SQL update
       let homeScore, awayScore;
