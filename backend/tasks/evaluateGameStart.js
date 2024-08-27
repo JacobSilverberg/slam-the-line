@@ -14,6 +14,12 @@ export async function checkAndUpdateGameStatus() {
     }
 
     for (const game of games) {
+      // Skip evaluation if game_start_time is null
+      if (!game.game_start_time) {
+        console.log(`Skipping game with api_id ${game.api_id} due to null game_start_time.`);
+        continue;
+      }
+
       // Get the game commence time from the database
       const gameCommenceTime = new Date(game.game_start_time);
 
