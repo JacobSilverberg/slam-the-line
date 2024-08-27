@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -25,20 +24,11 @@ export async function getScoresFromAPI() {
     }
     const data = await response.json();
 
-    // Write data to a file in the same directory as this .js file
-    const filePath = resolve(__dirname, 'api-data-scores.json');
-    fs.writeFile(
-      filePath,
-      JSON.stringify(data, null, 2),
-      (err) => {
-        if (err) {
-          console.error('Error writing file:', err);
-        } else {
-          console.log('Data successfully written to api-data-scores.json');
-        }
-      }
-    );
+    // Return the data directly
+    return data;
+
   } catch (error) {
     console.error('Error fetching data:', error);
+    throw error; // Re-throw the error so it can be handled by the caller
   }
 }

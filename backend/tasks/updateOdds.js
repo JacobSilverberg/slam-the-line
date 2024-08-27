@@ -1,43 +1,13 @@
-import fs from 'fs';
 import pool from '../config/db.js';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import dateFormat from '../utils/dateFormat.js';
 import { calculateNFLWeekAndDay } from './nflWeekCalculator.js';
-
-// Get the current file path and directory
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Resolve the absolute path to the JSON file
-const filePath = path.resolve(__dirname, 'api-data-odds.json');
-
-let data;
-try {
-  // Read and parse the JSON file
-  const rawData = fs.readFileSync(filePath, 'utf-8');
-  
-  // Check if the file is empty
-  if (rawData) {
-    data = JSON.parse(rawData);
-  } else {
-    console.error('Error: The JSON file is empty.');
-    data = null; // or set a default value
-  }
-  
-} catch (error) {
-  if (error.code === 'ENOENT') {
-    console.error('Error: JSON file not found:', filePath);
-  } else if (error instanceof SyntaxError) {
-    console.error('Error: Invalid JSON format:', error.message);
-  } else {
-    console.error('An unexpected error occurred:', error);
-  }
-  data = null; // Handle the absence of valid data gracefully
-}
+import { getOddsFromAPI } from './getOdds.js';
 
 export async function fetchAndSaveOdds() {
   try {
+    // Fetch data from the API
+    const data = await getOddsFromAPI();
+
     const today = new Date();
     const { day: currentDay } = calculateNFLWeekAndDay(today);
     const isTuesday = currentDay === 1; // Tuesday is the first day of the NFL week
@@ -63,7 +33,7 @@ export async function fetchAndSaveOdds() {
         [game.id]
       );
 
-      // Parse JSON into variables
+      // Parse the API response into variables
       for (const bookmaker of game.bookmakers) {
         for (const market of bookmaker.markets) {
           switch (market.key) {
@@ -160,7 +130,8 @@ export async function fetchAndSaveOdds() {
               game_over_odds = ?,
               game_under_odds = ?,
               week = ?,
-              game_started = ?
+              game_started = ?,
+              game_start_time = ?
           WHERE api_id = ?
         `;
         const updateValues = [
@@ -179,6 +150,7 @@ export async function fetchAndSaveOdds() {
           gameUnderOdds,
           gameWeek,  // Use gameWeek calculated based on commence_time
           gameStarted,
+          gameCommenceTime,  // Set the game_start_time to gameCommenceTime
           game.id,
         ];
         await pool.execute(updateQuery, updateValues);
@@ -200,8 +172,9 @@ export async function fetchAndSaveOdds() {
             game_over_odds, 
             game_under_odds, 
             week, 
-            game_started)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            game_started,
+            game_start_time)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const insertValues = [
           game.id,
@@ -220,6 +193,7 @@ export async function fetchAndSaveOdds() {
           gameUnderOdds,
           gameWeek,  // Use gameWeek calculated based on commence_time
           gameStarted,
+          gameCommenceTime,  // Insert the game_start_time
         ];
         await pool.execute(insertQuery, insertValues);
       }

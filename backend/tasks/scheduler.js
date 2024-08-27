@@ -29,30 +29,30 @@ const triggerRoutes = async (routes) => {
 
 // Testing runs every 20 seconds.
 // cron.schedule('*/20 * * * * *', () => {
-//   triggerRoutes([updateScores, updateOdds, evaluateGameStart]);
+//   triggerRoutes([evaluateGameStart]);
 // });
 
 // REAL SCHEDULE IS HERE
 
 // Odds Update Schedule: Tue-Mon at 8am EST (which is 1pm UTC)
 cron.schedule('0 13 * * 2-1', () => {
-  triggerRoutes([getOdds, updateOdds]);
+  triggerRoutes([updateOdds]);
 });
 
 // Scores Update Schedule:
 // Thu at Midnight EST (which is 5am UTC)
 cron.schedule('0 5 * * 4', () => {
-  triggerRoutes([getScores, updateScores]);
+  triggerRoutes([updateScores]);
 });
 
 // Sun at 5pm, 8pm, and Midnight EST (which are 10pm, 1am, 5am UTC)
 cron.schedule('0 22,1,5 * * 7', () => {
-  triggerRoutes([getScores, updateScores]);
+  triggerRoutes([updateScores]);
 });
 
 // Mon at Midnight EST (which is 5am UTC)
 cron.schedule('0 5 * * 1', () => {
-  triggerRoutes([getScores, updateScores]);
+  triggerRoutes([updateScores]);
 });
 
 // Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)

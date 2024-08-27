@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 
@@ -20,31 +19,16 @@ const bookmakers = 'draftkings';
 // API endpoint
 const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/odds/?regions=${regions}&markets=${markets}&oddsFormat=${oddsFormat}&bookmakers=${bookmakers}&apiKey=${API_KEY}`;
 
-// console.log('get odds api URL', apiUrl)
-
 export async function getOddsFromAPI() {
   try {
-    // console.log('API_KEY at getOdds:', API_KEY);
     const response = await fetch(apiUrl);
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data = await response.json();
-
-    // Write data to a file in the same directory as this .js file
-    const filePath = resolve(__dirname, 'api-data-odds.json');
-    fs.writeFile(
-      filePath,
-      JSON.stringify(data, null, 2),
-      (err) => {
-        if (err) {
-          console.error('Error writing file:', err);
-        } else {
-          console.log('Data successfully written to api-data-odds.json');
-        }
-      }
-    );
+    return data;
   } catch (error) {
     console.error('Error fetching data:', error);
+    throw error; // Re-throw the error to be handled by the caller
   }
 }
