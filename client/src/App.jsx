@@ -16,6 +16,7 @@ import Picksheet from './pages/Picksheet.jsx';
 import JoinLeague from './pages/JoinLeague.jsx';
 import CreateLeague from './pages/CreateLeague.jsx';
 import UserProfile from './pages/UserProfile.jsx';
+import Commissioner from './pages/Commissioner.jsx';
 
 import Navbar from './components/Navbar.jsx';
 // import Sidebar from './components/Sidebar.jsx';
@@ -85,6 +86,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Picksheet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/league/:leagueId/commissioner"
+            element={
+              <ProtectedRoute>
+                <Commissioner />
               </ProtectedRoute>
             }
           />
