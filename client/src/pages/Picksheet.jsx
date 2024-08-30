@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import getUserId from '../services/getUserId';
 import { WeekContext } from '../context/WeekContext';
-import Sidebar from '../components/Sidebar.jsx';
+import Topbar from '../components/Topbar.jsx';
 import apiUrl from '../services/serverConfig';
 
 const Picksheet = () => {
@@ -175,7 +175,7 @@ const Picksheet = () => {
 
   return (
     <div className="main-container">
-      <Sidebar leagueId={leagueId} />
+      <Topbar leagueId={leagueId} />
       <div className="page-content">
         <h2>Week {week} Picksheet</h2>
         <p>
