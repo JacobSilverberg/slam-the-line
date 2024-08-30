@@ -22,6 +22,7 @@ import getUserIdByEmailRoute from './routes/getUserIdByEmailRoute.js';
 import searchLeaguesRoute from './routes/searchLeaguesRoute.js';
 import evaluateGameStartRoute from './routes/evaluateGameStartRoute.js'
 import getUserLeagueRoleRoute from './routes/getUserLeagueRoleRoute.js'
+import getUsersInLeagueRoute from './routes/getUsersInLeagueRoute.js'
 
 dotenv.config();
 
@@ -76,6 +77,7 @@ app.use('/getuseridbyemail', getUserIdByEmailRoute);
 app.use('/searchleagues', searchLeaguesRoute);
 app.use('/evaluategamestart', evaluateGameStartRoute);
 app.use('/getuserleaguerole', getUserLeagueRoleRoute);
+app.use('/getusersinleague', getUsersInLeagueRoute);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
