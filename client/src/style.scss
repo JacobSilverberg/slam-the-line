@@ -112,9 +112,6 @@ body, html {
       }
     }
   
-  
-  
-
 
   .content {
     flex: 1;
@@ -283,17 +280,19 @@ body, html {
           box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
           margin-top: 0; // Position it below the navbar
           z-index: 100;
-      
+        
           .container {
             display: flex;
+            flex-wrap: wrap; // Allow wrapping on smaller screens
             justify-content: space-between; // Distribute links evenly
             gap: 20px;
-      
+        
             .links {
               display: flex;
               flex-direction: row; // Arrange links horizontally
+              flex-wrap: wrap; // Allow links to wrap to the next line if necessary
               gap: 20px;
-      
+        
               .link {
                 color: $color-white;
                 text-decoration: none;
@@ -301,20 +300,40 @@ body, html {
                 padding: 10px 15px;
                 border-radius: 5px;
                 transition: background-color 0.3s, transform 0.3s;
-      
+        
                 &:hover {
                   background-color: lighten($color-accent, 10%);
                   transform: translateY(-2px);
                 }
-      
+        
                 h6 {
                   margin: 0;
                   font-size: 1rem;
                 }
               }
             }
+          }
+        
+          @media (max-width: 768px) {
+            .container {
+              justify-content: center; // Center the links on smaller screens
+              gap: 10px; // Reduce gap between elements
+            }
+        
+            .links {
+              justify-content: center; // Center links within the container
+              gap: 10px; // Reduce gap between links
+            }
+        
+            .link {
+              padding: 8px 10px; // Reduce padding for smaller screens
+              h6 {
+                font-size: 0.9rem; // Reduce font size for smaller screens
+              }
+            }
           
         }
+        
       
         .content {
           flex-grow: 1;
