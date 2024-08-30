@@ -55,7 +55,7 @@ const Home = () => {
           {leagues.length > 0 ? (
             leagues.map((league) => (
               <li key={league.league_id}>
-                <Link to={`/league/${league.league_id}`}>{league.league_name}</Link>
+                <Link to={`/league/${league.league_id}/picksheet`}>{league.league_name}</Link>
               </li>
             ))
           ) : (
