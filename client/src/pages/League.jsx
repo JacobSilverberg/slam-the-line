@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Sidebar from '../components/Sidebar.jsx';
+import Topbar from '../components/Topbar.jsx';
 import apiUrl from '../services/serverConfig';
 
 const League = () => {
@@ -32,7 +32,7 @@ const League = () => {
 
   return (
     <div className="main-container">
-      <Sidebar leagueId={leagueId} />
+      <Topbar leagueId={leagueId} />
       <div className="page-content">
         <h1>{leagueInfo.name}</h1>
         <p>
