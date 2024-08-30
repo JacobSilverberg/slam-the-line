@@ -115,35 +115,61 @@ const Picksheet = () => {
 
   const handleInputChange = (gameId, event) => {
     const game = games.find((g) => g.id === gameId);
-
+  
     // Check if the game has already started
     if (game.game_started) {
       alert('This game has already started, and you cannot make changes.');
       return;
     }
-
+  
     event.stopPropagation();
+  
+    const value = parseInt(event.target.value) || 0;
+  
+    // Ensure a minimum of 1 point is allocated if the game is selected
+    if (value < 1) {
+      alert('You must allocate at least 1 point per selected game.');
+      return;
+    }
+  
     setWeeklyPoints({
       ...weeklyPoints,
-      [gameId]: parseInt(event.target.value) || 0,
+      [gameId]: value,
     });
   };
+  
 
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
-
+  
     const totalWeeklyPoints = Object.values(weeklyPoints).reduce((a, b) => a + b, 0);
-
+    const selectedGamesCount = Object.keys(selectedTeam).length;
+  
     if (totalWeeklyPoints !== leagueInfo.weekly_points) {
       alert(`Total weekly points must be equal to ${leagueInfo.weekly_points}.`);
       return;
     }
-
+  
+    // Ensure each selected game has at least 1 point allocated
+    if (selectedGamesCount < leagueInfo.games_select_min) {
+      alert(`You must select at least ${leagueInfo.games_select_min} games.`);
+      return;
+    }
+  
+    const pointsPerGame = Object.values(weeklyPoints);
+  
+    for (let i = 0; i < pointsPerGame.length; i++) {
+      if (pointsPerGame[i] < 1) {
+        alert('Each selected game must have at least 1 point allocated.');
+        return;
+      }
+    }
+  
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-
+  
     const selectedGames = games.filter((game) => weeklyPoints[game.id] !== undefined);
-
+  
     const formData = selectedGames.map((game) => ({
       gameId: game.id,
       teamId: selectedTeam[game.id],
@@ -151,18 +177,18 @@ const Picksheet = () => {
       createdAt,
       updatedAt,
     }));
-
+  
     try {
       if (hasExistingSelections) {
         await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${userId}`);
       }
-
+  
       await axios.post(`${apiUrl}/submitpicks/`, {
         picks: formData,
         userId: userId,
         leagueId: leagueId,
       });
-
+  
       alert('Picks submitted successfully!');
     } catch (err) {
       if (err.response) {
@@ -172,12 +198,13 @@ const Picksheet = () => {
       }
     }
   };
+  
 
   return (
     <div className="main-container">
       <Topbar leagueId={leagueId} />
       <div className="page-content">
-        <h2>Week {week} Picksheet</h2>
+        <h2>{leagueInfo.name}'s Week {week} Picksheet</h2>
         <p>
           Select between {leagueInfo.games_select_min} and {leagueInfo.games_select_max} games
         </p>
