@@ -326,21 +326,39 @@ body, html {
         }
       }
       
-      
-    
       .page-content {
         flex-grow: 1;
-        width: 90%; // Set the width to take up 90% of the screen width
+        width: 95%;
         max-width: 1600px;
         margin: 0 auto;
         background-color: $color-white;
-        padding: 15px; // Reduced padding for tighter layout
+        padding: 10px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         text-align: center;
+
+        .submit-button {
+          display: inline-block;
+          width: 180px;
+          padding: 15px 30px;
+          margin: 15px;
+          background-color: $color-primary;
+          color: $color-white;
+          font-weight: 600;
+          font-size: 1.1rem;
+          text-decoration: none;
+          border-radius: 50px;
+          transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    
+          &:hover {
+            background-color: darken($color-primary, 10%);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+          }
+        }
     
         h1, h2, p {
-            margin-bottom: 15px; // Reduced space between elements
+            margin-bottom: 10px;
         }
     
         .game-container-wrapper {
@@ -354,8 +372,8 @@ body, html {
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            padding: 4px 2px; // Reduced padding for tighter layout
-            margin-bottom: 2px; // Reduced margin for closer elements
+            padding: 3px 2px;
+            margin-bottom: 3px;
             border: 1px solid $color-accent;
             border-radius: 4px;
             background-color: lighten($color-accent, 40%);
@@ -366,27 +384,36 @@ body, html {
     
             .game-info {
                 flex: 1;
+                display: flex; /* Display as flexbox */
+                flex-direction: row; /* Arrange content horizontally */
+                justify-content: space-between; /* Space out items horizontally */
+                align-items: center; /* Center items vertically */
+                padding-right: 4px;
+                font-size: 0.8rem;
                 text-align: left;
-                font-weight: bold;
-                padding-right: 4px; // Reduced padding for tighter layout
-                font-size: 0.85rem; // Smaller font size for compact display
+    
+                .game-start-date,
+                .game-start-time {
+                    margin-right: 5px; /* Add space between date and time */
+                }
             }
     
             .team-button {
                 flex: 2;
                 display: flex;
-                flex-direction: row;
+                flex-direction: row; /* Arrange content horizontally */
                 align-items: center;
-                justify-content: center;
-                padding: 4px; // Reduced padding for tighter layout
-                margin: 0 4px; // Reduced margin between buttons
+                justify-content: space-between; /* Ensure content fits within the button */
+                padding: 4px;
+                margin: 0 4px;
                 border: 1px solid transparent;
                 border-radius: 4px;
                 cursor: pointer;
                 transition: background-color 0.3s, border-color 0.3s;
                 background-color: $color-background;
                 text-align: center;
-                font-size: 0.85rem; // Smaller font size for compact display
+                font-size: 0.8rem;
+                max-width: calc(100% - 8px); /* Prevent overflow */
     
                 &:hover {
                     background-color: lighten($color-background, 5%);
@@ -399,32 +426,34 @@ body, html {
                 }
     
                 .team-name, .open-spread, .curr-spread {
-                    margin: 0 4px; // Slight spacing between elements
+                    margin: 0 5px;
+                    flex: 1; /* Allow the elements to take equal space */
                 }
     
                 .team-name {
+                  font-size: 1rem;
                     font-weight: 600;
                 }
     
                 .curr-spread {
-                    font-size: 0.9rem; // Slightly larger for emphasis
+                    font-size: 0.85rem;
                     font-weight: bold;
                 }
     
                 .open-spread {
-                    font-size: 0.75rem; // Smaller font for less emphasis
+                    font-size: 0.75rem;
                 }
             }
     
             .point-input {
                 flex: 1;
-                padding: 4px; // Reduced padding for tighter layout
+                padding: 3px;
                 border-radius: 4px;
                 border: 1px solid $color-accent;
-                font-size: 0.85rem; // Smaller font size for compact display
+                font-size: 0.8rem;
                 text-align: center;
-                margin: 0 4px; // Reduced margin for closer elements
-                width: 50px; // Slightly reduced width for point input
+                margin: 0 4px;
+                width: 40px;
     
                 /* Remove arrows in Chrome, Safari, Edge, Opera */
                 &::-webkit-outer-spin-button,
@@ -432,7 +461,7 @@ body, html {
                     -webkit-appearance: none;
                     margin: 0;
                 }
-              
+    
                 /* Remove arrows in Firefox */
                 -moz-appearance: textfield;
             }
@@ -441,22 +470,32 @@ body, html {
         @media (max-width: 768px) {
             .game-container {
                 flex-direction: column;
-                align-items: flex-start;
-                padding: 8px;
+                align-items: center;
+                padding: 6px;
     
                 .game-info {
-                    text-align: center;
-                    margin-bottom: 8px;
+                    flex-direction: row; /* Arrange date and time horizontally */
+                    justify-content: center; /* Center the content horizontally */
+                    margin-bottom: 6px;
                 }
     
-                .team-button, .point-input {
-                    flex: none;
-                    width: 100%;
-                    margin-bottom: 8px;
-                    text-align: center;
+                .team-button {
+                    flex-direction: row; /* Arrange team name, spreads, etc., horizontally */
+                    justify-content: space-around; /* Distribute items evenly */
+                    width: 100%; /* Ensure the button fits within the container */
+                    margin-bottom: 6px;
+                }
+    
+                .point-input {
+                    width: 100%; /* Make the input take full width on mobile */
+                    margin-bottom: 6px;
                 }
             }
-        }
+        
+    }
+    
+    
+  
     }
     
     

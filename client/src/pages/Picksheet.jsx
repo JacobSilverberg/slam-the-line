@@ -184,7 +184,7 @@ const Picksheet = () => {
         <p>You have {leagueInfo.weekly_points} points to distribute.</p>
         <p>You have distributed {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.</p>
         <p>You have selected {selectedCount} games</p>
-        <button onClick={handleSubmitPicks} className='CTA-button'>Submit Picks</button>
+        <button onClick={handleSubmitPicks} className='submit-button'>Submit Picks</button>
         <div className="game-container-wrapper">
           {Array.isArray(games) && games.length > 0 ? (
             games.map((game) => {
@@ -232,6 +232,7 @@ const Picksheet = () => {
                         value={weeklyPoints[game.id] || ''}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleInputChange(game.id, e)}
+                        placeholder='Points'
                       />
                     )}
                   </div>
@@ -255,6 +256,7 @@ const Picksheet = () => {
                         value={weeklyPoints[game.id] || ''}
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => handleInputChange(game.id, e)}
+                        placeholder='Points'
                       />
                     )}
                   </div>
@@ -265,7 +267,7 @@ const Picksheet = () => {
             <p>No games available for this week.</p>
           )}
         </div>
-        <button onClick={handleSubmitPicks}>Submit Picks</button>
+        <button onClick={handleSubmitPicks} className='submit-button'>Submit Picks</button>
       </div>
     </div>
   );
