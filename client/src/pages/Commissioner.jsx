@@ -88,10 +88,24 @@ const Commissioner = () => {
   
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-
+  
+    // Debugging: Log the picks array to check teamId values
+    // console.log('Picks:', picks);
+  
     // Map the form data using the gameId from the games list
     const formData = picks.map(pick => {
-      const game = games.find(g => g.home_team_id === pick.teamId || g.away_team_id === pick.teamId);
+      // Find the matching game based on teamId
+      const game = games.find(g => 
+        g.home_team_id === parseInt(pick.teamId) || 
+        g.away_team_id === parseInt(pick.teamId)
+      );
+  
+      if (!game) {
+        console.error('No matching game found for teamId:', pick.teamId);
+      }
+  
+      // console.log('Mapped game:', game); // Log the matched game for debugging
+  
       return {
         gameId: game?.id, // Use game.id for gameId
         teamId: pick.teamId,
@@ -100,7 +114,9 @@ const Commissioner = () => {
         updatedAt,
       };
     });
-
+  
+    // console.log('Form Data:', formData); // Log formData for debugging
+  
     try {
       // Attempt to delete existing selections
       try {
@@ -129,6 +145,7 @@ const Commissioner = () => {
       }
     }
   };
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -186,7 +203,7 @@ const Commissioner = () => {
             >
               <option value="">--Select a Team--</option>
               {games.map((game) => (
-                <React.Fragment key={game.api_id}>
+                <React.Fragment key={game.id}>
                   <option key={`home-${game.home_team_id}`} value={game.home_team_id}>
                     {game.home_team_name} (Home)
                   </option>
