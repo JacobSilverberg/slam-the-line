@@ -88,15 +88,19 @@ const Commissioner = () => {
   
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-  
-    const formData = picks.map(pick => ({
-      gameId: pick.teamId, // Use teamId as the game ID (assuming gameId is the same as teamId in your API)
-      teamId: pick.teamId,
-      points: pick.points,
-      createdAt,
-      updatedAt,
-    }));
-  
+
+    // Map the form data using the gameId from the games list
+    const formData = picks.map(pick => {
+      const game = games.find(g => g.home_team_id === pick.teamId || g.away_team_id === pick.teamId);
+      return {
+        gameId: game?.id, // Use game.id for gameId
+        teamId: pick.teamId,
+        points: pick.points,
+        createdAt,
+        updatedAt,
+      };
+    });
+
     try {
       // Attempt to delete existing selections
       try {
@@ -125,7 +129,6 @@ const Commissioner = () => {
       }
     }
   };
-  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -215,9 +218,9 @@ const Commissioner = () => {
 
         <button type="button" onClick={addPick}>Add Another Pick</button>
 
-        {/* Submit button */}<div>
-            
-            <button onClick={handleSubmitPicks}>Submit Picks</button>
+        {/* Submit button */}
+        <div>
+          <button onClick={handleSubmitPicks}>Submit Picks</button>
         </div>
       </div>
     </div>
