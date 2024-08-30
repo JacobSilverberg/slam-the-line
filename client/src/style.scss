@@ -330,162 +330,138 @@ body, html {
     
       .page-content {
         flex-grow: 1;
-        max-width: 1200px; // Limit the maximum width of the content area
-        margin: 0 auto; // Center the content area between the sidebar and the right side
+        width: 90%; // Set the width to take up 90% of the screen width
+        max-width: 1600px;
+        margin: 0 auto;
         background-color: $color-white;
-        padding: 40px;
-        border-radius: 10px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-        text-align: center; // Center the h1, h2, and p elements
-        
+        padding: 15px; // Reduced padding for tighter layout
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    
         h1, h2, p {
-          margin-bottom: 20px; // Ensure there's space below these elements
+            margin-bottom: 15px; // Reduced space between elements
         }
-      
-        // Grid container to organize the game containers into columns
+    
         .game-container-wrapper {
-          display: grid;
-          grid-template-columns: 1fr; // Single column by default
-          gap: 20px; // Space between grid items
-          width: 100%; // Ensure the grid takes up the full width of the container
-      
-          @media (min-width: 600px) {
-            grid-template-columns: repeat(2, 1fr); // Two columns on screens 600px and wider
-          }
-      
-          @media (min-width: 900px) {
-            grid-template-columns: repeat(3, 1fr); // Three columns on screens 900px and wider
-          }
-      
-          @media (min-width: 1200px) {
-            grid-template-columns: repeat(4, 1fr); // Four columns on screens 1200px and wider
-          }
-        }
-      
-        .game-container {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-bottom: 20px;
-          padding: 15px;
-          border: 1px solid $color-accent;
-          border-radius: 10px;
-          background-color: lighten($color-accent, 40%);
-        
-          &:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: lighten($color-accent, 45%);
-          }
-        
-          .team-button {
             display: flex;
-            flex-direction: column; // Stack the content vertically
-            justify-content: center;
-            align-items: center;
-            padding: 10px 15px;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s, border-color 0.3s;
-            background-color: $color-background;
-            min-height: 100px; // Increase the minimum height for better spacing
-          
-            &:hover {
-              background-color: lighten($color-background, 5%);
-            }
-          
-            &.selected {
-              background-color: $color-primary;
-              color: $color-white;
-              border-color: darken($color-primary, 10%);
-          
-              &.home {
-                border-left: 5px solid $color-highlight;
-              }
-          
-              &.away {
-                border-right: 5px solid $color-highlight;
-              }
-          
-              .point-input {
-                display: block;
-              }
-            }
-          
-            #home, #away {
-              flex: 1;
-              text-align: center;
-              font-weight: 600;
-            }
-          
-            .team-name {
-              font-size: 1rem;
-              font-weight: 600;
-            }
-          
-            .open-spread {
-              font-size: 0.8rem;
-              color: $color-dark;
-              opacity: 0.7;
-            }
-          
-            .curr-spread {
-              font-size: 0.9rem;
-              font-weight: 700;
-              margin-bottom: 10px; // Add some spacing below the current spread
-            }
-          
-            .point-input {
-              margin-top: 10px;
-              padding: 10px 15px; // Increase padding for better usability
-              border-radius: 5px;
-              border: 1px solid $color-accent;
-              font-size: 1rem; // Increase font size for better readability
-              width: 60%; // Increase width for better visibility
-              text-align: center;
-              display: none;
-
-              /* Remove arrows in Chrome, Safari, Edge, Opera */
-              &::-webkit-outer-spin-button,
-              &::-webkit-inner-spin-button {
-                -webkit-appearance: none;
-                margin: 0;
-              }
-            
-              /* Remove arrows in Firefox */
-              -moz-appearance: textfield;
-            }
-          }
-          
+            flex-direction: column;
+            width: 100%;
         }
-      
-        @media (max-width: 768px) {
-          .game-container {
-            padding: 10px;
-            gap: 8px;
-          }
-      
-          .team-button {
-            padding: 8px 10px;
-            min-height: 50px;
-      
-            .team-name {
-              font-size: 0.9rem;
+    
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 2px; // Reduced padding for tighter layout
+            margin-bottom: 2px; // Reduced margin for closer elements
+            border: 1px solid $color-accent;
+            border-radius: 4px;
+            background-color: lighten($color-accent, 40%);
+    
+            &:hover {
+                background-color: lighten($color-accent, 45%);
             }
-      
-            .open-spread,
-            .curr-spread {
-              font-size: 0.75rem;
+    
+            .game-info {
+                flex: 1;
+                text-align: left;
+                font-weight: bold;
+                padding-right: 4px; // Reduced padding for tighter layout
+                font-size: 0.85rem; // Smaller font size for compact display
             }
-      
+    
+            .team-button {
+                flex: 2;
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: center;
+                padding: 4px; // Reduced padding for tighter layout
+                margin: 0 4px; // Reduced margin between buttons
+                border: 1px solid transparent;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s, border-color 0.3s;
+                background-color: $color-background;
+                text-align: center;
+                font-size: 0.85rem; // Smaller font size for compact display
+    
+                &:hover {
+                    background-color: lighten($color-background, 5%);
+                }
+    
+                &.selected {
+                    background-color: $color-primary;
+                    color: $color-white;
+                    border-color: darken($color-primary, 10%);
+                }
+    
+                .team-name, .open-spread, .curr-spread {
+                    margin: 0 4px; // Slight spacing between elements
+                }
+    
+                .team-name {
+                    font-weight: 600;
+                }
+    
+                .curr-spread {
+                    font-size: 0.9rem; // Slightly larger for emphasis
+                    font-weight: bold;
+                }
+    
+                .open-spread {
+                    font-size: 0.75rem; // Smaller font for less emphasis
+                }
+            }
+    
             .point-input {
-              font-size: 0.8rem;
-              padding: 5px 8px;
-              width: 35%;
+                flex: 1;
+                padding: 4px; // Reduced padding for tighter layout
+                border-radius: 4px;
+                border: 1px solid $color-accent;
+                font-size: 0.85rem; // Smaller font size for compact display
+                text-align: center;
+                margin: 0 4px; // Reduced margin for closer elements
+                width: 50px; // Slightly reduced width for point input
+    
+                /* Remove arrows in Chrome, Safari, Edge, Opera */
+                &::-webkit-outer-spin-button,
+                &::-webkit-inner-spin-button {
+                    -webkit-appearance: none;
+                    margin: 0;
+                }
+              
+                /* Remove arrows in Firefox */
+                -moz-appearance: textfield;
             }
-          }
-        }}
-      }
+        }
+    
+        @media (max-width: 768px) {
+            .game-container {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 8px;
+    
+                .game-info {
+                    text-align: center;
+                    margin-bottom: 8px;
+                }
+    
+                .team-button, .point-input {
+                    flex: none;
+                    width: 100%;
+                    margin-bottom: 8px;
+                    text-align: center;
+                }
+            }
+        }
+    }
+    
+    
+  }
+  
     }
   }
 

@@ -184,6 +184,7 @@ const Picksheet = () => {
         <p>You have {leagueInfo.weekly_points} points to distribute.</p>
         <p>You have distributed {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.</p>
         <p>You have selected {selectedCount} games</p>
+        <button onClick={handleSubmitPicks} className='CTA-button'>Submit Picks</button>
         <div className="game-container-wrapper">
           {Array.isArray(games) && games.length > 0 ? (
             games.map((game) => {
@@ -195,29 +196,35 @@ const Picksheet = () => {
               return (
                 <div className="game-container" key={game.id}>
                   <div className="game-info">
-                    <span className="game-start-time">
-                      {new Date(game.game_start_time).toLocaleString(undefined, {
+                    <div className="game-start-date">
+                      {new Date(game.game_start_time).toLocaleDateString(undefined, {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric',
+                      })}
+                    </div>
+                    <div className="game-start-time">
+                      {new Date(game.game_start_time).toLocaleTimeString(undefined, {
                         hour: 'numeric',
                         minute: '2-digit',
                         hour12: true,
                       })}
-                    </span>
+                    </div>
                   </div>
+
                   <div
                     className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
                     id="home"
                     onClick={() => handleSelectTeam(game.id, game.home_team_id)}
                   >
                     <span className="team-name">{game.home_team_name}</span>
+                   
+                    <span className="curr-spread" id="home">
+                      {formatSpread(game.home_curr_spread)}
+                    </span>
                     <span className="open-spread" id="home">
                       (Open: {formatSpread(game.home_open_spread)})
-                    </span>{' '}
-                    <span className="curr-spread" id="home">
-                      Current: {formatSpread(game.home_curr_spread)}
-                    </span>
+                      </span>{' '}
                     {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
                       <input
                         className='point-input'
@@ -234,11 +241,12 @@ const Picksheet = () => {
                     onClick={() => handleSelectTeam(game.id, game.away_team_id)}
                   >
                     <span className="team-name">{game.away_team_name}</span>
+                    <span className="curr-spread" id="away">
+                      {formatSpread(game.away_curr_spread)}
+                    </span>
+                    {' '}
                     <span className="open-spread" id="away">
                       (Open: {formatSpread(game.away_open_spread)})
-                    </span>{' '}
-                    <span className="curr-spread" id="away">
-                      Current: {formatSpread(game.away_curr_spread)}
                     </span>
                     {selectedTeam[game.id] === game.away_team_id && !game.game_started && (
                       <input
