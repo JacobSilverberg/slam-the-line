@@ -79,16 +79,16 @@ const Commissioner = () => {
 
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
-
+  
     // Ensure a user, week, and picks have been selected
     if (!selectedUser || !selectedWeek || picks.some(pick => !pick.teamId || !pick.points)) {
       alert('Please ensure all picks have a team and points selected.');
       return;
     }
-
+  
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-
+  
     const formData = picks.map(pick => ({
       gameId: pick.teamId, // Use teamId as the game ID (assuming gameId is the same as teamId in your API)
       teamId: pick.teamId,
@@ -96,18 +96,26 @@ const Commissioner = () => {
       createdAt,
       updatedAt,
     }));
-
+  
     try {
-      // Delete existing selections if necessary
-      await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${selectedUser}`);
-
+      // Attempt to delete existing selections
+      try {
+        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${selectedUser}`);
+      } catch (err) {
+        if (err.response && err.response.status === 404) {
+          console.warn('No existing selections found to delete, continuing...');
+        } else {
+          throw err; // Re-throw other errors
+        }
+      }
+  
       // Submit new selections
       await axios.post(`${apiUrl}/submitpicks/`, {
         picks: formData, // Submit the formData as an array
         userId: selectedUser, // Use the selectedUser ID
         leagueId: leagueId,
       });
-
+  
       alert('Picks submitted successfully!');
     } catch (err) {
       if (err.response) {
@@ -117,6 +125,7 @@ const Commissioner = () => {
       }
     }
   };
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
