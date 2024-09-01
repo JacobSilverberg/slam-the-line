@@ -15,21 +15,18 @@ const Pickgrid = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${apiUrl}/getusersinleague/${leagueId}`);
-        console.log('Fetched users:', response.data);
         setUsers(response.data);
 
         const selections = {};
         for (const user of response.data) {
           try {
             const picksResponse = await axios.get(`${apiUrl}/userselections/${leagueId}/${user.user_id}`);
-            console.log(`Selections for user ${user.user_id}:`, picksResponse.data.league);
             selections[user.user_id] = picksResponse.data.league || [];
           } catch (error) {
             console.error(`Error fetching selections for user ${user.user_id}:`, error);
             selections[user.user_id] = [];
           }
         }
-        console.log('All selections:', selections);
         setUserSelections(selections);
         setIsLoading(false);
       } catch (error) {
@@ -60,7 +57,6 @@ const Pickgrid = () => {
       for (let week = 1; week <= 18; week++) {
         allGames[week] = await fetchGames(week);
       }
-      console.log('Fetched all games:', allGames);
       setGames(allGames);
 
       setIsLoading(false);

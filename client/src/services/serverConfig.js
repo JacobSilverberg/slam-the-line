@@ -10,6 +10,6 @@ if (import.meta.env.MODE === 'production') {
   apiUrl = 'http://localhost:3000';
 }
 
-console.log('apiUrl at serverConfig:', apiUrl);
+// console.log('apiUrl at serverConfig:', apiUrl);
 
 export default apiUrl;
