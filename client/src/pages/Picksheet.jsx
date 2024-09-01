@@ -238,31 +238,6 @@ const Picksheet = () => {
                       })}
                     </div>
                   </div>
-
-                  <div
-                    className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
-                    id="home"
-                    onClick={() => handleSelectTeam(game.id, game.home_team_id)}
-                  >
-                    <span className="team-name">{game.home_team_name}</span>
-                   
-                    <span className="curr-spread" id="home">
-                      {formatSpread(game.home_curr_spread)}
-                    </span>
-                    <span className="open-spread" id="home">
-                      (Open: {formatSpread(game.home_open_spread)})
-                      </span>{' '}
-                    {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
-                      <input
-                        className='point-input'
-                        type="number"
-                        value={weeklyPoints[game.id] || ''}
-                        onClick={(e) => e.stopPropagation()}
-                        onChange={(e) => handleInputChange(game.id, e)}
-                        placeholder='Points'
-                      />
-                    )}
-                  </div>
                   <div
                     className={`team-button ${selectedTeam[game.id] === game.away_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
                     id="away"
@@ -287,6 +262,31 @@ const Picksheet = () => {
                       />
                     )}
                   </div>
+                  <div
+                    className={`team-button ${selectedTeam[game.id] === game.home_team_id ? 'selected' : ''} ${game.game_started ? 'disabled' : ''}`}
+                    id="home"
+                    onClick={() => handleSelectTeam(game.id, game.home_team_id)}
+                  >
+                    <span className="team-name">@ {game.home_team_name}</span>
+                   
+                    <span className="curr-spread" id="home">
+                      {formatSpread(game.home_curr_spread)}
+                    </span>
+                    <span className="open-spread" id="home">
+                      (Open: {formatSpread(game.home_open_spread)})
+                      </span>{' '}
+                    {selectedTeam[game.id] === game.home_team_id && !game.game_started && (
+                      <input
+                        className='point-input'
+                        type="number"
+                        value={weeklyPoints[game.id] || ''}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => handleInputChange(game.id, e)}
+                        placeholder='Points'
+                      />
+                    )}
+                  </div>
+                  
                 </div>
               );
             })
