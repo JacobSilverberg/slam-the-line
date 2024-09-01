@@ -34,6 +34,9 @@ const TopBar = () => {
           <Link className="link" to={`/league/${leagueId}/standings`}>
             <h6>Standings</h6>
           </Link>
+          <Link className="link" to={`/league/${leagueId}/pickgrid`}>
+            <h6>Pick Grid</h6>
+          </Link>
           <Link className="link" to={`/league/${leagueId}`}>
             <h6>League Details</h6>
           </Link>

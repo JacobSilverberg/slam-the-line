@@ -17,6 +17,7 @@ import JoinLeague from './pages/JoinLeague.jsx';
 import CreateLeague from './pages/CreateLeague.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import Commissioner from './pages/Commissioner.jsx';
+import Pickgrid from './pages/Pickgrid.jsx';
 
 import Navbar from './components/Navbar.jsx';
 // import Sidebar from './components/Sidebar.jsx';
@@ -86,6 +87,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Picksheet />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/league/:leagueId/pickgrid"
+            element={
+              <ProtectedRoute>
+                <Pickgrid />
               </ProtectedRoute>
             }
           />
