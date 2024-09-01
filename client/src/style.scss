@@ -444,14 +444,17 @@ body, html {
                     border-color: darken($color-primary, 10%);
                 }
     
-                .team-name, .open-spread, .curr-spread {
-                    margin: 0 5px;
-                    flex: 1; /* Allow the elements to take equal space */
-                }
-    
                 .team-name {
+                  flex: 2; /* Give more space to the team name */
                   font-size: 1rem;
-                    font-weight: 600;
+                  font-weight: 600;
+                  text-align: left; /* Left justify the team name */
+                }
+              
+                .open-spread,
+                .curr-spread {
+                  flex: 1; /* Keep the spreads centered */
+                  margin: 0 5px;
                 }
     
                 .curr-spread {
