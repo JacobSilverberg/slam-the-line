@@ -56,8 +56,8 @@ cron.schedule('0 0,4 * * 1', () => {
   triggerRoutes([updateScores]);
 });
 
-// Mon at Midnight EST (which is 4am UTC Tue)
-cron.schedule('0 4 * * 2', () => {
+// Mon at 1am EST (which is 5am UTC Tue)
+cron.schedule('0 5 * * 2', () => {
   triggerRoutes([updateScores]);
 });
 
@@ -90,7 +90,7 @@ Thu: Midnight
 Fri: 
 Sat: 
 Sun: 5pm, 8pm, Midnight
-Mon: Midnight
+Mon: 1am
 */
 
 /* Results Update Schedule:
