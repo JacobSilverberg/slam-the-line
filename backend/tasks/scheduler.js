@@ -28,9 +28,9 @@ const triggerRoutes = async (routes) => {
 };
 
 // One time Tuesday update.
-cron.schedule('0 23 * * 2', () => {
-  triggerRoutes([updateScores]);
-});
+// cron.schedule('0 23 * * 2', () => {
+//   triggerRoutes([updateScores]);
+// });
 
 // REAL SCHEDULE IS HERE
 
@@ -62,7 +62,7 @@ cron.schedule('0 5 * * 2', () => {
 });
 
 // Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)
-cron.schedule('1 0-23 * * 2-1', () => {
+cron.schedule('5 0-23 * * *', () => {
   triggerRoutes([evaluateSpreads, evaluateUserScores]);
 });
 
