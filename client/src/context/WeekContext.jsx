@@ -7,18 +7,25 @@ export const WeekProvider = ({ children }) => {
   const [week, setWeek] = useState(1); // Default week is 1
 
   useEffect(() => {
-    // Calculate the current week based on the current date
-    const currentDate = new Date();
-    // Adjust the start date of the NFL season as needed
-    const startDate = new Date('2024-09-04'); // Example: Start date of the NFL season
-    const timeDiff = currentDate.getTime() - startDate.getTime();
-    const currentWeek = Math.ceil(timeDiff / (1000 * 3600 * 24 * 7));
+    const calculateCurrentNFLWeek = () => {
+      const currentDate = new Date();
+      const startDate = new Date('2024-09-03'); // Tuesday, Sept 3, 2024
 
-    if (currentWeek >= 1 && currentWeek <= 18) {
-      setWeek(currentWeek);
-    } else {
-      setWeek(1);
-    }
+      // Calculate the difference in days from the start date
+      const timeDiffInMilliseconds = currentDate.getTime() - startDate.getTime();
+      const dayDiff = Math.floor(timeDiffInMilliseconds / (1000 * 3600 * 24));
+
+      // Calculate the current week (each week starts on Tuesday)
+      const currentWeek = Math.floor(dayDiff / 7) + 1;
+
+      if (currentWeek >= 1 && currentWeek <= 18) {
+        setWeek(currentWeek);
+      } else {
+        setWeek(1); // Default to week 1 if out of range
+      }
+    };
+
+    calculateCurrentNFLWeek();
   }, []);
 
   return (
