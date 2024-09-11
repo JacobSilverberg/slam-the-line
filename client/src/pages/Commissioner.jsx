@@ -112,6 +112,7 @@ const Commissioner = () => {
         points: pick.points,
         createdAt,
         updatedAt,
+        week: selectedWeek,
       };
     });
   
@@ -120,7 +121,7 @@ const Commissioner = () => {
     try {
       // Attempt to delete existing selections
       try {
-        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${selectedUser}`);
+        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${selectedUser}/${selectedWeek}`);
       } catch (err) {
         if (err.response && err.response.status === 404) {
           console.warn('No existing selections found to delete, continuing...');
