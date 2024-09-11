@@ -20,6 +20,7 @@ const Picksheet = () => {
 
   const userId = getUserId();
 
+  // Fetch games for the current week
   useEffect(() => {
     const fetchGames = async () => {
       try {
@@ -29,9 +30,11 @@ const Picksheet = () => {
         console.error('Error fetching game data:', error);
       }
     };
+
     fetchGames();
   }, [week]);
 
+  // Fetch league info and clear selections on league or week change
   useEffect(() => {
     const fetchLeagueInfo = async () => {
       try {
@@ -42,36 +45,64 @@ const Picksheet = () => {
         console.error('Error fetching league data:', error);
       }
     };
+
+    // Reset selections and points when the week or league changes
+    setSelectedTeam({});
+    setWeeklyPoints({});
+    setSelectedCount(0);
     fetchLeagueInfo();
-  }, [leagueId]);
+  }, [leagueId, week]);
 
-  useEffect(() => {
-    const fetchUserSelections = async () => {
-      try {
-        const response = await axios.get(`${apiUrl}/userselections/${leagueId}/${userId}`);
+  // Fetch user selections and reset state based on the current week
+  // Fetch user selections and reset state based on the current week
+useEffect(() => {
+  const fetchUserSelections = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/userselections/${leagueId}/${userId}/${week}`);
+      
+      // Check if user has existing selections for this week
+      const weekSelections = response.data.league.filter(selection => selection.week === week);
+      if (weekSelections.length > 0) {
+        setHasExistingSelections(true);
 
-        if (response.data.league && response.data.league.length > 0) {
-          setHasExistingSelections(true);
+        const selections = weekSelections.reduce(
+          (acc, selection) => {
+            acc.selectedTeam[selection.game_id] = selection.team_id;
+            acc.weeklyPoints[selection.game_id] = selection.points;
+            return acc;
+          },
+          { selectedTeam: {}, weeklyPoints: {} }
+        );
 
-          const selections = response.data.league.reduce(
-            (acc, selection) => {
-              acc.selectedTeam[selection.game_id] = selection.team_id;
-              acc.weeklyPoints[selection.game_id] = selection.points;
-              return acc;
-            },
-            { selectedTeam: {}, weeklyPoints: {} }
-          );
-
-          setSelectedTeam(selections.selectedTeam);
-          setWeeklyPoints(selections.weeklyPoints);
-          setSelectedCount(Object.keys(selections.selectedTeam).length);
-        }
-      } catch (error) {
+        setSelectedTeam(selections.selectedTeam);
+        setWeeklyPoints(selections.weeklyPoints);
+        setSelectedCount(Object.keys(selections.selectedTeam).length);
+      } else {
+        // Reset the state if no selections for the current week
+        setSelectedTeam({});
+        setWeeklyPoints({});
+        setSelectedCount(0);
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        console.log("No selections found for the given user and league.");
+        setSelectedTeam({});
+        setWeeklyPoints({});
+        setSelectedCount(0);
+      } else {
         console.error('Error fetching user selections:', error);
       }
-    };
+    }
+  };
+
+  // Only fetch selections if the week is defined and greater than 0
+  if (week && week > 0) {
     fetchUserSelections();
-  }, [leagueId, userId]);
+  }
+
+}, [leagueId, userId, week]);
+
+  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -79,116 +110,102 @@ const Picksheet = () => {
 
   const handleSelectTeam = (gameId, teamId) => {
     const game = games.find((g) => g.id === gameId);
-  
-    // Check if the game has already started
+
     if (game.game_started) {
       alert('This game has already started, and you cannot make changes.');
       return;
     }
-  
+
     setSelectedTeam((prev) => {
       if (prev[gameId] === teamId) {
         const updatedSelection = { ...prev };
         delete updatedSelection[gameId];
-  
+
         // Remove the associated points when the game is deselected
         setWeeklyPoints((prevPoints) => {
           const updatedPoints = { ...prevPoints };
           delete updatedPoints[gameId];
           return updatedPoints;
         });
-  
+
         setSelectedCount(Object.keys(updatedSelection).length);
         return updatedSelection;
       }
-  
+
       if (Object.keys(prev).length >= leagueInfo.games_select_max) {
         return prev;
       }
-  
+
       const updatedSelection = { ...prev, [gameId]: teamId };
       setSelectedCount(Object.keys(updatedSelection).length);
       return updatedSelection;
     });
   };
-  
 
   const handleInputChange = (gameId, event) => {
     const game = games.find((g) => g.id === gameId);
-  
-    // Check if the game has already started
+
     if (game.game_started) {
       alert('This game has already started, and you cannot make changes.');
       return;
     }
-  
+
     event.stopPropagation();
-  
+
     const value = parseInt(event.target.value) || 0;
-  
-    // Ensure a minimum of 1 point is allocated if the game is selected
-    if (value < 1) {
-      alert('You must allocate at least 1 point per selected game.');
-      return;
-    }
-  
+
+    // if (value < 1) {
+    //   alert('You must allocate at least 1 point per selected game.');
+    //   return;
+    // }
+
     setWeeklyPoints({
       ...weeklyPoints,
       [gameId]: value,
     });
   };
-  
 
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
-  
+
     const totalWeeklyPoints = Object.values(weeklyPoints).reduce((a, b) => a + b, 0);
     const selectedGamesCount = Object.keys(selectedTeam).length;
-  
+
     if (totalWeeklyPoints !== leagueInfo.weekly_points) {
       alert(`Total weekly points must be equal to ${leagueInfo.weekly_points}.`);
       return;
     }
-  
-    // Ensure each selected game has at least 1 point allocated
+
     if (selectedGamesCount < leagueInfo.games_select_min) {
       alert(`You must select at least ${leagueInfo.games_select_min} games.`);
       return;
     }
-  
-    const pointsPerGame = Object.values(weeklyPoints);
-  
-    for (let i = 0; i < pointsPerGame.length; i++) {
-      if (pointsPerGame[i] < 1) {
-        alert('Each selected game must have at least 1 point allocated.');
-        return;
-      }
-    }
-  
+
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-  
+
     const selectedGames = games.filter((game) => weeklyPoints[game.id] !== undefined);
-  
+
     const formData = selectedGames.map((game) => ({
       gameId: game.id,
       teamId: selectedTeam[game.id],
       points: weeklyPoints[game.id],
       createdAt,
       updatedAt,
+      week
     }));
-  
+
     try {
       if (hasExistingSelections) {
-        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${userId}`);
+        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${userId}/${week}`);
       }
-  
+
       await axios.post(`${apiUrl}/submitpicks/`, {
         picks: formData,
         userId: userId,
         leagueId: leagueId,
       });
-  
+
       alert('Picks submitted successfully!');
     } catch (err) {
       if (err.response) {
@@ -198,7 +215,6 @@ const Picksheet = () => {
       }
     }
   };
-  
 
   return (
     <div className="main-container">
@@ -298,9 +314,6 @@ const Picksheet = () => {
       </div>
     </div>
   );
-
-
-
 };
 
 export default Picksheet;

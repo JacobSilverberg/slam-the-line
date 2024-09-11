@@ -1,12 +1,12 @@
 import pool from '../config/db.js';
 
 export const removeUserSelections = async (req, res) => {
-  const { leagueId, userId } = req.params;
+  const { leagueId, userId, week } = req.params;
 
   try {
     const [result] = await pool.query(
-      'DELETE FROM users_select_games WHERE league_id = ? AND user_id = ?',
-      [leagueId, userId]
+      'DELETE FROM users_select_games WHERE league_id = ? AND user_id = ? AND week = ?',
+      [leagueId, userId, week],
     );
 
     if (result.affectedRows > 0) {

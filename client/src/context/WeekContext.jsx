@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 export const WeekContext = createContext();
 
 export const WeekProvider = ({ children }) => {
-  const [week, setWeek] = useState(1); // Default week is 1
+  const [week, setWeek] = useState(0); // Default week is 1
 
   useEffect(() => {
     const calculateCurrentNFLWeek = () => {
@@ -21,7 +21,7 @@ export const WeekProvider = ({ children }) => {
       if (currentWeek >= 1 && currentWeek <= 18) {
         setWeek(currentWeek);
       } else {
-        setWeek(1); // Default to week 1 if out of range
+        setWeek(0); // Default to week 1 if out of range
       }
     };
 
