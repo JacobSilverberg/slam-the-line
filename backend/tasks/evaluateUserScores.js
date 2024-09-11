@@ -1,6 +1,4 @@
 import pool from '../config/db.js';
-import axios from 'axios';
-import apiUrl from '../services/serverConfig.js'; // Adjust path if necessary
 
 export async function evaluateUserScores() {
   try {
@@ -107,7 +105,9 @@ export async function evaluateUserScores() {
       const leagueId = userScore.league_id;
 
       // Fetch league info to get weekly_points
-      const leagueInfo = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
+      const leagueInfo = await pool.query('SELECT * FROM leagues WHERE id = ?', [
+        leagueId
+      ]);
       const leagueWeeklyPoints = leagueInfo.data.league[0].weekly_points;
 
       // If user's total points are less than the league's weekly points, it's not a perfect week
