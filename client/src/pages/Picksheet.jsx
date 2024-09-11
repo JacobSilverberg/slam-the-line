@@ -192,7 +192,7 @@ useEffect(() => {
       points: weeklyPoints[game.id],
       createdAt,
       updatedAt,
-      week
+      week: week,
     }));
 
     try {
