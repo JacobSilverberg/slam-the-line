@@ -103,18 +103,17 @@ export async function evaluateUserScores() {
     for (const scoreKey of Object.keys(userScores)) {
       const userScore = userScores[scoreKey];
       const leagueId = userScore.league_id;
-
+    
       // Fetch league info to get weekly_points
-      const leagueWeeklyPoints = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
-
-      console.log('leagueWeeklyPoints:', leagueWeeklyPoints);
-
-      // if (!leagueInfo || leagueInfo.length === 0) {
-      //   throw new Error(`League info not found for league_id ${leagueId}`);
-      // }
-
-      // const leagueWeeklyPoints = leagueInfo[0].weekly_points;
-
+      const [leagueInfo] = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
+    
+      // Since leagueInfo is an array, extract the weekly_points value
+      const leagueWeeklyPoints = leagueInfo[0]?.weekly_points; 
+    
+      if (!leagueWeeklyPoints) {
+        throw new Error(`League info not found for league_id ${leagueId}`);
+      }
+    
       // If user's total points are less than the league's weekly points, it's not a perfect week
       if (userScore.points !== leagueWeeklyPoints) {
         userScore.perfect = 0;
