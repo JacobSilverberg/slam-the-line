@@ -1,4 +1,6 @@
 import pool from '../config/db.js';
+import axios from 'axios';
+import apiUrl from '../services/serverConfig.js'; // Adjust path if necessary
 
 export async function evaluateUserScores() {
   try {
@@ -56,7 +58,7 @@ export async function evaluateUserScores() {
               league_id: selection.league_id,
               week: selection.week,
               points: 0,
-              perfect: 1,
+              perfect: 1, // Assume perfect until proven otherwise
               overdog_correct: 0,
               underdog_correct: 0,
               curr_streak: 0,
@@ -93,17 +95,30 @@ export async function evaluateUserScores() {
           }
 
           if (pointsAwarded === 0) {
-            userScore.perfect = 0;
+            userScore.perfect = 0; // If they get any game wrong, they're not perfect.
           }
         }
       }
     }
 
-    // Update streaks and insert/update user scores in the database
-    for (const scoreData of Object.values(userScores)) {
+    // Fetch league weekly points from league info and adjust perfect week logic
+    for (const scoreKey of Object.keys(userScores)) {
+      const userScore = userScores[scoreKey];
+      const leagueId = userScore.league_id;
+
+      // Fetch league info to get weekly_points
+      const leagueInfo = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
+      const leagueWeeklyPoints = leagueInfo.data.league[0].weekly_points;
+
+      // If user's total points are less than the league's weekly points, it's not a perfect week
+      if (userScore.points !== leagueWeeklyPoints) {
+        userScore.perfect = 0;
+      }
+
+      // Update streaks and insert/update user scores in the database
       const [existingScore] = await pool.query(
         `SELECT id, curr_streak, max_streak FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
-        [scoreData.user_id, scoreData.league_id, scoreData.week - 1] // Get last week's data
+        [userScore.user_id, userScore.league_id, userScore.week - 1]
       );
 
       let lastWeekCurrStreak = 0;
@@ -115,32 +130,32 @@ export async function evaluateUserScores() {
         lastWeekMaxStreak = lastWeekScore.max_streak;
       }
 
-      if (scoreData.perfect === 1) {
+      if (userScore.perfect === 1) {
         // Had a perfect week
-        scoreData.curr_streak = lastWeekCurrStreak + scoreData.points;
-        if (scoreData.curr_streak > lastWeekMaxStreak) {
-          scoreData.max_streak = scoreData.curr_streak;
+        userScore.curr_streak = lastWeekCurrStreak + userScore.points;
+        if (userScore.curr_streak > lastWeekMaxStreak) {
+          userScore.max_streak = userScore.curr_streak;
         } else {
-          scoreData.max_streak = lastWeekMaxStreak;
+          userScore.max_streak = lastWeekMaxStreak;
         }
       } else {
         // Did not have a perfect week
         if (lastWeekCurrStreak > 0) {
-          scoreData.curr_streak = lastWeekCurrStreak + scoreData.points;
-          if (scoreData.curr_streak > lastWeekMaxStreak) {
-            scoreData.max_streak = scoreData.curr_streak;
-            scoreData.curr_streak = 0;
+          userScore.curr_streak = lastWeekCurrStreak + userScore.points;
+          if (userScore.curr_streak > lastWeekMaxStreak) {
+            userScore.max_streak = userScore.curr_streak;
+            userScore.curr_streak = 0;
           } else {
-            scoreData.max_streak = lastWeekMaxStreak;
+            userScore.max_streak = lastWeekMaxStreak;
           }
         } else {
-          scoreData.max_streak = lastWeekMaxStreak;
+          userScore.max_streak = lastWeekMaxStreak;
         }
       }
 
       const [currentWeekScore] = await pool.query(
         `SELECT id FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
-        [scoreData.user_id, scoreData.league_id, scoreData.week]
+        [userScore.user_id, userScore.league_id, userScore.week]
       );
 
       if (currentWeekScore.length > 0) {
@@ -149,12 +164,12 @@ export async function evaluateUserScores() {
            SET points = ?, perfect = ?, overdog_correct = ?, underdog_correct = ?, curr_streak = ?, max_streak = ?, updated_at = ?
            WHERE id = ?`,
           [
-            scoreData.points,
-            scoreData.perfect,
-            scoreData.overdog_correct,
-            scoreData.underdog_correct,
-            scoreData.curr_streak,
-            scoreData.max_streak,
+            userScore.points,
+            userScore.perfect,
+            userScore.overdog_correct,
+            userScore.underdog_correct,
+            userScore.curr_streak,
+            userScore.max_streak,
             new Date(),
             currentWeekScore[0].id,
           ]
@@ -164,15 +179,15 @@ export async function evaluateUserScores() {
           `INSERT INTO users_have_scores (user_id, league_id, week, points, perfect, overdog_correct, underdog_correct, curr_streak, max_streak, updated_at)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
           [
-            scoreData.user_id,
-            scoreData.league_id,
-            scoreData.week,
-            scoreData.points,
-            scoreData.perfect,
-            scoreData.overdog_correct,
-            scoreData.underdog_correct,
-            scoreData.curr_streak,
-            scoreData.max_streak,
+            userScore.user_id,
+            userScore.league_id,
+            userScore.week,
+            userScore.points,
+            userScore.perfect,
+            userScore.overdog_correct,
+            userScore.underdog_correct,
+            userScore.curr_streak,
+            userScore.max_streak,
             new Date(),
           ]
         );
