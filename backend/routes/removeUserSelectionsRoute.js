@@ -4,6 +4,6 @@ import { removeUserSelections } from '../controllers/removeUserSelectionsControl
 const router = express.Router();
 
 // Change from 'router.get' to 'router.delete' to handle DELETE requests
-router.delete('/:leagueId/:userId', removeUserSelections);
+router.delete('/:leagueId/:userId/:week', removeUserSelections);
 
 export default router;
