@@ -105,10 +105,15 @@ export async function evaluateUserScores() {
       const leagueId = userScore.league_id;
 
       // Fetch league info to get weekly_points
-      const leagueInfo = await pool.query('SELECT * FROM leagues WHERE id = ?', [
-        leagueId
-      ]);
-      const leagueWeeklyPoints = leagueInfo.data.league[0].weekly_points;
+      const leagueWeeklyPoints = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
+
+      console.log('leagueWeeklyPoints:', leagueWeeklyPoints);
+
+      // if (!leagueInfo || leagueInfo.length === 0) {
+      //   throw new Error(`League info not found for league_id ${leagueId}`);
+      // }
+
+      // const leagueWeeklyPoints = leagueInfo[0].weekly_points;
 
       // If user's total points are less than the league's weekly points, it's not a perfect week
       if (userScore.points !== leagueWeeklyPoints) {
@@ -196,6 +201,6 @@ export async function evaluateUserScores() {
 
     console.log('Scores updated successfully!');
   } catch (error) {
-    console.error('Error evaluating spreads:', error);
+    console.error('Error evaluating user scores:', error);
   }
 }
