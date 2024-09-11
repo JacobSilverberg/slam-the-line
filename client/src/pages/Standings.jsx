@@ -59,10 +59,10 @@ const Standings = () => {
                 Perfect Weeks
               </th>
               <th onClick={() => requestSort('overdog_correct')}>
-                Overdog Correct
+                Favorites Correct
               </th>
               <th onClick={() => requestSort('underdog_correct')}>
-                Underdog Correct
+                Underdogs Correct
               </th>
               <th onClick={() => requestSort('curr_streak')}>Current Streak</th>
               <th onClick={() => requestSort('max_streak')}>Max Streak</th>
