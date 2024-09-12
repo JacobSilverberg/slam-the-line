@@ -26,7 +26,6 @@ export async function getScoresFromAPI() {
 
     // Return the data directly
     return data;
-
   } catch (error) {
     console.error('Error fetching data:', error);
     throw error; // Re-throw the error so it can be handled by the caller

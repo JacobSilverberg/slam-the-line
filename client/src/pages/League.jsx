@@ -12,9 +12,7 @@ const League = () => {
   useEffect(() => {
     const fetchLeagueInfo = async () => {
       try {
-        const response = await axios.get(
-          `${apiUrl}/leagueinfo/${leagueId}`
-        );
+        const response = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
         setLeagueInfo(response.data.league[0]);
       } catch (error) {
         console.error('Error fetching league data:', error);

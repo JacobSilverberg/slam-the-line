@@ -17,17 +17,17 @@ const CreateLeague = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Convert gamesSelectMax and gamesSelectMin to numbers for comparison
     const max = Number(gamesSelectMax);
     const min = Number(gamesSelectMin);
-  
+
     // Validate gamesSelectMax and gamesSelectMin
     if (max < min) {
       alert('gamesSelectMax must be greater than or equal to gamesSelectMin');
       return;
     }
-  
+
     // Send the form data to the backend
     const formData = {
       gamesSelectMax: max,
@@ -38,18 +38,15 @@ const CreateLeague = () => {
       weeklyPoints,
       year: 2024,
     };
-  
+
     try {
-      const res = await axios.post(
-        `${apiUrl}/createleague`,
-        formData
-      );
-  
+      const res = await axios.post(`${apiUrl}/createleague`, formData);
+
       const leagueId = res.data.id; // Assuming the response contains the ID of the created league
-  
+
       console.log(res);
       console.log('league id', leagueId);
-  
+
       await axios.post(
         `${apiUrl}/leagueregistration/${leagueId}/users/${userId}`,
         {
@@ -57,7 +54,7 @@ const CreateLeague = () => {
           team_name: teamName,
         }
       );
-  
+
       alert('League Created Successfully!');
       navigate(`/league/${leagueId}`); // Redirect to the league home page
     } catch (err) {

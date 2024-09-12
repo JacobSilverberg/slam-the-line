@@ -28,7 +28,9 @@ const Commissioner = () => {
 
     const fetchUsersInLeague = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/getusersinleague/${leagueId}`);
+        const response = await axios.get(
+          `${apiUrl}/getusersinleague/${leagueId}`
+        );
         setUsers(response.data); // Set the list of users
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -79,33 +81,38 @@ const Commissioner = () => {
 
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
-  
+
     // Ensure a user, week, and picks have been selected
-    if (!selectedUser || !selectedWeek || picks.some(pick => !pick.teamId || !pick.points)) {
+    if (
+      !selectedUser ||
+      !selectedWeek ||
+      picks.some((pick) => !pick.teamId || !pick.points)
+    ) {
       alert('Please ensure all picks have a team and points selected.');
       return;
     }
-  
+
     const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const updatedAt = createdAt;
-  
+
     // Debugging: Log the picks array to check teamId values
     // console.log('Picks:', picks);
-  
+
     // Map the form data using the gameId from the games list
-    const formData = picks.map(pick => {
+    const formData = picks.map((pick) => {
       // Find the matching game based on teamId
-      const game = games.find(g => 
-        g.home_team_id === parseInt(pick.teamId) || 
-        g.away_team_id === parseInt(pick.teamId)
+      const game = games.find(
+        (g) =>
+          g.home_team_id === parseInt(pick.teamId) ||
+          g.away_team_id === parseInt(pick.teamId)
       );
-  
+
       if (!game) {
         console.error('No matching game found for teamId:', pick.teamId);
       }
-  
+
       // console.log('Mapped game:', game); // Log the matched game for debugging
-  
+
       return {
         gameId: game?.id, // Use game.id for gameId
         teamId: pick.teamId,
@@ -115,13 +122,15 @@ const Commissioner = () => {
         week: selectedWeek,
       };
     });
-  
+
     // console.log('Form Data:', formData); // Log formData for debugging
-  
+
     try {
       // Attempt to delete existing selections
       try {
-        await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${selectedUser}/${selectedWeek}`);
+        await axios.delete(
+          `${apiUrl}/removeuserselections/${leagueId}/${selectedUser}/${selectedWeek}`
+        );
       } catch (err) {
         if (err.response && err.response.status === 404) {
           console.warn('No existing selections found to delete, continuing...');
@@ -129,14 +138,14 @@ const Commissioner = () => {
           throw err; // Re-throw other errors
         }
       }
-  
+
       // Submit new selections
       await axios.post(`${apiUrl}/submitpicks/`, {
         picks: formData, // Submit the formData as an array
         userId: selectedUser, // Use the selectedUser ID
         leagueId: leagueId,
       });
-  
+
       alert('Picks submitted successfully!');
     } catch (err) {
       if (err.response) {
@@ -146,7 +155,6 @@ const Commissioner = () => {
       }
     }
   };
-  
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -161,7 +169,9 @@ const Commissioner = () => {
 
         {/* Dropdown for selecting a user */}
         <h3>Make Game Selection</h3>
-        <label htmlFor="user-select"><strong>Select a User:</strong></label>
+        <label htmlFor="user-select">
+          <strong>Select a User:</strong>
+        </label>
         <select
           id="user-select"
           value={selectedUser}
@@ -177,7 +187,9 @@ const Commissioner = () => {
 
         {/* Dropdown for selecting a week */}
         <h3>Select Week</h3>
-        <label htmlFor="week-select"><strong>Select a Week:</strong></label>
+        <label htmlFor="week-select">
+          <strong>Select a Week:</strong>
+        </label>
         <select
           id="week-select"
           value={selectedWeek}
@@ -195,46 +207,67 @@ const Commissioner = () => {
         <h3>Picks</h3>
         {picks.map((pick, index) => (
           <div key={index}>
-            <label htmlFor={`team-select-${index}`}><strong>Select a Team:</strong></label>
+            <label htmlFor={`team-select-${index}`}>
+              <strong>Select a Team:</strong>
+            </label>
             <select
               id={`team-select-${index}`}
               value={pick.teamId}
-              onChange={(e) => handlePickChange(index, 'teamId', e.target.value)}
+              onChange={(e) =>
+                handlePickChange(index, 'teamId', e.target.value)
+              }
               disabled={!selectedWeek} // Disable the dropdown until a week is selected
             >
               <option value="">--Select a Team--</option>
               {games.map((game) => (
                 <React.Fragment key={game.id}>
-                  <option key={`home-${game.home_team_id}`} value={game.home_team_id}>
+                  <option
+                    key={`home-${game.home_team_id}`}
+                    value={game.home_team_id}
+                  >
                     {game.home_team_name} (Home)
                   </option>
-                  <option key={`away-${game.away_team_id}`} value={game.away_team_id}>
+                  <option
+                    key={`away-${game.away_team_id}`}
+                    value={game.away_team_id}
+                  >
                     {game.away_team_name} (Away)
                   </option>
                 </React.Fragment>
               ))}
             </select>
 
-            <label htmlFor={`points-select-${index}`}><strong>Select Points:</strong></label>
+            <label htmlFor={`points-select-${index}`}>
+              <strong>Select Points:</strong>
+            </label>
             <select
               id={`points-select-${index}`}
               value={pick.points}
-              onChange={(e) => handlePickChange(index, 'points', e.target.value)}
+              onChange={(e) =>
+                handlePickChange(index, 'points', e.target.value)
+              }
               disabled={!pick.teamId} // Disable the dropdown until a team is selected
             >
               <option value="">--Select Points--</option>
-              {Array.from({ length: leagueInfo.weekly_points }, (_, i) => i + 1).map((points) => (
+              {Array.from(
+                { length: leagueInfo.weekly_points },
+                (_, i) => i + 1
+              ).map((points) => (
                 <option key={points} value={points}>
                   {points} Points
                 </option>
               ))}
             </select>
 
-            <button type="button" onClick={() => removePick(index)}>Remove Pick</button>
+            <button type="button" onClick={() => removePick(index)}>
+              Remove Pick
+            </button>
           </div>
         ))}
 
-        <button type="button" onClick={addPick}>Add Another Pick</button>
+        <button type="button" onClick={addPick}>
+          Add Another Pick
+        </button>
 
         {/* Submit button */}
         <div>

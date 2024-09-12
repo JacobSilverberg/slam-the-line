@@ -14,7 +14,7 @@ const Register = () => {
     created_at: date_formatted,
     updated_at: date_formatted,
   });
-  
+
   const [confirmPassword, setConfirmPassword] = useState('');
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
@@ -82,8 +82,12 @@ const Register = () => {
             placeholder="confirm password"
             required
           />
-          {!passwordsMatch && <p style={{ color: 'red' }}>Passwords do not match</p>}
-          <button type="submit" disabled={!passwordsMatch}>Register</button>
+          {!passwordsMatch && (
+            <p style={{ color: 'red' }}>Passwords do not match</p>
+          )}
+          <button type="submit" disabled={!passwordsMatch}>
+            Register
+          </button>
         </form>
       )}
     </div>

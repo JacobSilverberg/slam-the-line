@@ -19,10 +19,7 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${apiUrl}/auth/login`,
-        formData
-      );
+      const res = await axios.post(`${apiUrl}/auth/login`, formData);
       login(res.data.token);
       console.log('Logged in');
       setLoginSuccess(true);

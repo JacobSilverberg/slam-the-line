@@ -18,7 +18,13 @@ const Standings = () => {
         const response = await axios.get(
           `${apiUrl}/getleaguestandings/${leagueId}`
         );
-        setStandings(response.data);
+        const standingsWithPicksCorrect = response.data.map((standing) => ({
+          ...standing,
+          picks_correct:
+            Number(standing.overdog_correct) +
+            Number(standing.underdog_correct),
+        }));
+        setStandings(standingsWithPicksCorrect);
       } catch (error) {
         console.error('Error fetching league standings:', error);
       }
@@ -55,20 +61,32 @@ const Standings = () => {
             <tr>
               <th onClick={() => requestSort('team_name')}>Team Name</th>
               <th onClick={() => requestSort('total_points')}>Total Points</th>
-              <th onClick={() => requestSort('picks_correct')}>Picks Correct</th>
+              <th onClick={() => requestSort('picks_correct')}>
+                Picks Correct
+              </th>
               <th onClick={() => requestSort('max_streak')}>Max Streak</th>
               <th onClick={() => requestSort('curr_streak')}>Current Streak</th>
-              <th onClick={() => requestSort('perfect_weeks')}>Perfect Weeks</th>
-              <th onClick={() => requestSort('overdog_correct')}>Favorites Correct</th>
-              <th onClick={() => requestSort('underdog_correct')}>Underdogs Correct</th>
+              <th onClick={() => requestSort('perfect_weeks')}>
+                Perfect Weeks
+              </th>
+              <th onClick={() => requestSort('overdog_correct')}>
+                Favorites Correct
+              </th>
+              <th onClick={() => requestSort('underdog_correct')}>
+                Underdogs Correct
+              </th>
             </tr>
           </thead>
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
                 <td>{standing.team_name}</td>
-                <td>{standing.total_points}</td>
-                <td>{Number(standing.overdog_correct) + Number(standing.underdog_correct)}</td>
+                <td>
+                  {Number.isInteger(Number(standing.total_points))
+                    ? Number(standing.total_points)
+                    : Number(standing.total_points).toFixed(1)}
+                </td>
+                <td>{standing.picks_correct}</td>
                 <td>{standing.max_streak}</td>
                 <td>{standing.curr_streak}</td>
                 <td>{standing.perfect_weeks}</td>

@@ -14,7 +14,9 @@ const Pickgrid = () => {
   // Fetch games for all weeks in parallel
   const fetchGames = async () => {
     try {
-      const gamePromises = Array.from({ length: 18 }, (_, week) => axios.get(`${apiUrl}/games/${week + 1}`));
+      const gamePromises = Array.from({ length: 18 }, (_, week) =>
+        axios.get(`${apiUrl}/games/${week + 1}`)
+      );
       const gameResponses = await Promise.all(gamePromises);
 
       // Consolidate games into one object where games are stored by week
@@ -36,7 +38,9 @@ const Pickgrid = () => {
   // Fetch users in the league
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(`${apiUrl}/getusersinleague/${leagueId}`);
+      const response = await axios.get(
+        `${apiUrl}/getusersinleague/${leagueId}`
+      );
       setUsers(response.data);
       return response.data;
     } catch (error) {
@@ -51,26 +55,35 @@ const Pickgrid = () => {
       const selectionPromises = users.flatMap((user) => {
         return Array.from({ length: 18 }, (_, week) =>
           axios
-            .get(`${apiUrl}/userselections/${leagueId}/${user.user_id}/${week + 1}`)
+            .get(
+              `${apiUrl}/userselections/${leagueId}/${user.user_id}/${week + 1}`
+            )
             .then((response) => ({
               userId: user.user_id,
               week: week + 1,
               selections: response.data.league || [],
             }))
-            .catch(() => ({ userId: user.user_id, week: week + 1, selections: [] }))
+            .catch(() => ({
+              userId: user.user_id,
+              week: week + 1,
+              selections: [],
+            }))
         );
       });
 
       const resolvedSelections = await Promise.all(selectionPromises);
 
       // Organize selections into a structured object
-      const organizedSelections = resolvedSelections.reduce((acc, { userId, week, selections }) => {
-        if (!acc[userId]) {
-          acc[userId] = {};
-        }
-        acc[userId][week] = selections;
-        return acc;
-      }, {});
+      const organizedSelections = resolvedSelections.reduce(
+        (acc, { userId, week, selections }) => {
+          if (!acc[userId]) {
+            acc[userId] = {};
+          }
+          acc[userId][week] = selections;
+          return acc;
+        },
+        {}
+      );
 
       setUserSelections(organizedSelections);
     } catch (error) {
@@ -110,7 +123,10 @@ const Pickgrid = () => {
           return 'pending';
         }
 
-        const teamName = game.home_team_id === pick.team_id ? game.home_team_name : game.away_team_name;
+        const teamName =
+          game.home_team_id === pick.team_id
+            ? game.home_team_name
+            : game.away_team_name;
         return `${teamName} - ${pick.points}`;
       });
   };

@@ -23,7 +23,9 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-console.log('Connected to database:', process.env.NODE_ENV === 'production' ? 'Production' : 'Development');
+console.log(
+  'Connected to database:',
+  process.env.NODE_ENV === 'production' ? 'Production' : 'Development'
+);
 
 export default pool;
-

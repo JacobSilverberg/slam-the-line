@@ -12,7 +12,8 @@ export const WeekProvider = ({ children }) => {
       const startDate = new Date('2024-09-03'); // Tuesday, Sept 3, 2024
 
       // Calculate the difference in days from the start date
-      const timeDiffInMilliseconds = currentDate.getTime() - startDate.getTime();
+      const timeDiffInMilliseconds =
+        currentDate.getTime() - startDate.getTime();
       const dayDiff = Math.floor(timeDiffInMilliseconds / (1000 * 3600 * 24));
 
       // Calculate the current week (each week starts on Tuesday)
