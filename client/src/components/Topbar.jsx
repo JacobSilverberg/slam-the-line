@@ -12,7 +12,9 @@ const TopBar = () => {
     const checkUserRole = async () => {
       try {
         const userId = getUserId(); // Get the current user ID
-        const response = await axios.get(`${apiUrl}/getuserleaguerole/${leagueId}/user/${userId}`);
+        const response = await axios.get(
+          `${apiUrl}/getuserleaguerole/${leagueId}/user/${userId}`
+        );
         if (response.data && response.data.league_role === 'commish') {
           setIsCommish(true);
         }

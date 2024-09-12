@@ -15,7 +15,9 @@ const JoinLeague = () => {
   useEffect(() => {
     const fetchLeagues = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/searchleagues?query=${searchTerm}`);
+        const response = await axios.get(
+          `${apiUrl}/searchleagues?query=${searchTerm}`
+        );
         setLeagues(response.data);
       } catch (error) {
         console.error('Error fetching leagues:', error);
@@ -61,19 +63,24 @@ const JoinLeague = () => {
   };
 
   return (
-    <div className='home'>
+    <div className="home">
       <h1>Join a League</h1>
       {selectedLeagueId ? (
         <>
-          <h2>League Selected: {leagues.find(league => league.id === selectedLeagueId)?.name}</h2>
+          <h2>
+            League Selected:{' '}
+            {leagues.find((league) => league.id === selectedLeagueId)?.name}
+          </h2>
           <input
-          className='cta-input'
+            className="cta-input"
             type="text"
             value={teamName}
             onChange={(e) => setTeamName(e.target.value)}
             placeholder="Enter your team name"
           />
-          <button className='cta-button' onClick={handleRegistration}>Register</button>
+          <button className="cta-button" onClick={handleRegistration}>
+            Register
+          </button>
         </>
       ) : (
         <>
@@ -83,10 +90,10 @@ const JoinLeague = () => {
             onChange={handleSearchChange}
             placeholder="Search for a league"
           />
-          <ul className='league-list'>
+          <ul className="league-list">
             {leagues.length > 0 ? (
               leagues.map((league) => (
-                <li className='league-li' key={league.id}>
+                <li className="league-li" key={league.id}>
                   <button onClick={() => handleLeagueSelection(league.id)}>
                     {league.name}
                   </button>

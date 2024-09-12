@@ -39,11 +39,16 @@ const LeagueDropdown = ({ renderType = 'dropdown' }) => {
         {leagues.length > 0 ? (
           leagues.map((league) => (
             <li key={league.league_id}>
-              <Link to={`/league/${league.league_id}`}>{league.league_name}</Link>
+              <Link to={`/league/${league.league_id}`}>
+                {league.league_name}
+              </Link>
             </li>
           ))
         ) : (
-          <p>You are not currently in any leagues. <Link to="/createleague">Create one now!</Link></p>
+          <p>
+            You are not currently in any leagues.{' '}
+            <Link to="/createleague">Create one now!</Link>
+          </p>
         )}
       </ul>
     );

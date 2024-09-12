@@ -55,11 +55,16 @@ const Home = () => {
           {leagues.length > 0 ? (
             leagues.map((league) => (
               <li key={league.league_id}>
-                <Link to={`/league/${league.league_id}/picksheet`}>{league.league_name}</Link>
+                <Link to={`/league/${league.league_id}/picksheet`}>
+                  {league.league_name}
+                </Link>
               </li>
             ))
           ) : (
-            <p>You are not currently in any leagues. <Link to="/createleague">Create one now!</Link></p>
+            <p>
+              You are not currently in any leagues.{' '}
+              <Link to="/createleague">Create one now!</Link>
+            </p>
           )}
         </ul>
         <div className="league-options">
@@ -72,17 +77,31 @@ const Home = () => {
             onChange={(e) => setTeamName(e.target.value)} // Update the teamName state on input change
             placeholder="Enter your team name"
           />
-          <button className='cta-button' onClick={handleBettingLeague} disabled={teamName.trim() === ''}>
+          <button
+            className="cta-button"
+            onClick={handleBettingLeague}
+            disabled={teamName.trim() === ''}
+          >
             Join the Betting League!
           </button>
 
           <h3>Want to create your own league?</h3>
-          <p>You can create a custom league with your own rules and invite your friends to join.</p>
-          <Link to="/createleague" className="cta-button">Create a League</Link>
-  
+          <p>
+            You can create a custom league with your own rules and invite your
+            friends to join.
+          </p>
+          <Link to="/createleague" className="cta-button">
+            Create a League
+          </Link>
+
           <h3>Looking to join an existing league?</h3>
-          <p>Search for a league using a league code provided by your friends and join the competition.</p>
-          <Link to="/joinleague" className="cta-button">Join a League</Link>
+          <p>
+            Search for a league using a league code provided by your friends and
+            join the competition.
+          </p>
+          <Link to="/joinleague" className="cta-button">
+            Join a League
+          </Link>
         </div>
       </div>
     );
@@ -92,10 +111,21 @@ const Home = () => {
     <div className="home">
       <h1>Get Ready to Slam The Line!</h1>
       <h2>Compete with Friends in the Ultimate Season-Long ATS Betting Pool</h2>
-      <p>Join "Slam The Line" and dive into a thrilling season-long adventure where you pick against the spread every week. Challenge your friends, track your progress, and see who reigns supreme.</p>
-      <p>No more juggling multiple apps and spreadsheets. "Slam The Line" brings everything you need into one seamless experience. Ready to start?</p>
-      <Link to="/login" className="cta-button">Log in</Link>
-      <Link to="/register" className="cta-button">Register</Link>
+      <p>
+        Join "Slam The Line" and dive into a thrilling season-long adventure
+        where you pick against the spread every week. Challenge your friends,
+        track your progress, and see who reigns supreme.
+      </p>
+      <p>
+        No more juggling multiple apps and spreadsheets. "Slam The Line" brings
+        everything you need into one seamless experience. Ready to start?
+      </p>
+      <Link to="/login" className="cta-button">
+        Log in
+      </Link>
+      <Link to="/register" className="cta-button">
+        Register
+      </Link>
     </div>
   );
 };

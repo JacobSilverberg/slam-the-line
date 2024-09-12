@@ -15,7 +15,8 @@ export async function fetchAndSaveOdds() {
     for (const game of data) {
       // Get the game commence time and calculate the NFL week for the game
       const gameCommenceTime = new Date(game.commence_time);
-      const { week: gameWeek, day: gameDay } = calculateNFLWeekAndDay(gameCommenceTime);
+      const { week: gameWeek, day: gameDay } =
+        calculateNFLWeekAndDay(gameCommenceTime);
 
       // Get home and away team id's
       const homeTeamId = await getTeamId(pool, game.home_team);
@@ -54,7 +55,11 @@ export async function fetchAndSaveOdds() {
                 (o) => o.name === game.away_team
               );
 
-              if (isTuesday || (!existingSpreads.home_open_spread && !existingSpreads.away_open_spread)) {
+              if (
+                isTuesday ||
+                (!existingSpreads.home_open_spread &&
+                  !existingSpreads.away_open_spread)
+              ) {
                 // Set both open and current spreads on Tuesday or if no open spread exists
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
@@ -148,9 +153,9 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          gameWeek,  // Use gameWeek calculated based on commence_time
+          gameWeek, // Use gameWeek calculated based on commence_time
           gameStarted,
-          gameCommenceTime,  // Set the game_start_time to gameCommenceTime
+          gameCommenceTime, // Set the game_start_time to gameCommenceTime
           game.id,
         ];
         await pool.execute(updateQuery, updateValues);
@@ -191,9 +196,9 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          gameWeek,  // Use gameWeek calculated based on commence_time
+          gameWeek, // Use gameWeek calculated based on commence_time
           gameStarted,
-          gameCommenceTime,  // Insert the game_start_time
+          gameCommenceTime, // Insert the game_start_time
         ];
         await pool.execute(insertQuery, insertValues);
       }

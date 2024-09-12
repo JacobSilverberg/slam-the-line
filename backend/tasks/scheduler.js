@@ -34,7 +34,7 @@ const triggerRoutes = async (routes) => {
 
 // REAL SCHEDULE IS HERE
 
-// Odds Update Schedule: 
+// Odds Update Schedule:
 // Tue-Mon at 8am EST (which is 1pm UTC)
 cron.schedule('0 12 * * *', () => {
   triggerRoutes([updateOdds]);

@@ -20,9 +20,9 @@ import evaluateUserScoresRoute from './routes/evaluateUserScoresRoute.js';
 import getLeagueStandingsRoute from './routes/getLeagueStandingsRoute.js';
 import getUserIdByEmailRoute from './routes/getUserIdByEmailRoute.js';
 import searchLeaguesRoute from './routes/searchLeaguesRoute.js';
-import evaluateGameStartRoute from './routes/evaluateGameStartRoute.js'
-import getUserLeagueRoleRoute from './routes/getUserLeagueRoleRoute.js'
-import getUsersInLeagueRoute from './routes/getUsersInLeagueRoute.js'
+import evaluateGameStartRoute from './routes/evaluateGameStartRoute.js';
+import getUserLeagueRoleRoute from './routes/getUserLeagueRoleRoute.js';
+import getUsersInLeagueRoute from './routes/getUsersInLeagueRoute.js';
 
 dotenv.config();
 
@@ -30,27 +30,29 @@ const app = express();
 
 // List of allowed origins
 const allowedOrigins = [
-  'http://localhost:5173',  // Localhost for development
-  'https://slamtheline.com',  // Custom domain for production
-  'https://www.slamtheline.com'  // Custom domain with www prefix
+  'http://localhost:5173', // Localhost for development
+  'https://slamtheline.com', // Custom domain for production
+  'https://www.slamtheline.com', // Custom domain with www prefix
 ];
 
 // Enable CORS
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
-      // Origin is allowed
-      callback(null, true);
-    } else {
-      // Origin is not allowed
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,  // Allow credentials such as cookies, authorization headers, etc.
-}));
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        // Origin is allowed
+        callback(null, true);
+      } else {
+        // Origin is not allowed
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true, // Allow credentials such as cookies, authorization headers, etc.
+  })
+);
 
 // Middleware
 app.use(express.json());

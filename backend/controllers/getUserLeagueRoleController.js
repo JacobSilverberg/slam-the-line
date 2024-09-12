@@ -17,7 +17,6 @@ export const getUserLeagueRole = async (req, res) => {
       // Handle the case where the user is not found
       return res.status(404).json({ msg: 'User not found in the league' });
     }
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send(`Server error: ${err.message}`);
