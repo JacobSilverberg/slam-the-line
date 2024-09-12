@@ -55,17 +55,12 @@ const Standings = () => {
             <tr>
               <th onClick={() => requestSort('team_name')}>Team Name</th>
               <th onClick={() => requestSort('total_points')}>Total Points</th>
-              <th onClick={() => requestSort('perfect_weeks')}>
-                Perfect Weeks
-              </th>
-              <th onClick={() => requestSort('overdog_correct')}>
-                Favorites Correct
-              </th>
-              <th onClick={() => requestSort('underdog_correct')}>
-                Underdogs Correct
-              </th>
-              <th onClick={() => requestSort('curr_streak')}>Current Streak</th>
+              <th onClick={() => requestSort('picks_correct')}>Picks Correct</th>
               <th onClick={() => requestSort('max_streak')}>Max Streak</th>
+              <th onClick={() => requestSort('curr_streak')}>Current Streak</th>
+              <th onClick={() => requestSort('perfect_weeks')}>Perfect Weeks</th>
+              <th onClick={() => requestSort('overdog_correct')}>Favorites Correct</th>
+              <th onClick={() => requestSort('underdog_correct')}>Underdogs Correct</th>
             </tr>
           </thead>
           <tbody>
@@ -73,11 +68,12 @@ const Standings = () => {
               <tr key={standing.user_id}>
                 <td>{standing.team_name}</td>
                 <td>{standing.total_points}</td>
+                <td>{Number(standing.overdog_correct) + Number(standing.underdog_correct)}</td>
+                <td>{standing.max_streak}</td>
+                <td>{standing.curr_streak}</td>
                 <td>{standing.perfect_weeks}</td>
                 <td>{standing.overdog_correct}</td>
                 <td>{standing.underdog_correct}</td>
-                <td>{standing.curr_streak}</td>
-                <td>{standing.max_streak}</td>
               </tr>
             ))}
           </tbody>
