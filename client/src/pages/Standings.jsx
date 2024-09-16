@@ -80,18 +80,18 @@ const Standings = () => {
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
-                <td>{standing.team_name}</td>
+                <td>{Number(standing.team_name)}</td>
                 <td>
                   {Number.isInteger(Number(standing.total_points))
                     ? Number(standing.total_points)
                     : Number(standing.total_points).toFixed(1)}
                 </td>
-                <td>{standing.picks_correct}</td>
-                <td>{standing.max_streak}</td>
-                <td>{standing.curr_streak}</td>
-                <td>{standing.perfect_weeks}</td>
-                <td>{standing.overdog_correct}</td>
-                <td>{standing.underdog_correct}</td>
+                <td>{Number(standing.picks_correct)}</td>
+                <td>{Number(standing.max_streak)}</td>
+                <td>{Number(standing.curr_streak)}</td>
+                <td>{Number(standing.perfect_weeks)}</td>
+                <td>{Number(standing.overdog_correct)}</td>
+                <td>{Number(standing.underdog_correct)}</td>
               </tr>
             ))}
           </tbody>
