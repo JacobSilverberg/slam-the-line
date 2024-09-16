@@ -34,14 +34,18 @@ const Standings = () => {
   }, [leagueId]);
 
   const sortedStandings = [...standings].sort((a, b) => {
-    if (a[sortConfig.key] < b[sortConfig.key]) {
+    const aValue = Number(a[sortConfig.key]);
+    const bValue = Number(b[sortConfig.key]);
+  
+    if (aValue < bValue) {
       return sortConfig.direction === 'ascending' ? -1 : 1;
     }
-    if (a[sortConfig.key] > b[sortConfig.key]) {
+    if (aValue > bValue) {
       return sortConfig.direction === 'ascending' ? 1 : -1;
     }
     return 0;
   });
+  
 
   const requestSort = (key) => {
     let direction = 'ascending';
@@ -80,7 +84,7 @@ const Standings = () => {
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
-                <td>{Number(standing.team_name)}</td>
+                <td>{standing.team_name}</td>
                 <td>
                   {Number.isInteger(Number(standing.total_points))
                     ? Number(standing.total_points)
