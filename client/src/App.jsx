@@ -18,6 +18,7 @@ import CreateLeague from './pages/CreateLeague.jsx';
 import UserProfile from './pages/UserProfile.jsx';
 import Commissioner from './pages/Commissioner.jsx';
 import Pickgrid from './pages/Pickgrid.jsx';
+import UpdatePassword from './pages/UpdatePassword.jsx';
 
 import Navbar from './components/Navbar.jsx';
 // import Sidebar from './components/Sidebar.jsx';
@@ -64,6 +65,12 @@ const App = () => {
             path="/register"
             element={
               isAuthenticated ? <Navigate to="/" replace /> : <Register />
+            }
+          />
+          <Route
+            path="/updatepassword"
+            element={
+              isAuthenticated ? <Navigate to="/" replace /> : <UpdatePassword />
             }
           />
           <Route

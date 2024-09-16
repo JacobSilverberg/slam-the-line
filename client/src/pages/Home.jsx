@@ -110,6 +110,9 @@ const Home = () => {
   return (
     <div className="home">
       <h1>Get Ready to Slam The Line!</h1>
+      <Link to="/login" className="cta-button">
+        Log in
+      </Link>
       <h2>Compete with Friends in the Ultimate Season-Long ATS Betting Pool</h2>
       <p>
         Join "Slam The Line" and dive into a thrilling season-long adventure
@@ -120,9 +123,6 @@ const Home = () => {
         No more juggling multiple apps and spreadsheets. "Slam The Line" brings
         everything you need into one seamless experience. Ready to start?
       </p>
-      <Link to="/login" className="cta-button">
-        Log in
-      </Link>
       <Link to="/register" className="cta-button">
         Register
       </Link>
