@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import apiUrl from '../services/serverConfig';
+import { Link } from 'react-router-dom';
 
 const UpdatePassword = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const UpdatePassword = () => {
     }
 
     try {
-      const res = await axios.post(`${apiUrl}/auth/forgot-password`, {
+      const res = await axios.post(`${apiUrl}/auth/updatepassword`, {
         email,
         password,
       });
@@ -53,7 +54,14 @@ const UpdatePassword = () => {
   return (
     <div className="auth">
       {updateSuccess ? (
-        <div>Password updated successfully!</div>
+        <div>
+            <div>Password updated successfully!</div>
+<div>
+    
+              <Link to="/login">Back to Login</Link>
+</div>
+            </div>
+        
       ) : (
         <form onSubmit={onSubmit}>
           <input
