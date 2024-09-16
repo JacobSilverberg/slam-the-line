@@ -80,7 +80,7 @@ const Standings = () => {
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
-                <td>{Number(standing.team_name)}</td>
+                <td>{standing.team_name}</td>
                 <td>
                   {Number.isInteger(Number(standing.total_points))
                     ? Number(standing.total_points)
