@@ -132,14 +132,10 @@ export async function evaluateUserScores() {
           } else {
             userScore.max_streak = lastWeekMaxStreak;
           }
-
-          // Reset curr_streak because the user did not have a perfect week
-          userScore.curr_streak = 0;
-        } else {
-          // If there was no streak last week, reset streak
-          userScore.curr_streak = 0;
-          userScore.max_streak = lastWeekMaxStreak;
         }
+
+        // Reset curr_streak because the user did not have a perfect week
+        userScore.curr_streak = 0;
       }
 
       const [currentWeekScore] = await pool.query(
