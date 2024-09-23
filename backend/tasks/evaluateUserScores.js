@@ -70,7 +70,7 @@ export async function evaluateUserScores() {
           }
 
           if (pointsAwarded === 0) {
-            userScore.perfect = 0;
+            userScore.perfect = 0; // If they miss a game, they don't have a perfect week
           }
         }
       }
@@ -81,16 +81,17 @@ export async function evaluateUserScores() {
       const leagueId = userScore.league_id;
 
       const [leagueInfo] = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
-
       const leagueWeeklyPoints = leagueInfo[0]?.weekly_points;
       if (!leagueWeeklyPoints) {
         throw new Error(`League info not found for league_id ${leagueId}`);
       }
 
+      // If the user's total points aren't equal to the weekly_points, it's not a perfect week
       if (userScore.points !== leagueWeeklyPoints) {
         userScore.perfect = 0;
       }
 
+      // Get last week's data for the user
       const [existingScore] = await pool.query(
         `SELECT id, curr_streak, max_streak, perfect FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
         [userScore.user_id, userScore.league_id, userScore.week - 1]
@@ -107,35 +108,29 @@ export async function evaluateUserScores() {
         lastWeekPerfect = lastWeekScore.perfect;
       }
 
+      // Determine curr_streak based on perfect week status
       if (userScore.perfect === 1) {
-        // If last week was perfect, add this week's points to the previous streak
+        // If the user had a perfect week last week as well, add last week's streak
         if (lastWeekPerfect === 1) {
           userScore.curr_streak = lastWeekCurrStreak + userScore.points;
         } else {
+          // If last week wasn't perfect, set streak to this week's points only
           userScore.curr_streak = userScore.points;
         }
-
-        if (userScore.curr_streak > lastWeekMaxStreak) {
-          userScore.max_streak = userScore.curr_streak;
-        } else {
-          userScore.max_streak = lastWeekMaxStreak;
-        }
       } else {
-        // No perfect week
-        // Add this week's points to last week's streak for max_streak comparison
-        const tempStreak = lastWeekCurrStreak + userScore.points;
-
-        // Update max_streak if the tempStreak is greater than last week's max_streak
-        if (tempStreak > lastWeekMaxStreak) {
-          userScore.max_streak = tempStreak;
-        } else {
-          userScore.max_streak = lastWeekMaxStreak;
-        }
-
-        // Ensure curr_streak is always set to 0 if no perfect week
+        // Reset curr_streak if the user didn't have a perfect week this week
         userScore.curr_streak = 0;
       }
 
+      // Now, calculate max_streak
+      const potentialMaxStreak = lastWeekCurrStreak + userScore.points;
+      if (potentialMaxStreak > lastWeekMaxStreak) {
+        userScore.max_streak = potentialMaxStreak;
+      } else {
+        userScore.max_streak = lastWeekMaxStreak;
+      }
+
+      // Insert or update the user's score for the current week
       const [currentWeekScore] = await pool.query(
         `SELECT id FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
         [userScore.user_id, userScore.league_id, userScore.week]
