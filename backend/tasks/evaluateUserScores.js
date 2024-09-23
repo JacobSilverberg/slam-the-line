@@ -21,29 +21,18 @@ export async function evaluateUserScores() {
 
     // Evaluate user selections based on the spread winner
     for (const game of games) {
-      const {
-        id: gameId,
-        spread_winner,
-        home_curr_spread,
-        home_team_id,
-        away_team_id,
-      } = game;
+      const { id: gameId, spread_winner, home_curr_spread, home_team_id, away_team_id } = game;
 
-      // Determine overdog and underdog
       const isHomeOverdog = parseFloat(home_curr_spread) < 0;
       const isAwayOverdog = parseFloat(home_curr_spread) > 0;
 
-      // Evaluate user selections
       for (const selection of userSelections) {
         if (selection.game_id === gameId) {
           const isHomeTeam = selection.team_id === home_team_id;
           const isAwayTeam = selection.team_id === away_team_id;
           let pointsAwarded = 0;
 
-          if (
-            (isHomeTeam && spread_winner === 'home') ||
-            (isAwayTeam && spread_winner === 'away')
-          ) {
+          if ((isHomeTeam && spread_winner === 'home') || (isAwayTeam && spread_winner === 'away')) {
             pointsAwarded = selection.points;
           } else if (spread_winner === 'push') {
             pointsAwarded = selection.points / 2;
@@ -60,7 +49,7 @@ export async function evaluateUserScores() {
               overdog_correct: 0,
               underdog_correct: 0,
               curr_streak: 0,
-              max_streak: 0, // Assuming a fresh start
+              max_streak: 0,
               updated_at: new Date(),
             };
           }
@@ -71,91 +60,84 @@ export async function evaluateUserScores() {
           if (isHomeTeam || isAwayTeam) {
             if (isHomeTeam && isHomeOverdog && spread_winner === 'home') {
               userScore.overdog_correct++;
-            } else if (
-              isAwayTeam &&
-              isAwayOverdog &&
-              spread_winner === 'away'
-            ) {
+            } else if (isAwayTeam && isAwayOverdog && spread_winner === 'away') {
               userScore.overdog_correct++;
-            } else if (
-              isHomeTeam &&
-              !isHomeOverdog &&
-              spread_winner === 'home'
-            ) {
+            } else if (isHomeTeam && !isHomeOverdog && spread_winner === 'home') {
               userScore.underdog_correct++;
-            } else if (
-              isAwayTeam &&
-              !isAwayOverdog &&
-              spread_winner === 'away'
-            ) {
+            } else if (isAwayTeam && !isAwayOverdog && spread_winner === 'away') {
               userScore.underdog_correct++;
             }
           }
 
           if (pointsAwarded === 0) {
-            userScore.perfect = 0; // If they get any game wrong, they're not perfect.
+            userScore.perfect = 0;
           }
         }
       }
     }
 
-    // Fetch league weekly points from league info and adjust perfect week logic
     for (const scoreKey of Object.keys(userScores)) {
       const userScore = userScores[scoreKey];
       const leagueId = userScore.league_id;
 
-      // Fetch league info to get weekly_points
-      const [leagueInfo] = await pool.query(
-        'SELECT weekly_points FROM leagues WHERE id = ?',
-        [leagueId]
-      );
+      const [leagueInfo] = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
 
-      // Since leagueInfo is an array, extract the weekly_points value
       const leagueWeeklyPoints = leagueInfo[0]?.weekly_points;
-
       if (!leagueWeeklyPoints) {
         throw new Error(`League info not found for league_id ${leagueId}`);
       }
 
-      // If user's total points are less than the league's weekly points, it's not a perfect week
       if (userScore.points !== leagueWeeklyPoints) {
         userScore.perfect = 0;
       }
 
-      // Update streaks and insert/update user scores in the database
       const [existingScore] = await pool.query(
-        `SELECT id, curr_streak, max_streak FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
+        `SELECT id, curr_streak, max_streak, perfect FROM users_have_scores WHERE user_id = ? AND league_id = ? AND week = ?`,
         [userScore.user_id, userScore.league_id, userScore.week - 1]
       );
 
       let lastWeekCurrStreak = 0;
       let lastWeekMaxStreak = 0;
+      let lastWeekPerfect = 0;
 
       if (existingScore.length > 0) {
         const lastWeekScore = existingScore[0];
         lastWeekCurrStreak = lastWeekScore.curr_streak;
         lastWeekMaxStreak = lastWeekScore.max_streak;
+        lastWeekPerfect = lastWeekScore.perfect;
       }
 
       if (userScore.perfect === 1) {
-        // Had a perfect week
-        userScore.curr_streak = lastWeekCurrStreak + userScore.points;
+        // If last week was perfect, add this week's points to the previous streak
+        if (lastWeekPerfect === 1) {
+          userScore.curr_streak = lastWeekCurrStreak + userScore.points;
+        } else {
+          userScore.curr_streak = userScore.points;
+        }
+
         if (userScore.curr_streak > lastWeekMaxStreak) {
           userScore.max_streak = userScore.curr_streak;
         } else {
           userScore.max_streak = lastWeekMaxStreak;
         }
       } else {
-        // Did not have a perfect week
+        // No perfect week
         if (lastWeekCurrStreak > 0) {
-          userScore.curr_streak = lastWeekCurrStreak + userScore.points;
-          if (userScore.curr_streak > lastWeekMaxStreak) {
-            userScore.max_streak = userScore.curr_streak;
-            userScore.curr_streak = 0;
+          // Add this week's points to last week's streak for max_streak comparison
+          const tempStreak = lastWeekCurrStreak + userScore.points;
+
+          // Update max_streak if the tempStreak is greater than last week's max_streak
+          if (tempStreak > lastWeekMaxStreak) {
+            userScore.max_streak = tempStreak;
           } else {
             userScore.max_streak = lastWeekMaxStreak;
           }
+
+          // Reset curr_streak because the user did not have a perfect week
+          userScore.curr_streak = 0;
         } else {
+          // If there was no streak last week, reset streak
+          userScore.curr_streak = 0;
           userScore.max_streak = lastWeekMaxStreak;
         }
       }
