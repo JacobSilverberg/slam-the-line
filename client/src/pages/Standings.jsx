@@ -36,7 +36,7 @@ const Standings = () => {
   const sortedStandings = [...standings].sort((a, b) => {
     const aValue = Number(a[sortConfig.key]);
     const bValue = Number(b[sortConfig.key]);
-  
+
     if (aValue < bValue) {
       return sortConfig.direction === 'ascending' ? -1 : 1;
     }
@@ -45,7 +45,6 @@ const Standings = () => {
     }
     return 0;
   });
-  
 
   const requestSort = (key) => {
     let direction = 'ascending';
