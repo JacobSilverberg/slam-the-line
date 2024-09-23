@@ -12,6 +12,7 @@ const Picksheet = () => {
   const [games, setGames] = useState([]);
   const [leagueInfo, setLeagueInfo] = useState({});
   const [userSelections, setUserSelections] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedTeam, setSelectedTeam] = useState({});
   const [selectedCount, setSelectedCount] = useState(0);
   const [weeklyPoints, setWeeklyPoints] = useState({});
@@ -169,6 +170,9 @@ const Picksheet = () => {
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
 
+      // Disable the submit button after submission
+    setIsSubmitting(true);
+
     const totalWeeklyPoints = Object.values(weeklyPoints).reduce(
       (a, b) => a + b,
       0
@@ -223,6 +227,8 @@ const Picksheet = () => {
       } else {
         console.error(err.message);
       }
+    } finally {
+      setIsSubmitting(false); // Re-enable the button after submission is complete
     }
   };
 
@@ -243,8 +249,8 @@ const Picksheet = () => {
           {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
         </p>
         <p>You have selected {selectedCount} games</p>
-        <button onClick={handleSubmitPicks} className="submit-button">
-          Submit Picks
+        <button onClick={handleSubmitPicks} disabled={isSubmitting} className="submit-button">
+          {isSubmitting ? 'Submitting...' : 'Submit Picks'}
         </button>
         <div className="game-container-wrapper">
           {Array.isArray(games) && games.length > 0 ? (
@@ -333,8 +339,8 @@ const Picksheet = () => {
             <p>No games available for this week.</p>
           )}
         </div>
-        <button onClick={handleSubmitPicks} className="submit-button">
-          Submit Picks
+        <button onClick={handleSubmitPicks} disabled={isSubmitting} className="submit-button">
+          {isSubmitting ? 'Submitting...' : 'Submit Picks'}
         </button>
       </div>
     </div>
