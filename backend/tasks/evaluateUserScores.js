@@ -58,14 +58,18 @@ export async function evaluateUserScores() {
           userScore.points += pointsAwarded;
 
           if (isHomeTeam || isAwayTeam) {
-            if (isHomeTeam && isHomeOverdog && spread_winner === 'home') {
-              userScore.overdog_correct++;
-            } else if (isAwayTeam && isAwayOverdog && spread_winner === 'away') {
-              userScore.overdog_correct++;
-            } else if (isHomeTeam && !isHomeOverdog && spread_winner === 'home') {
-              userScore.underdog_correct++;
-            } else if (isAwayTeam && !isAwayOverdog && spread_winner === 'away') {
-              userScore.underdog_correct++;
+            if (isHomeTeam) {
+              if (isHomeOverdog && spread_winner === 'home') {
+                userScore.overdog_correct++;
+              } else if (!isHomeOverdog && spread_winner === 'home') {
+                userScore.underdog_correct++;
+              }
+            } else if (isAwayTeam) {
+              if (isAwayOverdog && spread_winner === 'away') {
+                userScore.overdog_correct++;
+              } else if (!isAwayOverdog && spread_winner === 'away') {
+                userScore.underdog_correct++;
+              }
             }
           }
 
@@ -117,9 +121,18 @@ export async function evaluateUserScores() {
           // If last week wasn't perfect, set streak to this week's points only
           userScore.curr_streak = userScore.points;
         }
+
+        // Now calculate max_streak if this week is perfect
+        const potentialMaxStreak = lastWeekCurrStreak + userScore.points;
+        if (potentialMaxStreak > lastWeekMaxStreak) {
+          userScore.max_streak = potentialMaxStreak;
+        } else {
+          userScore.max_streak = lastWeekMaxStreak;
+        }
       } else {
-        // Reset curr_streak if the user didn't have a perfect week this week
+        // If the user did not have a perfect week, reset curr_streak
         userScore.curr_streak = 0;
+        userScore.max_streak = lastWeekMaxStreak; // max_streak remains unchanged if no perfect week
       }
 
       // Now, calculate max_streak
