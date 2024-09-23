@@ -33,8 +33,6 @@ const Standings = () => {
     fetchStandings();
   }, [leagueId]);
 
-  console.log('standings in standings.jsx', standings)
-
   const sortedStandings = [...standings].sort((a, b) => {
     const aValue = Number(a[sortConfig.key]);
     const bValue = Number(b[sortConfig.key]);
