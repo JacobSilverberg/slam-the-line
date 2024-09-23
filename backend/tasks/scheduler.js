@@ -28,7 +28,7 @@ const triggerRoutes = async (routes) => {
 };
 
 // One time Tuesday update.
-cron.schedule('33 * * * *', () => {
+cron.schedule('51 * * * *', () => {
   triggerRoutes([evaluateGameStart, evaluateSpreads, evaluateUserScores]);
 });
 
