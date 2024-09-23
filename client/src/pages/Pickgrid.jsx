@@ -38,9 +38,7 @@ const Pickgrid = () => {
   // Fetch users in the league
   const fetchUsers = async () => {
     try {
-      const response = await axios.get(
-        `${apiUrl}/getusersinleague/${leagueId}`
-      );
+      const response = await axios.get(`${apiUrl}/getusersinleague/${leagueId}`);
       setUsers(response.data);
       return response.data;
     } catch (error) {
@@ -117,17 +115,33 @@ const Pickgrid = () => {
       .filter((selection) => weekGames[selection.game_id])
       .map((pick) => {
         const game = weekGames[pick.game_id];
-        if (!game) return 'pending';
+        if (!game) return { status: 'pending', content: 'Pending' };
 
+        let className = '';
         if (game.game_started === 0) {
-          return 'pending';
+          return { status: 'pending', content: 'Pending' };
+        } else if (game.game_completed === 1) {
+          const isHomeTeam = game.home_team_id === pick.team_id;
+          const isAwayTeam = game.away_team_id === pick.team_id;
+
+          if (game.spread_winner === 'home') {
+            className = isHomeTeam ? 'winner' : 'loser';
+          } else if (game.spread_winner === 'away') {
+            className = isAwayTeam ? 'winner' : 'loser';
+          } else if (game.spread_winner === 'push') {
+            className = 'push';
+          }
         }
 
         const teamName =
           game.home_team_id === pick.team_id
             ? game.home_team_name
             : game.away_team_name;
-        return `${teamName} - ${pick.points}`;
+
+        return {
+          status: className || 'game-started',
+          content: `${teamName} - ${pick.points}`,
+        };
       });
   };
 
@@ -156,7 +170,9 @@ const Pickgrid = () => {
                 {Array.from({ length: 18 }, (_, i) => (
                   <td key={i + 1}>
                     {getPicksForWeek(user.user_id, i + 1).map((pick, index) => (
-                      <div key={index}>{pick}</div>
+                      <div key={index} className={pick.status}>
+                        {pick.content}
+                      </div>
                     ))}
                   </td>
                 ))}
