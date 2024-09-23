@@ -27,11 +27,13 @@ const Standings = () => {
         setStandings(standingsWithPicksCorrect);
       } catch (error) {
         console.error('Error fetching league standings:', error);
-      }
+      }      
     };
 
     fetchStandings();
   }, [leagueId]);
+
+  console.log('standings in standings.jsx', standings)
 
   const sortedStandings = [...standings].sort((a, b) => {
     const aValue = Number(a[sortConfig.key]);

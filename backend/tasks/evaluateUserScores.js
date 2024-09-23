@@ -73,9 +73,9 @@ export async function evaluateUserScores() {
             }
           }
 
-          if (pointsAwarded === 0) {
-            userScore.perfect = 0; // If they miss a game, they don't have a perfect week
-          }
+          // if (pointsAwarded !== selection.points) {
+          //   userScore.perfect = 0; // If they miss a game, they don't have a perfect week
+          // }
         }
       }
     }
@@ -142,6 +142,8 @@ export async function evaluateUserScores() {
       } else {
         userScore.max_streak = lastWeekMaxStreak;
       }
+
+      console.log('userid, currstreak, maxstreak', userScore.user_id, userScore.curr_streak, userScore.max_streak)
 
       // Insert or update the user's score for the current week
       const [currentWeekScore] = await pool.query(
