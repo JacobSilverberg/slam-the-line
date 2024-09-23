@@ -10,7 +10,12 @@ export const getLeagueStandings = async (req, res) => {
       SUM(uhs.perfect) AS perfect_weeks,
       SUM(uhs.overdog_correct) AS overdog_correct,
       SUM(uhs.underdog_correct) AS underdog_correct,
-      MAX(uhs.curr_streak) AS curr_streak,
+      (SELECT uhs2.curr_streak 
+       FROM users_have_scores uhs2 
+       WHERE uhs2.user_id = uhs.user_id 
+         AND uhs2.league_id = uhs.league_id 
+       ORDER BY uhs2.week DESC 
+       LIMIT 1) AS curr_streak, 
       MAX(uhs.max_streak) AS max_streak,
       u.email AS user_email,
       l.name AS league_name,
