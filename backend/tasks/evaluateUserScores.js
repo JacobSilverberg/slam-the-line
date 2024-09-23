@@ -122,19 +122,17 @@ export async function evaluateUserScores() {
         }
       } else {
         // No perfect week
-        if (lastWeekCurrStreak > 0) {
-          // Add this week's points to last week's streak for max_streak comparison
-          const tempStreak = lastWeekCurrStreak + userScore.points;
+        // Add this week's points to last week's streak for max_streak comparison
+        const tempStreak = lastWeekCurrStreak + userScore.points;
 
-          // Update max_streak if the tempStreak is greater than last week's max_streak
-          if (tempStreak > lastWeekMaxStreak) {
-            userScore.max_streak = tempStreak;
-          } else {
-            userScore.max_streak = lastWeekMaxStreak;
-          }
+        // Update max_streak if the tempStreak is greater than last week's max_streak
+        if (tempStreak > lastWeekMaxStreak) {
+          userScore.max_streak = tempStreak;
+        } else {
+          userScore.max_streak = lastWeekMaxStreak;
         }
 
-        // Reset curr_streak because the user did not have a perfect week
+        // Ensure curr_streak is always set to 0 if no perfect week
         userScore.curr_streak = 0;
       }
 
