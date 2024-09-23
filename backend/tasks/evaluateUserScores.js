@@ -143,7 +143,7 @@ export async function evaluateUserScores() {
         userScore.max_streak = lastWeekMaxStreak;
       }
 
-      console.log('userid, currstreak, maxstreak', userScore.user_id, userScore.curr_streak, userScore.max_streak)
+      console.log('userid, currstreak, maxstreak, perfect, week', userScore.user_id, userScore.curr_streak, userScore.max_streak, userScore.perfectt, userScore.week)
 
       // Insert or update the user's score for the current week
       const [currentWeekScore] = await pool.query(
