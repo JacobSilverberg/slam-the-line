@@ -55,13 +55,11 @@ const UpdatePassword = () => {
     <div className="auth">
       {updateSuccess ? (
         <div>
-            <div>Password updated successfully!</div>
-<div>
-    
-              <Link to="/login">Back to Login</Link>
-</div>
-            </div>
-        
+          <div>Password updated successfully!</div>
+          <div>
+            <Link to="/login">Back to Login</Link>
+          </div>
+        </div>
       ) : (
         <form onSubmit={onSubmit}>
           <input
@@ -91,9 +89,7 @@ const UpdatePassword = () => {
           {!passwordsMatch && (
             <p style={{ color: 'red' }}>Passwords do not match</p>
           )}
-          {updateError && (
-            <p style={{ color: 'red' }}>{updateError}</p>
-          )}
+          {updateError && <p style={{ color: 'red' }}>{updateError}</p>}
           <button type="submit" disabled={!passwordsMatch}>
             Update Password
           </button>
