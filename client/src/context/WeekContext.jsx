@@ -22,7 +22,7 @@ export const WeekProvider = ({ children }) => {
       if (currentWeek >= 1 && currentWeek <= 18) {
         setWeek(currentWeek);
       } else {
-        setWeek(0); // Default to week 1 if out of range
+        setWeek(1); // Default to week 1 if out of range
       }
     };
 
