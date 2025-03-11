@@ -8,8 +8,7 @@ import apiUrl from '../services/serverConfig';
 
 const Picksheet = () => {
   const { leagueId } = useParams();
-  // const { week } = useContext(WeekContext);
-  const { week } = 1; // Set week to 1 for testing
+  const { week } = useContext(WeekContext);
   const [games, setGames] = useState([]);
   const [leagueInfo, setLeagueInfo] = useState({});
   const [userSelections, setUserSelections] = useState([]);
