@@ -9,7 +9,7 @@ export const WeekProvider = ({ children }) => {
   useEffect(() => {
     const calculateCurrentNFLWeek = () => {
       const currentDate = new Date();
-      const startDate = new Date('2024-09-03'); // Tuesday, Sept 3, 2024
+      const startDate = new Date('2025-09-02'); // Tuesday, Sept 2, 2025
 
       // Calculate the difference in days from the start date
       const timeDiffInMilliseconds =
