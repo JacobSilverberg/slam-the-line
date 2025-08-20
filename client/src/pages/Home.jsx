@@ -31,14 +31,14 @@ const Home = () => {
     }
 
     axios
-      .post(`${apiUrl}/leagueregistration/77/users/${userId}`, {
+      .post(`${apiUrl}/leagueregistration/79/users/${userId}`, {
         league_role: 'owner',
         team_name: teamName,
       })
       .then((res) => {
         console.log(res.data);
         alert('Successfully registered for the league!');
-        navigate(`/league/77`); // Redirect to the league home page
+        navigate(`/league/79`); // Redirect to the league home page
       })
       .catch((err) => {
         console.error(err);
@@ -68,7 +68,7 @@ const Home = () => {
           )}
         </ul>
         <div className="league-options">
-          <h3>Joining the Betting League Year 6?</h3>
+          <h3>Joining the Betting League Year 7?</h3>
           <p>Enter your team name and click the link below to register!</p>
 
           <input
