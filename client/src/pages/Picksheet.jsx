@@ -21,6 +21,34 @@ const Picksheet = () => {
 
   const userId = getUserId();
 
+
+  useEffect(() => {
+  const fetchGamesAndLeague = async () => {
+    try {
+      // Fetch league info first
+      const leagueRes = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
+      const league = leagueRes.data.league[0];
+      setLeagueInfo(league);
+
+      // Fetch games for the current week
+      const gamesRes = await axios.get(`${apiUrl}/games/${week}`);
+      // Filter games by nfl_year === league.year
+      const filteredGames = gamesRes.data.filter(
+        (game) => game.nfl_year === league.year
+      );
+      setGames(filteredGames);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching game or league data:', error);
+      setIsLoading(false);
+    }
+  };
+
+  fetchGamesAndLeague();
+}, [leagueId, week]);
+
+
+/*
   // Fetch games for the current week
   useEffect(() => {
     const fetchGames = async () => {
@@ -53,6 +81,8 @@ const Picksheet = () => {
     setSelectedCount(0);
     fetchLeagueInfo();
   }, [leagueId, week]);
+
+  */
 
   // Fetch user selections and reset state based on the current week
   // Fetch user selections and reset state based on the current week

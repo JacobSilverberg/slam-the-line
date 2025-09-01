@@ -1,6 +1,8 @@
 export function calculateNFLWeekAndDay(currentDate) {
   // Define the start date of the NFL season (Tuesday, Sep 2nd, 2025) in EST
   const seasonStartDate = new Date('2025-09-02T00:00:00-04:00'); // EST
+  const seasonEndDate = new Date('2026-01-05T00:00:00-05:00'); // EST
+  const nflYear = 2025;
 
   // Convert the current date to EST (Eastern Standard Time)
   const estOffset = -5 * 60; // EST is UTC-5
@@ -14,16 +16,16 @@ export function calculateNFLWeekAndDay(currentDate) {
     (estDate.getTime() - seasonStartDate.getTime()) / (1000 * 3600 * 24)
   );
 
-  // Ensure diffInDays is non-negative
-  if (diffInDays < 0) {
-    return { week: 0, day: 0 }; // Before the season starts
+  // If before the season starts or after it ends, return week: 0, day: 0, no nflYear
+  if (diffInDays < 0 || estDate > seasonEndDate) {
+    return { week: 0, day: 0 };
   }
 
   // Calculate the NFL week and day
   const nflWeek = Math.floor(diffInDays / 7) + 1;
   const nflDay = (diffInDays % 7) + 1;
 
-  return { week: nflWeek, day: nflDay };
+  return { week: nflWeek, day: nflDay, year: nflYear };
 }
 
 // // Quick tests

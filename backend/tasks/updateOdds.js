@@ -15,7 +15,7 @@ export async function fetchAndSaveOdds() {
     for (const game of data) {
       // Get the game commence time and calculate the NFL week for the game
       const gameCommenceTime = new Date(game.commence_time);
-      const { week: gameWeek, day: gameDay } =
+      const { week: gameWeek, day: gameDay, nflYear } =
         calculateNFLWeekAndDay(gameCommenceTime);
 
       // Get home and away team id's
@@ -135,6 +135,7 @@ export async function fetchAndSaveOdds() {
               game_over_odds = ?,
               game_under_odds = ?,
               week = ?,
+              nfl_year = ?,
               game_started = ?,
               game_start_time = ?
           WHERE api_id = ?
@@ -154,6 +155,7 @@ export async function fetchAndSaveOdds() {
           gameOverOdds,
           gameUnderOdds,
           gameWeek, // Use gameWeek calculated based on commence_time
+          nflYear,  // Add nflYear here
           gameStarted,
           gameCommenceTime, // Set the game_start_time to gameCommenceTime
           game.id,
@@ -177,9 +179,10 @@ export async function fetchAndSaveOdds() {
             game_over_odds, 
             game_under_odds, 
             week, 
+            nfl_year,
             game_started,
             game_start_time)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
         const insertValues = [
           game.id,
@@ -197,6 +200,7 @@ export async function fetchAndSaveOdds() {
           gameOverOdds,
           gameUnderOdds,
           gameWeek, // Use gameWeek calculated based on commence_time
+          nflYear,  // Add nflYear here
           gameStarted,
           gameCommenceTime, // Insert the game_start_time
         ];
