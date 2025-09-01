@@ -3,7 +3,7 @@ import pool from '../config/db.js';
 export const getUserLeagues = async (req, res) => {
   const userId = req.params.userId;
   const query = `
-        SELECT lhu.team_name, l.name AS league_name, l.id AS league_id
+        SELECT lhu.team_name, l.name AS league_name, l.id AS league_id, l.year
         FROM leagues_have_users lhu
         JOIN leagues l ON lhu.league_id = l.id
         WHERE lhu.user_id = ?;

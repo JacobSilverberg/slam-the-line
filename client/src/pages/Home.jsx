@@ -16,7 +16,10 @@ const Home = () => {
   useEffect(() => {
     const getLeagues = async () => {
       const leaguesData = await fetchUserLeagues(userId);
-      setLeagues(leaguesData);
+      // Only show leagues from 2025
+      const filteredLeagues = leaguesData.filter(league => league.year === 2025);
+      setLeagues(filteredLeagues);
+      console.log('Fetched leagues:', filteredLeagues);
     };
 
     if (isAuthenticated) {
