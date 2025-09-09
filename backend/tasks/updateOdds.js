@@ -21,7 +21,7 @@ export async function fetchAndSaveOdds() {
 
       // Get the game commence time and calculate the NFL week for the game
       const gameCommenceTime = new Date(game.commence_time);
-      const { week: gameWeek, day: gameDay, nflYear } =
+      const { week: gameWeek, day: gameDay, year: nflYear } =
         calculateNFLWeekAndDay(gameCommenceTime);
       console.log(`Calculated week: ${gameWeek}, nflYear: ${nflYear}`);
 

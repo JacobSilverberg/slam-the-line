@@ -40,6 +40,10 @@ cron.schedule('0 12 * * *', () => {
   triggerRoutes([updateOdds]);
 });
 
+cron.schedule('0 22 * * *', () => {
+  triggerRoutes([updateOdds]);
+});
+
 // Scores Update Schedule:
 // Thu at Midnight EDT (which is 4am UTC Fri)
 cron.schedule('0 4 * * 5', () => {
