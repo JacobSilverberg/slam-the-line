@@ -5,22 +5,35 @@ import { getOddsFromAPI } from './getOdds.js';
 
 export async function fetchAndSaveOdds() {
   try {
+    console.log('Starting fetchAndSaveOdds...');
     // Fetch data from the API
     const data = await getOddsFromAPI();
+    console.log(`Fetched ${data.length} games from API`);
 
     const today = new Date();
     const { day: currentDay } = calculateNFLWeekAndDay(today);
     const isTuesday = currentDay === 1; // Tuesday is the first day of the NFL week
 
     for (const game of data) {
+      console.log(
+        `\nProcessing game: ${game.id} (${game.home_team} vs ${game.away_team})`
+      );
+
       // Get the game commence time and calculate the NFL week for the game
       const gameCommenceTime = new Date(game.commence_time);
       const { week: gameWeek, day: gameDay, nflYear } =
         calculateNFLWeekAndDay(gameCommenceTime);
+      console.log(`Calculated week: ${gameWeek}, nflYear: ${nflYear}`);
 
       // Get home and away team id's
-      const homeTeamId = await getTeamId(pool, game.home_team);
-      const awayTeamId = await getTeamId(pool, game.away_team);
+      let homeTeamId, awayTeamId;
+      try {
+        homeTeamId = await getTeamId(pool, game.home_team);
+        awayTeamId = await getTeamId(pool, game.away_team);
+      } catch (err) {
+        console.error(`Error getting team IDs for game ${game.id}:`, err.message);
+        continue;
+      }
 
       // Initialize variables for SQL update
       let last_update, last_update_unformatted;
@@ -33,6 +46,7 @@ export async function fetchAndSaveOdds() {
         'SELECT home_open_spread, away_open_spread FROM games WHERE api_id = ?',
         [game.id]
       );
+      console.log('Existing spreads:', existingSpreads);
 
       // Parse the API response into variables
       for (const bookmaker of game.bookmakers) {
@@ -60,13 +74,11 @@ export async function fetchAndSaveOdds() {
                 (!existingSpreads.home_open_spread &&
                   !existingSpreads.away_open_spread)
               ) {
-                // Set both open and current spreads on Tuesday or if no open spread exists
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
                 homeCurrSpread = homeOpenSpread;
                 awayCurrSpread = awayOpenSpread;
               } else {
-                // Otherwise, only update the current spread
                 homeCurrSpread = homeSpread?.point;
                 awayCurrSpread = awaySpread?.point;
               }
@@ -116,6 +128,7 @@ export async function fetchAndSaveOdds() {
         'SELECT id FROM games WHERE api_id = ?',
         [game.id]
       );
+      console.log(`Game ${game.id} exists in DB:`, existingGame.length > 0);
 
       if (existingGame.length > 0) {
         // Update the existing game
@@ -154,12 +167,13 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          gameWeek, // Use gameWeek calculated based on commence_time
-          nflYear,  // Add nflYear here
+          gameWeek,
+          nflYear,
           gameStarted,
-          gameCommenceTime, // Set the game_start_time to gameCommenceTime
+          gameCommenceTime,
           game.id,
         ];
+        console.log('Updating game with values:', updateValues);
         await pool.execute(updateQuery, updateValues);
       } else {
         // Insert a new game
@@ -199,11 +213,12 @@ export async function fetchAndSaveOdds() {
           gameCurrTotal || gameOpenTotal,
           gameOverOdds,
           gameUnderOdds,
-          gameWeek, // Use gameWeek calculated based on commence_time
-          nflYear,  // Add nflYear here
+          gameWeek,
+          nflYear,
           gameStarted,
-          gameCommenceTime, // Insert the game_start_time
+          gameCommenceTime,
         ];
+        console.log('Inserting new game with values:', insertValues);
         await pool.execute(insertQuery, insertValues);
       }
     }

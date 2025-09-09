@@ -4,10 +4,16 @@ import { getScoresFromAPI } from './getScores.js';
 
 export async function fetchAndSaveScores() {
   try {
+    console.log('Starting fetchAndSaveScores...');
     // Fetch scores from the API
     const data = await getScoresFromAPI();
+    console.log(`Fetched ${data.length} games from API`);
 
     for (const game of data) {
+      console.log(
+        `\nProcessing game: ${game.id} (${game.home_team} vs ${game.away_team})`
+      );
+
       // Initialize variables for SQL update
       let homeScore, awayScore;
       let gameCompleted = false;
@@ -15,6 +21,7 @@ export async function fetchAndSaveScores() {
 
       // Skip games that have not completed
       if (game.completed === false) {
+        console.log(`Skipping game ${game.id}: not completed`);
         continue;
       } else {
         gameCompleted = true;
@@ -29,6 +36,11 @@ export async function fetchAndSaveScores() {
         }
       }
       last_update_unformatted = game.last_update;
+
+      // Log parsed scores
+      console.log(
+        `Parsed scores - Home: ${homeScore}, Away: ${awayScore}`
+      );
 
       // Ensure last_update_unformatted is valid
       if (!last_update_unformatted) {
@@ -54,6 +66,10 @@ export async function fetchAndSaveScores() {
         'SELECT id FROM games WHERE api_id = ?',
         [game.id]
       );
+      console.log(
+        `Game ${game.id} exists in DB:`,
+        existingGame.length > 0
+      );
 
       if (existingGame.length > 0 && gameCompleted) {
         // Update the existing game
@@ -72,9 +88,12 @@ export async function fetchAndSaveScores() {
           gameCompleted,
           game.id,
         ];
+        console.log('Updating game with values:', updateValues);
         await pool.execute(updateQuery, updateValues);
       } else {
-        console.error('game does not exist in db');
+        console.error(
+          `Game ${game.id} does not exist in db or not completed`
+        );
       }
     }
 
