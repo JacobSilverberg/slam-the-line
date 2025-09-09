@@ -9,10 +9,13 @@ const Pickgrid = () => {
   const [users, setUsers] = useState([]);
   const [userSelections, setUserSelections] = useState({});
   const [games, setGames] = useState({});
+  const [leagueInfo, setLeagueInfo] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch games for all weeks in parallel
   const fetchGames = async () => {
+    if (!leagueInfo) return;
+    
     try {
       const gamePromises = Array.from({ length: 18 }, (_, week) =>
         axios.get(`${apiUrl}/games/${week + 1}`)
@@ -22,7 +25,11 @@ const Pickgrid = () => {
       // Consolidate games into one object where games are stored by week
       const allGames = gameResponses.reduce((acc, response, index) => {
         const week = index + 1;
-        acc[week] = response.data.reduce((gameAcc, game) => {
+        // Filter games by nfl_year === league.year
+        const filteredGames = response.data.filter(
+          (game) => game.nfl_year === leagueInfo.year
+        );
+        acc[week] = filteredGames.reduce((gameAcc, game) => {
           gameAcc[game.id] = game;
           return gameAcc;
         }, {});
@@ -32,6 +39,18 @@ const Pickgrid = () => {
       setGames(allGames);
     } catch (error) {
       console.error('Error fetching games:', error);
+    }
+  };
+
+  // Fetch league info
+  const fetchLeagueInfo = async () => {
+    try {
+      const response = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
+      setLeagueInfo(response.data.league[0]);
+      return response.data.league[0];
+    } catch (error) {
+      console.error('Error fetching league data:', error);
+      return null;
     }
   };
 
@@ -93,7 +112,11 @@ const Pickgrid = () => {
     const fetchAllData = async () => {
       setIsLoading(true);
 
-      await fetchGames();
+      // Fetch league info first
+      const league = await fetchLeagueInfo();
+      if (league) {
+        await fetchGames(); // Now fetch games with league info available
+      }
 
       const fetchedUsers = await fetchUsers(); // Wait for users to be fetched first
       if (fetchedUsers.length > 0) {
@@ -153,7 +176,7 @@ const Pickgrid = () => {
     <div className="main-container">
       <Topbar leagueId={leagueId} />
       <div className="page-content">
-        <h1>User Picks Grid</h1>
+        <h1>User Picks Grid - {leagueInfo?.year} Season</h1>
         <table>
           <thead>
             <tr>

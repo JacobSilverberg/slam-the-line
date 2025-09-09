@@ -43,10 +43,14 @@ const Commissioner = () => {
 
   useEffect(() => {
     const fetchGames = async () => {
-      if (selectedWeek) {
+      if (selectedWeek && leagueInfo) {
         try {
           const response = await axios.get(`${apiUrl}/games/${selectedWeek}`);
-          setGames(response.data); // Set the list of games
+          // Filter games by nfl_year === league.year
+          const filteredGames = response.data.filter(
+            (game) => game.nfl_year === leagueInfo.year
+          );
+          setGames(filteredGames); // Set the filtered list of games
         } catch (error) {
           console.error('Error fetching games data:', error);
         }
@@ -54,7 +58,7 @@ const Commissioner = () => {
     };
 
     fetchGames(); // Fetch games data when a week is selected
-  }, [selectedWeek]);
+  }, [selectedWeek, leagueInfo]);
 
   const handleUserChange = (event) => {
     setSelectedUser(event.target.value); // Update the selected user when the dropdown changes
@@ -165,7 +169,7 @@ const Commissioner = () => {
       <Topbar leagueId={leagueId} />
       <div className="page-content">
         <h1>{leagueInfo.name}</h1>
-        <h2>Commissioner Page</h2>
+        <h2>Commissioner Page - {leagueInfo.year} Season</h2>
 
         {/* Dropdown for selecting a user */}
         <h3>Make Game Selection</h3>

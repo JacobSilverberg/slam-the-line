@@ -11,6 +11,8 @@ const createMockData = async () => {
       .replace('T', ' ');
     const uniqueIdentifier = Date.now();
 
+    console.log('Note: Make sure you have run insertMockData.sql first to create teams and games!');
+
     // Create multiple users
     const userEmails = Array.from(
       { length: 10 },
@@ -53,14 +55,16 @@ const createMockData = async () => {
     const leagues = await Promise.all(
       Array.from({ length: 3 }, async (_, i) => {
         const weeklyPoints = getRandomInt(10, 20); // Example range for weekly points
-        const gamesSelectMin = getRandomInt(1, 32); // Example range for gamesSelectMin
-        const gamesSelectMax = getRandomInt(gamesSelectMin, 32); // Ensure gamesSelectMax >= gamesSelectMin
+        const gamesSelectMin = getRandomInt(1, 8); // More realistic range for gamesSelectMin
+        const gamesSelectMax = getRandomInt(gamesSelectMin, 12); // More realistic range for gamesSelectMax
+        const year = 2025; // Use 2025 for all leagues
 
         // Log the values to verify they are correct
         console.log('Creating league with:');
         console.log('weeklyPoints:', weeklyPoints);
         console.log('gamesSelectMin:', gamesSelectMin);
         console.log('gamesSelectMax:', gamesSelectMax);
+        console.log('year:', year);
 
         // Create the league and log the response for debugging
         const response = await axios.post(
@@ -69,7 +73,7 @@ const createMockData = async () => {
             name: `League_${uniqueIdentifier}_${i}`,
             type: 'league',
             sport: 'nfl',
-            year: 2024,
+            year: year,
             weeklyPoints,
             gamesSelectMin,
             gamesSelectMax,
@@ -83,6 +87,7 @@ const createMockData = async () => {
           weeklyPoints,
           gamesSelectMin,
           gamesSelectMax,
+          year: year, // Make sure year is included
         };
       })
     );
@@ -115,20 +120,31 @@ const createMockData = async () => {
           continue;
         }
 
-        // Make pick selections
+        // Make pick selections for multiple weeks
         try {
-          const week = 1;
+          // Create picks for weeks 1-3 to have more comprehensive test data
+          const weeks = [1, 2, 3];
+          
+          // Debug: Log league info
+          console.log(`League info for league ${leagueId}:`, {
+            id: league.id,
+            year: league.year,
+            weeklyPoints: league.weeklyPoints
+          });
+          
+          for (const week of weeks) {
           const gamesResponse = await axios.get(
             `http://localhost:3000/games/${week}`
           );
-          const games = gamesResponse.data;
+          // Filter games by nfl_year to match the league year
+          const games = gamesResponse.data.filter(game => game.nfl_year === league.year);
 
           // Log fetched games
-          console.log(`Fetched games for week ${week}:`, games);
+          console.log(`Fetched games for week ${week} (year ${league.year}):`, games);
 
           if (games.length === 0) {
             console.warn(
-              `No games found for week ${week}. Skipping picks for user ${userId} in league ${leagueId}.`
+              `No games found for week ${week} in year ${league.year}. Skipping picks for user ${userId} in league ${leagueId}.`
             );
             continue;
           }
@@ -190,11 +206,14 @@ const createMockData = async () => {
             formData
           );
 
-          await axios.post(`http://localhost:3000/submitpicks/`, {
-            userId: userId,
-            leagueId: leagueId,
-            picks: formData,
-          });
+            await axios.post(`http://localhost:3000/submitpicks/`, {
+              userId: userId,
+              leagueId: leagueId,
+              picks: formData,
+            });
+            
+            console.log(`Successfully created picks for user ${userId} in league ${leagueId} for week ${week}`);
+          } // End of week loop
         } catch (err) {
           console.error(
             `Error making picks for user ${userId} in league ${leagueId}:`,
