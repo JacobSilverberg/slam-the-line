@@ -13,11 +13,11 @@ const Pickgrid = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch games for all weeks in parallel
-  const fetchGames = async () => {
-    if (!leagueInfo) return;
+  const fetchGames = async (leagueData) => {
+    if (!leagueData) return;
     
     try {
-      console.log('Fetching games for league year:', leagueInfo.year);
+      console.log('Fetching games for league year:', leagueData.year);
       const gamePromises = Array.from({ length: 18 }, (_, week) =>
         axios.get(`${apiUrl}/games/${week + 1}`)
       );
@@ -30,9 +30,9 @@ const Pickgrid = () => {
         
         // Filter games by nfl_year === league.year
         const filteredGames = response.data.filter(
-          (game) => game.nfl_year === leagueInfo.year
+          (game) => game.nfl_year === leagueData.year
         );
-        console.log(`Week ${week}: After filtering by year ${leagueInfo.year}: ${filteredGames.length} games`);
+        console.log(`Week ${week}: After filtering by year ${leagueData.year}: ${filteredGames.length} games`);
         
         acc[week] = filteredGames.reduce((gameAcc, game) => {
           gameAcc[game.id] = game;
@@ -51,9 +51,13 @@ const Pickgrid = () => {
   // Fetch league info
   const fetchLeagueInfo = async () => {
     try {
+      console.log('Fetching league info for leagueId:', leagueId);
       const response = await axios.get(`${apiUrl}/leagueinfo/${leagueId}`);
-      setLeagueInfo(response.data.league[0]);
-      return response.data.league[0];
+      console.log('League info response:', response.data);
+      const leagueData = response.data.league[0];
+      console.log('League data:', leagueData);
+      setLeagueInfo(leagueData);
+      return leagueData;
     } catch (error) {
       console.error('Error fetching league data:', error);
       return null;
@@ -129,7 +133,7 @@ const Pickgrid = () => {
       // Fetch league info first
       const league = await fetchLeagueInfo();
       if (league) {
-        await fetchGames(); // Now fetch games with league info available
+        await fetchGames(league); // Pass league data directly
       }
 
       const fetchedUsers = await fetchUsers(); // Wait for users to be fetched first
@@ -149,11 +153,13 @@ const Pickgrid = () => {
     
     console.log(`getPicksForWeek - User ${userId}, Week ${week}:`, {
       selections: selections.length,
-      weekGames: weekGames ? Object.keys(weekGames).length : 0
+      weekGames: weekGames ? Object.keys(weekGames).length : 0,
+      gamesObject: games,
+      hasGames: Object.keys(games).length
     });
     
     if (!weekGames) {
-      console.log(`No games found for week ${week}`);
+      console.log(`No games found for week ${week}. Total games object:`, games);
       return [];
     }
 
