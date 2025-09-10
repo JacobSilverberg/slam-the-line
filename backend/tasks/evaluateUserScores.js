@@ -2,12 +2,14 @@ import pool from '../config/db.js';
 
 export async function evaluateUserScores() {
   try {
-    // Fetch completed games from the database
+    // Fetch completed games from the database that also have spread_winner calculated
     const [games] = await pool.query(`
       SELECT id, spread_winner, home_curr_spread, home_team_id, away_team_id, week
       FROM games
-      WHERE game_completed = 1
+      WHERE game_completed = 1 AND spread_winner IS NOT NULL
     `);
+    
+    console.log(`Found ${games.length} completed games with spread_winner calculated`);
 
     // Fetch user selections with game details
     const [userSelections] = await pool.query(`

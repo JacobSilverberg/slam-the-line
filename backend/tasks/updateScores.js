@@ -89,7 +89,20 @@ export async function fetchAndSaveScores() {
           game.id,
         ];
         console.log('Updating game with values:', updateValues);
-        await pool.execute(updateQuery, updateValues);
+        
+        try {
+          const [result] = await pool.execute(updateQuery, updateValues);
+          console.log(`Successfully updated game ${game.id}. Rows affected: ${result.affectedRows}`);
+          
+          // Verify the update was successful
+          const [verifyGame] = await pool.execute(
+            'SELECT game_completed FROM games WHERE api_id = ?',
+            [game.id]
+          );
+          console.log(`Verification - Game ${game.id} game_completed status:`, verifyGame[0]?.game_completed);
+        } catch (updateError) {
+          console.error(`Failed to update game ${game.id}:`, updateError);
+        }
       } else {
         console.error(
           `Game ${game.id} does not exist in db or not completed`

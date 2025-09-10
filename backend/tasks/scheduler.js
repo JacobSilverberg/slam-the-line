@@ -62,8 +62,10 @@ cron.schedule('0 5 * * 2', () => {
 });
 
 // Results Update Schedule: Hourly from Tue-Mon in EST (which is every hour in UTC)
-cron.schedule('5 0-23 * * *', () => {
-  triggerRoutes([evaluateSpreads, evaluateUserScores]);
+cron.schedule('5 0-23 * * *', async () => {
+  // Run evaluateSpreads first, then evaluateUserScores
+  await triggerRoutes([evaluateSpreads]);
+  await triggerRoutes([evaluateUserScores]);
 });
 
 // GameStart Update Schedule: Every 5 minutes.
