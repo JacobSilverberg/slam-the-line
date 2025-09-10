@@ -17,6 +17,7 @@ const Pickgrid = () => {
     if (!leagueInfo) return;
     
     try {
+      console.log('Fetching games for league year:', leagueInfo.year);
       const gamePromises = Array.from({ length: 18 }, (_, week) =>
         axios.get(`${apiUrl}/games/${week + 1}`)
       );
@@ -25,10 +26,14 @@ const Pickgrid = () => {
       // Consolidate games into one object where games are stored by week
       const allGames = gameResponses.reduce((acc, response, index) => {
         const week = index + 1;
+        console.log(`Week ${week}: Found ${response.data.length} total games`);
+        
         // Filter games by nfl_year === league.year
         const filteredGames = response.data.filter(
           (game) => game.nfl_year === leagueInfo.year
         );
+        console.log(`Week ${week}: After filtering by year ${leagueInfo.year}: ${filteredGames.length} games`);
+        
         acc[week] = filteredGames.reduce((gameAcc, game) => {
           gameAcc[game.id] = game;
           return gameAcc;
@@ -36,6 +41,7 @@ const Pickgrid = () => {
         return acc;
       }, {});
 
+      console.log('Final games object:', allGames);
       setGames(allGames);
     } catch (error) {
       console.error('Error fetching games:', error);
@@ -69,22 +75,29 @@ const Pickgrid = () => {
   // Fetch selections for each user
   const fetchUserSelections = async (users) => {
     try {
+      console.log('Fetching user selections for users:', users);
       const selectionPromises = users.flatMap((user) => {
         return Array.from({ length: 18 }, (_, week) =>
           axios
             .get(
               `${apiUrl}/userselections/${leagueId}/${user.user_id}/${week + 1}`
             )
-            .then((response) => ({
-              userId: user.user_id,
-              week: week + 1,
-              selections: response.data.league || [],
-            }))
-            .catch(() => ({
-              userId: user.user_id,
-              week: week + 1,
-              selections: [],
-            }))
+            .then((response) => {
+              console.log(`User ${user.user_id} Week ${week + 1}: Found ${response.data.league?.length || 0} selections`);
+              return {
+                userId: user.user_id,
+                week: week + 1,
+                selections: response.data.league || [],
+              };
+            })
+            .catch((error) => {
+              console.log(`User ${user.user_id} Week ${week + 1}: Error fetching selections:`, error.message);
+              return {
+                userId: user.user_id,
+                week: week + 1,
+                selections: [],
+              };
+            })
         );
       });
 
@@ -102,6 +115,7 @@ const Pickgrid = () => {
         {}
       );
 
+      console.log('Organized user selections:', organizedSelections);
       setUserSelections(organizedSelections);
     } catch (error) {
       console.error('Error fetching user selections:', error);
@@ -132,7 +146,16 @@ const Pickgrid = () => {
   const getPicksForWeek = (userId, week) => {
     const selections = userSelections[userId]?.[week] || [];
     const weekGames = games[week];
-    if (!weekGames) return [];
+    
+    console.log(`getPicksForWeek - User ${userId}, Week ${week}:`, {
+      selections: selections.length,
+      weekGames: weekGames ? Object.keys(weekGames).length : 0
+    });
+    
+    if (!weekGames) {
+      console.log(`No games found for week ${week}`);
+      return [];
+    }
 
     return selections
       .filter((selection) => weekGames[selection.game_id])
