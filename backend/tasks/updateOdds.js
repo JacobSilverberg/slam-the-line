@@ -47,6 +47,10 @@ export async function fetchAndSaveOdds() {
         [game.id]
       );
       console.log('Existing spreads:', existingSpreads);
+      
+      // Determine if we should update open spreads (Tuesday or if they don't exist)
+      const shouldUpdateOpenSpreads = isTuesday || (!existingSpreads[0]?.home_open_spread && !existingSpreads[0]?.away_open_spread);
+      console.log(`Should update open spreads for game ${game.id}: ${shouldUpdateOpenSpreads} (isTuesday: ${isTuesday})`);
 
       // Parse the API response into variables
       for (const bookmaker of game.bookmakers) {
@@ -69,11 +73,7 @@ export async function fetchAndSaveOdds() {
                 (o) => o.name === game.away_team
               );
 
-              if (
-                isTuesday ||
-                (!existingSpreads.home_open_spread &&
-                  !existingSpreads.away_open_spread)
-              ) {
+              if (shouldUpdateOpenSpreads) {
                 homeOpenSpread = homeSpread?.point;
                 awayOpenSpread = awaySpread?.point;
                 homeCurrSpread = homeOpenSpread;
@@ -137,8 +137,8 @@ export async function fetchAndSaveOdds() {
           SET updated_at = ?,
               home_team_id = ?,
               away_team_id = ?,
-              home_open_spread = COALESCE(home_open_spread, ?),
-              away_open_spread = COALESCE(away_open_spread, ?),
+              home_open_spread = ?,
+              away_open_spread = ?,
               home_curr_spread = ?,
               away_curr_spread = ?,
               home_ml_odds = ?,
@@ -157,8 +157,8 @@ export async function fetchAndSaveOdds() {
           last_update,
           homeTeamId,
           awayTeamId,
-          homeOpenSpread,
-          awayOpenSpread,
+          shouldUpdateOpenSpreads ? homeOpenSpread : existingSpreads[0]?.home_open_spread,
+          shouldUpdateOpenSpreads ? awayOpenSpread : existingSpreads[0]?.away_open_spread,
           homeCurrSpread || homeOpenSpread,
           awayCurrSpread || awayOpenSpread,
           homeMlOdds,

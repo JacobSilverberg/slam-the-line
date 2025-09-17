@@ -200,7 +200,12 @@ const Picksheet = () => {
   const handleSubmitPicks = async (e) => {
     e.preventDefault();
 
-      // Disable the submit button after submission
+    // Prevent multiple submissions
+    if (isSubmitting) {
+      return;
+    }
+
+    // Disable the submit button after submission
     setIsSubmitting(true);
 
     const totalWeeklyPoints = Object.values(weeklyPoints).reduce(
@@ -213,11 +218,13 @@ const Picksheet = () => {
       alert(
         `Total weekly points must be equal to ${leagueInfo.weekly_points}.`
       );
+      setIsSubmitting(false);
       return;
     }
 
     if (selectedGamesCount < leagueInfo.games_select_min) {
       alert(`You must select at least ${leagueInfo.games_select_min} games.`);
+      setIsSubmitting(false);
       return;
     }
 
@@ -251,12 +258,27 @@ const Picksheet = () => {
       });
 
       alert('Picks submitted successfully!');
+      
+      // Update the state to reflect that we now have existing selections
+      setHasExistingSelections(true);
+      
     } catch (err) {
+      console.error('Error submitting picks:', err);
+      
+      let errorMessage = 'Failed to submit picks. Please try again.';
+      
       if (err.response) {
-        console.error(err.response.data);
+        if (err.response.status === 409) {
+          errorMessage = 'Picks have already been submitted for this week.';
+        } else if (err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+        }
+        console.error('Server error:', err.response.data);
       } else {
-        console.error(err.message);
+        console.error('Network error:', err.message);
       }
+      
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false); // Re-enable the button after submission is complete
     }
@@ -269,6 +291,18 @@ const Picksheet = () => {
         <h2>
           {leagueInfo.name}'s Week {week} Picksheet
         </h2>
+        {hasExistingSelections && (
+          <div className="submission-status" style={{ 
+            backgroundColor: '#d4edda', 
+            color: '#155724', 
+            padding: '10px', 
+            borderRadius: '5px', 
+            marginBottom: '10px',
+            border: '1px solid #c3e6cb'
+          }}>
+            ✓ Picks have been submitted for this week
+          </div>
+        )}
         <p>
           Select between {leagueInfo.games_select_min} and{' '}
           {leagueInfo.games_select_max} games
@@ -279,8 +313,20 @@ const Picksheet = () => {
           {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
         </p>
         <p>You have selected {selectedCount} games</p>
-        <button onClick={handleSubmitPicks} disabled={isSubmitting} className="submit-button">
-          {isSubmitting ? 'Submitting...' : 'Submit Picks'}
+        <button 
+          onClick={handleSubmitPicks} 
+          disabled={isSubmitting} 
+          className="submit-button"
+          style={{
+            backgroundColor: isSubmitting ? '#6c757d' : '#007bff',
+            color: 'white',
+            padding: '10px 20px',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: isSubmitting ? 'not-allowed' : 'pointer'
+          }}
+        >
+          {isSubmitting ? 'Submitting...' : hasExistingSelections ? 'Update Picks' : 'Submit Picks'}
         </button>
         <div className="game-container-wrapper">
           {Array.isArray(games) && games.length > 0 ? (
@@ -369,9 +415,6 @@ const Picksheet = () => {
             <p>No games available for this week.</p>
           )}
         </div>
-        <button onClick={handleSubmitPicks} disabled={isSubmitting} className="submit-button">
-          {isSubmitting ? 'Submitting...' : 'Submit Picks'}
-        </button>
       </div>
     </div>
   );
