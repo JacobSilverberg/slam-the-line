@@ -303,16 +303,17 @@ const Picksheet = () => {
             ✓ Picks have been submitted for this week
           </div>
         )}
-        <p>
-          Select between {leagueInfo.games_select_min} and{' '}
-          {leagueInfo.games_select_max} games
-        </p>
-        <p>You have {leagueInfo.weekly_points} points to distribute.</p>
-        <p>
-          You have distributed{' '}
-          {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points.
-        </p>
-        <p>You have selected {selectedCount} games</p>
+        <div className="picksheet-instructions">
+          <p className="instruction-text">
+            Select {leagueInfo.games_select_min}-{leagueInfo.games_select_max} games • 
+            Distribute {leagueInfo.weekly_points} points • 
+            Selected: {selectedCount} games • 
+            Distributed: {Object.values(weeklyPoints).reduce((a, b) => a + b, 0)} points
+          </p>
+          <p className="update-note">
+            Game lines update at 8am every day up until gameday.
+          </p>
+        </div>
         <button 
           onClick={handleSubmitPicks} 
           disabled={isSubmitting} 
