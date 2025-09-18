@@ -599,6 +599,12 @@ html {
                 z-index: 11;
                 background: linear-gradient(135deg, $color-accent, $color-accent-light);
                 box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+                width: 120px;
+                max-width: 120px;
+                min-width: 100px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               }
             }
 
@@ -629,6 +635,13 @@ html {
                   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
                   font-weight: 700;
                   color: $color-text-primary;
+                  width: 120px;
+                  max-width: 120px;
+                  min-width: 100px;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  font-size: 0.8rem;
                 }
 
                 &:last-child {
@@ -1214,6 +1227,15 @@ html {
         padding: 0.375rem 0.375rem;
       }
 
+      thead th:first-child,
+      tbody td:first-child {
+        width: 80px;
+        max-width: 80px;
+        min-width: 70px;
+        font-size: 0.7rem;
+        padding: 0.375rem 0.25rem;
+      }
+
       tbody tr {
         height: 2rem;
       }
@@ -1252,5 +1274,18 @@ html {
   .auth {
     padding: 1.5rem 1rem;
     margin: 0.5rem auto;
+  }
+
+  .table-container {
+    table {
+      thead th:first-child,
+      tbody td:first-child {
+        width: 60px;
+        max-width: 60px;
+        min-width: 50px;
+        font-size: 0.65rem;
+        padding: 0.25rem 0.125rem;
+      }
+    }
   }
 }
