@@ -206,7 +206,8 @@ const Pickgrid = () => {
       <Topbar leagueId={leagueId} />
       <div className="page-content">
         <h1>User Picks Grid - {leagueInfo?.year} Season</h1>
-        <table>
+        <div className="table-container">
+          <table>
           <thead>
             <tr>
               <th>User</th>
@@ -231,7 +232,8 @@ const Pickgrid = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );

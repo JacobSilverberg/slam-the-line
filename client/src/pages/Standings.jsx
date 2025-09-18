@@ -59,7 +59,8 @@ const Standings = () => {
       <Topbar leagueId={leagueId} />
       <div className="page-content">
         <h1>League Standings</h1>
-        <table>
+        <div className="table-container">
+          <table>
           <thead>
             <tr>
               <th onClick={() => requestSort('team_name')}>Team Name</th>
@@ -98,7 +99,8 @@ const Standings = () => {
               </tr>
             ))}
           </tbody>
-        </table>
+          </table>
+        </div>
       </div>
     </div>
   );
