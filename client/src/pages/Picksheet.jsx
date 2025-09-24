@@ -338,7 +338,7 @@ const Picksheet = () => {
               };
 
               return (
-                <div className="game-container" key={game.id}>
+                <div className={`game-container ${game.game_started ? 'game-locked' : ''}`} key={game.id}>
                   <div className="game-info">
                     <div className="game-start-date">
                       {new Date(game.game_start_time).toLocaleDateString(

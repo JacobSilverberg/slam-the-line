@@ -835,6 +835,26 @@ html {
               }
             }
 
+            &.game-locked {
+              background: linear-gradient(135deg, rgba($color-text-muted, 0.05), rgba($color-text-muted, 0.1));
+              border-color: $color-text-muted;
+              opacity: 0.9;
+
+              &::before {
+                background: linear-gradient(90deg, $color-text-muted, $color-text-secondary, $color-text-muted);
+              }
+
+              &:hover {
+                transform: none;
+                box-shadow: $shadow-sm;
+                border-color: $color-text-muted;
+
+                &::before {
+                  transform: none;
+                }
+              }
+            }
+
             .game-info {
               flex: 1;
               display: flex;
@@ -916,13 +936,26 @@ html {
               }
 
               &.disabled {
-                opacity: 0.6;
+                opacity: 0.8;
                 cursor: not-allowed;
-                background: $color-border-light;
+                background: linear-gradient(135deg, $color-border-light, #f8f9fa);
+                border-color: $color-text-muted;
+
+                .team-name {
+                  color: $color-text-secondary;
+                  font-weight: 600;
+                }
+
+                .curr-spread,
+                .open-spread {
+                  color: $color-text-secondary;
+                  font-weight: 600;
+                }
 
                 &:hover {
                   transform: none;
                   box-shadow: none;
+                  background: linear-gradient(135deg, $color-border-light, #f8f9fa);
                 }
               }
 
@@ -978,6 +1011,14 @@ html {
                 border-color: $color-primary-light;
               }
 
+              &:disabled {
+                background: $color-border-light;
+                color: $color-text-secondary;
+                border-color: $color-text-muted;
+                font-weight: 600;
+                opacity: 0.9;
+              }
+
               /* Remove arrows in Chrome, Safari, Edge, Opera */
               &::-webkit-outer-spin-button,
               &::-webkit-inner-spin-button {
@@ -1022,6 +1063,12 @@ html {
                 background: rgba($color-primary, 0.05);
                 border-radius: $radius-md;
                 font-size: 0.7rem;
+                gap: 0.5rem;
+
+                .game-start-date,
+                .game-start-time {
+                  margin: 0;
+                }
               }
 
               .team-button {
