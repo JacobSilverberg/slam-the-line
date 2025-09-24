@@ -36,7 +36,11 @@ const Picksheet = () => {
       const filteredGames = gamesRes.data.filter(
         (game) => game.nfl_year === league.year
       );
-      setGames(filteredGames);
+      // Sort games chronologically by game_start_time
+      const sortedGames = filteredGames.sort((a, b) => {
+        return new Date(a.game_start_time) - new Date(b.game_start_time);
+      });
+      setGames(sortedGames);
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching game or league data:', error);
