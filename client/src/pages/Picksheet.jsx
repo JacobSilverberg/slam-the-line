@@ -21,6 +21,30 @@ const Picksheet = () => {
 
   const userId = getUserId();
 
+  // Function to generate picks summary
+  const generatePicksSummary = () => {
+    if (!hasExistingSelections || Object.keys(selectedTeam).length === 0) {
+      return "No picks selected";
+    }
+
+    const picksSummary = Object.entries(selectedTeam).map(([gameId, teamId]) => {
+      const game = games.find(g => g.id === parseInt(gameId));
+      if (!game) return null;
+      
+      const teamName = teamId === game.away_team_id ? game.away_team_name : game.home_team_name;
+      const points = weeklyPoints[gameId] || 0;
+      const gameTime = new Date(game.game_start_time).toLocaleDateString(undefined, {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric'
+      });
+      
+      return `${teamName} (${points}pts) - ${gameTime}`;
+    }).filter(Boolean);
+
+    return picksSummary.join(' • ');
+  };
+
 
   useEffect(() => {
   const fetchGamesAndLeague = async () => {
@@ -299,12 +323,17 @@ const Picksheet = () => {
           <div className="submission-status" style={{ 
             backgroundColor: '#d4edda', 
             color: '#155724', 
-            padding: '10px', 
-            borderRadius: '5px', 
-            marginBottom: '10px',
+            padding: '15px', 
+            borderRadius: '8px', 
+            marginBottom: '15px',
             border: '1px solid #c3e6cb'
           }}>
-            ✓ Picks have been submitted for this week
+            <div style={{ fontWeight: '600', marginBottom: '8px' }}>
+              ✓ Picks have been submitted for this week
+            </div>
+            <div style={{ fontSize: '0.9rem', lineHeight: '1.4', opacity: '0.9' }}>
+              {generatePicksSummary()}
+            </div>
           </div>
         )}
         <div className="picksheet-instructions">

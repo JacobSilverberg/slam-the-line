@@ -800,6 +800,23 @@ html {
             }
           }
 
+          .submission-status {
+            background: rgba($color-success, 0.1) !important;
+            border: 1px solid rgba($color-success, 0.2) !important;
+            border-radius: $radius-lg !important;
+            padding: 1rem !important;
+            margin: 1rem 0 !important;
+            color: darken($color-success, 20%) !important;
+
+            .picks-summary {
+              font-size: 0.875rem;
+              line-height: 1.5;
+              word-wrap: break-word;
+              overflow-wrap: break-word;
+              max-width: 100%;
+            }
+          }
+
           .game-container-wrapper {
             display: flex;
             flex-direction: column;
