@@ -84,37 +84,18 @@ const Standings = () => {
           <tbody>
             {sortedStandings.map((standing) => (
               <tr key={standing.user_id}>
-                <td data-fullname={standing.team_name}>{standing.team_name}</td>
+                <td>{standing.team_name}</td>
                 <td>
                   {Number.isInteger(Number(standing.total_points))
                     ? Number(standing.total_points)
                     : Number(standing.total_points).toFixed(1)}
                 </td>
-                <td>
-                  {Number(standing.picks_correct)}
-                  <span className="percentage">
-                    ({((Number(standing.picks_correct) / Math.max(Number(standing.picks_correct) + Number(standing.picks_incorrect || 0), 1)) * 100).toFixed(0)}%)
-                  </span>
-                </td>
+                <td>{Number(standing.picks_correct)}</td>
                 <td>{Number(standing.max_streak)}</td>
-                <td>
-                  {Number(standing.curr_streak)}
-                  {Number(standing.curr_streak) > 0 && <span className="trend-up"> ↑</span>}
-                  {Number(standing.curr_streak) < 0 && <span className="trend-down"> ↓</span>}
-                </td>
+                <td>{Number(standing.curr_streak)}</td>
                 <td>{Number(standing.perfect_weeks)}</td>
-                <td>
-                  {Number(standing.overdog_correct)}
-                  <span className="percentage">
-                    ({((Number(standing.overdog_correct) / Math.max(Number(standing.overdog_correct) + Number(standing.overdog_incorrect || 0), 1)) * 100).toFixed(0)}%)
-                  </span>
-                </td>
-                <td>
-                  {Number(standing.underdog_correct)}
-                  <span className="percentage">
-                    ({((Number(standing.underdog_correct) / Math.max(Number(standing.underdog_correct) + Number(standing.underdog_incorrect || 0), 1)) * 100).toFixed(0)}%)
-                  </span>
-                </td>
+                <td>{Number(standing.overdog_correct)}</td>
+                <td>{Number(standing.underdog_correct)}</td>
               </tr>
             ))}
           </tbody>

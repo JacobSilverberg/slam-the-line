@@ -234,7 +234,7 @@ const Pickgrid = () => {
               const currentUserId = getUserId();
               return (
                 <tr key={user.user_id} className={user.user_id === currentUserId ? 'current-user' : ''}>
-                  <td data-fullname={user.team_name}>{user.team_name}</td>
+                  <td>{user.team_name}</td>
                 {Array.from({ length: 18 }, (_, i) => (
                   <td key={i + 1}>
                     {getPicksForWeek(user.user_id, i + 1).map((pick, index) => (
