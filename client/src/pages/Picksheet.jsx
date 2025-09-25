@@ -32,10 +32,9 @@ const Picksheet = () => {
       if (!game) return null;
       
       const selectedTeamName = teamId === game.away_team_id ? game.away_team_name : game.home_team_name;
-      const opponentTeamName = teamId === game.away_team_id ? game.home_team_name : game.away_team_name;
       const points = weeklyPoints[gameId] || 0;
       
-      return `${selectedTeamName} (${points} pts) - ${opponentTeamName}`;
+      return `${selectedTeamName} (${points} pts)`;
     }).filter(Boolean);
 
     return picksSummary.join(' • ');
