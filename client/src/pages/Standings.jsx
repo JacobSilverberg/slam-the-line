@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Topbar from '../components/Topbar.jsx';
 import apiUrl from '../services/serverConfig';
+import getUserId from '../services/getUserId';
 
 const Standings = () => {
   const { leagueId } = useParams();
@@ -82,9 +83,11 @@ const Standings = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedStandings.map((standing) => (
-              <tr key={standing.user_id}>
-                <td>{standing.team_name}</td>
+            {sortedStandings.map((standing) => {
+              const currentUserId = getUserId();
+              return (
+                <tr key={standing.user_id} className={standing.user_id === currentUserId ? 'current-user' : ''}>
+                  <td>{standing.team_name}</td>
                 <td>
                   {Number.isInteger(Number(standing.total_points))
                     ? Number(standing.total_points)
@@ -97,7 +100,8 @@ const Standings = () => {
                 <td>{Number(standing.overdog_correct)}</td>
                 <td>{Number(standing.underdog_correct)}</td>
               </tr>
-            ))}
+              );
+            })}
           </tbody>
           </table>
         </div>
