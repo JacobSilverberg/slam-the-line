@@ -621,6 +621,15 @@ html {
                   background: rgba($color-primary, 0.05);
                   transform: none;
                 }
+
+                &.current-user {
+                  background: linear-gradient(135deg, rgba($color-primary, 0.08), rgba($color-primary, 0.12));
+                  border-left: 3px solid $color-primary;
+                  
+                  &:hover {
+                    background: linear-gradient(135deg, rgba($color-primary, 0.12), rgba($color-primary, 0.16));
+                  }
+                }
               }
 
               td {
@@ -642,6 +651,28 @@ html {
                   overflow: hidden;
                   text-overflow: ellipsis;
                   font-size: 0.8rem;
+                  position: relative;
+                  cursor: help;
+
+                  &:hover::after {
+                    content: attr(data-fullname);
+                    position: absolute;
+                    left: 100%;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    background: $color-accent;
+                    color: $color-surface;
+                    padding: 0.5rem 0.75rem;
+                    border-radius: $radius-md;
+                    font-size: 0.75rem;
+                    font-weight: 500;
+                    white-space: nowrap;
+                    z-index: 1000;
+                    box-shadow: $shadow-lg;
+                    border: 1px solid $color-border;
+                    margin-left: 0.5rem;
+                    pointer-events: none;
+                  }
                 }
 
                 &:last-child {
@@ -682,6 +713,25 @@ html {
                   color: $color-surface;
                   box-shadow: $shadow-sm;
                 }
+              }
+
+              .percentage {
+                font-size: 0.7rem;
+                color: $color-text-muted;
+                font-weight: 400;
+                margin-left: 0.25rem;
+              }
+
+              .trend-up {
+                color: $color-success;
+                font-weight: 700;
+                font-size: 0.9rem;
+              }
+
+              .trend-down {
+                color: $color-error;
+                font-weight: 700;
+                font-size: 0.9rem;
               }
             }
           }

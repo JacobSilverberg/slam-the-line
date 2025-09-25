@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Topbar from '../components/Topbar.jsx';
 import apiUrl from '../services/serverConfig';
+import getUserId from '../services/getUserId';
 
 const Pickgrid = () => {
   const { leagueId } = useParams();
@@ -68,8 +69,20 @@ const Pickgrid = () => {
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`${apiUrl}/getusersinleague/${leagueId}`);
-      setUsers(response.data);
-      return response.data;
+      const usersData = response.data;
+      
+      // Get current user ID from localStorage or context
+      const currentUserId = localStorage.getItem('userId') || getUserId();
+      
+      // Sort users to put current user first
+      const sortedUsers = usersData.sort((a, b) => {
+        if (a.user_id === currentUserId) return -1;
+        if (b.user_id === currentUserId) return 1;
+        return 0;
+      });
+      
+      setUsers(sortedUsers);
+      return sortedUsers;
     } catch (error) {
       console.error('Error fetching users:', error);
       return [];
@@ -217,9 +230,11 @@ const Pickgrid = () => {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user.user_id}>
-                <td>{user.team_name}</td>
+            {users.map((user) => {
+              const currentUserId = getUserId();
+              return (
+                <tr key={user.user_id} className={user.user_id === currentUserId ? 'current-user' : ''}>
+                  <td data-fullname={user.team_name}>{user.team_name}</td>
                 {Array.from({ length: 18 }, (_, i) => (
                   <td key={i + 1}>
                     {getPicksForWeek(user.user_id, i + 1).map((pick, index) => (
@@ -230,7 +245,8 @@ const Pickgrid = () => {
                   </td>
                 ))}
               </tr>
-            ))}
+              );
+            })}
           </tbody>
           </table>
         </div>
