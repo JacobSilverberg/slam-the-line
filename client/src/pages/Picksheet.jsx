@@ -320,18 +320,11 @@ const Picksheet = () => {
           {leagueInfo.name}'s Week {week} Picksheet
         </h2>
         {hasExistingSelections && (
-          <div className="submission-status" style={{ 
-            backgroundColor: '#d4edda', 
-            color: '#155724', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            marginBottom: '15px',
-            border: '1px solid #c3e6cb'
-          }}>
+          <div className="submission-status">
             <div style={{ fontWeight: '600', marginBottom: '8px' }}>
               ✓ Picks have been submitted for this week
             </div>
-            <div style={{ fontSize: '0.9rem', lineHeight: '1.4', opacity: '0.9' }}>
+            <div className="picks-summary">
               {generatePicksSummary()}
             </div>
           </div>
