@@ -31,15 +31,11 @@ const Picksheet = () => {
       const game = games.find(g => g.id === parseInt(gameId));
       if (!game) return null;
       
-      const teamName = teamId === game.away_team_id ? game.away_team_name : game.home_team_name;
+      const selectedTeamName = teamId === game.away_team_id ? game.away_team_name : game.home_team_name;
+      const opponentTeamName = teamId === game.away_team_id ? game.home_team_name : game.away_team_name;
       const points = weeklyPoints[gameId] || 0;
-      const gameTime = new Date(game.game_start_time).toLocaleDateString(undefined, {
-        weekday: 'short',
-        month: 'short',
-        day: 'numeric'
-      });
       
-      return `${teamName} (${points}pts) - ${gameTime}`;
+      return `${selectedTeamName} (${points} pts) - ${opponentTeamName}`;
     }).filter(Boolean);
 
     return picksSummary.join(' • ');
