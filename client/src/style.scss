@@ -871,20 +871,6 @@ html {
                 background: linear-gradient(90deg, $color-text-muted, $color-text-secondary, $color-text-muted);
               }
 
-              &::after {
-                content: "GAME STARTED";
-                position: absolute;
-                top: -8px;
-                right: -8px;
-                background: $color-error;
-                color: white;
-                font-size: 0.6rem;
-                font-weight: 700;
-                padding: 2px 6px;
-                border-radius: $radius-sm;
-                z-index: 10;
-                letter-spacing: 0.5px;
-              }
 
               &:hover {
                 transform: none;
@@ -968,20 +954,6 @@ html {
                 box-shadow: $shadow-md;
                 position: relative;
 
-                &::after {
-                  content: "✓ SELECTED";
-                  position: absolute;
-                  top: -6px;
-                  left: -6px;
-                  background: $color-success;
-                  color: white;
-                  font-size: 0.55rem;
-                  font-weight: 700;
-                  padding: 2px 5px;
-                  border-radius: $radius-sm;
-                  z-index: 10;
-                  letter-spacing: 0.3px;
-                }
 
                 .team-name {
                   color: $color-surface;
@@ -1052,11 +1024,6 @@ html {
                     );
                   }
 
-                  &::after {
-                    content: "✓ LOCKED";
-                    background: $color-warning;
-                    color: white;
-                  }
 
                   .team-name {
                     color: $color-surface;
