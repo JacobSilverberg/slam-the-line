@@ -862,12 +862,28 @@ html {
             }
 
             &.game-locked {
-              background: linear-gradient(135deg, rgba($color-text-muted, 0.05), rgba($color-text-muted, 0.1));
+              background: linear-gradient(135deg, rgba($color-text-muted, 0.1), rgba($color-text-muted, 0.15));
               border-color: $color-text-muted;
-              opacity: 0.9;
+              opacity: 0.85;
+              position: relative;
 
               &::before {
                 background: linear-gradient(90deg, $color-text-muted, $color-text-secondary, $color-text-muted);
+              }
+
+              &::after {
+                content: "GAME STARTED";
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                background: $color-danger;
+                color: white;
+                font-size: 0.6rem;
+                font-weight: 700;
+                padding: 2px 6px;
+                border-radius: $radius-sm;
+                z-index: 10;
+                letter-spacing: 0.5px;
               }
 
               &:hover {
@@ -950,22 +966,58 @@ html {
                 color: $color-surface;
                 border-color: $color-primary;
                 box-shadow: $shadow-md;
+                position: relative;
+
+                &::after {
+                  content: "✓ SELECTED";
+                  position: absolute;
+                  top: -6px;
+                  left: -6px;
+                  background: $color-success;
+                  color: white;
+                  font-size: 0.55rem;
+                  font-weight: 700;
+                  padding: 2px 5px;
+                  border-radius: $radius-sm;
+                  z-index: 10;
+                  letter-spacing: 0.3px;
+                }
 
                 .team-name {
                   color: $color-surface;
+                  font-weight: 700;
                 }
 
                 .curr-spread,
                 .open-spread {
                   color: $color-surface;
+                  font-weight: 600;
                 }
               }
 
               &.disabled {
-                opacity: 0.8;
+                opacity: 0.75;
                 cursor: not-allowed;
-                background: linear-gradient(135deg, $color-border-light, #f8f9fa);
+                background: linear-gradient(135deg, rgba($color-text-muted, 0.1), rgba($color-text-muted, 0.15));
                 border-color: $color-text-muted;
+                position: relative;
+
+                &::before {
+                  content: "";
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  right: 0;
+                  bottom: 0;
+                  background: repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 2px,
+                    rgba($color-text-muted, 0.1) 2px,
+                    rgba($color-text-muted, 0.1) 4px
+                  );
+                  pointer-events: none;
+                }
 
                 .team-name {
                   color: $color-text-secondary;
@@ -981,7 +1033,41 @@ html {
                 &:hover {
                   transform: none;
                   box-shadow: none;
-                  background: linear-gradient(135deg, $color-border-light, #f8f9fa);
+                  background: linear-gradient(135deg, rgba($color-text-muted, 0.1), rgba($color-text-muted, 0.15));
+                }
+
+                // Special styling for selected + disabled (game started but team was selected)
+                &.selected {
+                  background: linear-gradient(135deg, rgba($color-primary, 0.7), rgba($color-primary-dark, 0.7));
+                  border-color: $color-primary;
+                  opacity: 0.9;
+
+                  &::before {
+                    background: repeating-linear-gradient(
+                      45deg,
+                      transparent,
+                      transparent 2px,
+                      rgba($color-primary, 0.2) 2px,
+                      rgba($color-primary, 0.2) 4px
+                    );
+                  }
+
+                  &::after {
+                    content: "✓ LOCKED";
+                    background: $color-warning;
+                    color: white;
+                  }
+
+                  .team-name {
+                    color: $color-surface;
+                    font-weight: 700;
+                  }
+
+                  .curr-spread,
+                  .open-spread {
+                    color: $color-surface;
+                    font-weight: 600;
+                  }
                 }
               }
 
