@@ -11,7 +11,7 @@ dotenv.config({ path: resolve(__dirname, '../.env') });
 const API_KEY = process.env.API_KEY;
 
 const sport = 'americanfootball_nfl';
-const daysFrom = '1';
+const daysFrom = '3'; // Increased from 1 to 3 to catch games that were missed in initial updates
 
 // API endpoint
 const apiUrl = `https://api.the-odds-api.com/v4/sports/${sport}/scores/?daysFrom=${daysFrom}&apiKey=${API_KEY}`;

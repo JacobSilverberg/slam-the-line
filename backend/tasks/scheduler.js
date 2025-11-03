@@ -51,13 +51,18 @@ cron.schedule('0 21 * * 7', () => {
   triggerRoutes([updateScores]);
 });
 
-// Sun at 8pm, Midnight EDT (which is 12am, 4am UTC Mon)
-cron.schedule('0 0,4 * * 1', () => {
+// Sun at 8pm EDT (which is 12am UTC Mon)
+cron.schedule('0 0 * * 1', () => {
   triggerRoutes([updateScores]);
 });
 
-// Mon at 1am EST (which is 5am UTC Tue)
-cron.schedule('0 5 * * 2', () => {
+// Mon at 1am, 3am EDT for SNF (which is 5am, 7am UTC Tue)
+cron.schedule('0 5,7 * * 2', () => {
+  triggerRoutes([updateScores]);
+});
+
+// Tue at 1am, 3am EDT for MNF (which is 5am, 7am UTC Wed)
+cron.schedule('0 5,7 * * 3', () => {
   triggerRoutes([updateScores]);
 });
 
@@ -86,13 +91,13 @@ Mon: 8am
 */
 
 /* Scores Update Schedule:
-Tue: 
+Tue: 1am, 3am (for MNF)
 Wed: 
-Thu: Midnight
+Thu: Midnight (for TNF)
 Fri: 
 Sat: 
-Sun: 5pm, 8pm, Midnight
-Mon: 1am
+Sun: 5pm, 8pm
+Mon: 1am, 3am (for SNF)
 */
 
 /* Results Update Schedule:

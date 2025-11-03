@@ -61,16 +61,19 @@ export async function fetchAndSaveScores() {
         continue; // Skip this iteration and move to the next game
       }
 
-      // Check if the game exists in db
+      // Check if the game exists in db and if it's already been marked as completed
       const [existingGame] = await pool.execute(
-        'SELECT id FROM games WHERE api_id = ?',
+        'SELECT id, game_completed FROM games WHERE api_id = ?',
         [game.id]
       );
       console.log(
         `Game ${game.id} exists in DB:`,
-        existingGame.length > 0
+        existingGame.length > 0,
+        'Already completed:',
+        existingGame[0]?.game_completed
       );
 
+      // Only update if game exists, is completed, and hasn't been marked complete yet (or needs score update)
       if (existingGame.length > 0 && gameCompleted) {
         // Update the existing game
         const updateQuery = `
