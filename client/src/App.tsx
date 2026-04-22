@@ -7,23 +7,23 @@ import {
   useLocation,
 } from 'react-router-dom';
 
-import Navbar from './components/Navbar.jsx';
-import { AuthContext } from './context/AuthContext.jsx';
+import Navbar from './components/Navbar.tsx';
+import { AuthContext } from './context/AuthContext.tsx';
 import './style.scss';
 
 // Code-split all pages — each loads only when navigated to
-const Home = lazy(() => import('./pages/Home.jsx'));
-const Login = lazy(() => import('./pages/Login.jsx'));
-const Register = lazy(() => import('./pages/Register.jsx'));
-const UpdatePassword = lazy(() => import('./pages/UpdatePassword.jsx'));
-const League = lazy(() => import('./pages/League.jsx'));
-const Standings = lazy(() => import('./pages/Standings.jsx'));
-const Picksheet = lazy(() => import('./pages/Picksheet.jsx'));
-const Pickgrid = lazy(() => import('./pages/Pickgrid.jsx'));
-const JoinLeague = lazy(() => import('./pages/JoinLeague.jsx'));
-const CreateLeague = lazy(() => import('./pages/CreateLeague.jsx'));
-const UserProfile = lazy(() => import('./pages/UserProfile.jsx'));
-const Commissioner = lazy(() => import('./pages/Commissioner.jsx'));
+const Home = lazy(() => import('./pages/Home.tsx'));
+const Login = lazy(() => import('./pages/Login.tsx'));
+const Register = lazy(() => import('./pages/Register.tsx'));
+const UpdatePassword = lazy(() => import('./pages/UpdatePassword.tsx'));
+const League = lazy(() => import('./pages/League.tsx'));
+const Standings = lazy(() => import('./pages/Standings.tsx'));
+const Picksheet = lazy(() => import('./pages/Picksheet.tsx'));
+const Pickgrid = lazy(() => import('./pages/Pickgrid.tsx'));
+const JoinLeague = lazy(() => import('./pages/JoinLeague.tsx'));
+const CreateLeague = lazy(() => import('./pages/CreateLeague.tsx'));
+const UserProfile = lazy(() => import('./pages/UserProfile.tsx'));
+const Commissioner = lazy(() => import('./pages/Commissioner.tsx'));
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
