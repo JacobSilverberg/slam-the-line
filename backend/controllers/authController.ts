@@ -11,7 +11,7 @@ dotenv.config();
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true,
-  sameSite: 'none' as const,
+  sameSite: 'strict' as const,
   maxAge: 3600000, // 1 hour
 };
 
@@ -93,7 +93,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const logout = (_req: Request, res: Response): void => {
-  res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'none' });
+  res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'strict' });
   res.json({ msg: 'Logged out' });
 };
 
