@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { AuthContext } from '../context/AuthContext.jsx';
-import Topbar from '../components/Topbar.jsx';
-import apiUrl from '../services/serverConfig.js';
+import { AuthContext } from '../context/AuthContext.tsx';
+import Topbar from '../components/Topbar.tsx';
+import apiUrl from '../services/serverConfig.ts';
 
 const Pickgrid = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
@@ -23,37 +23,26 @@ const Pickgrid = () => {
         ]);
         const league = leagueRes.data.league[0];
         setLeagueInfo(league);
+        setUsers(usersRes.data);
 
-        const gameResponses = await Promise.all(
-          Array.from({ length: 18 }, (_, i) => axios.get(`${apiUrl}/games/${i + 1}`))
-        );
-        const allGames = gameResponses.reduce<Record<number, Record<number, any>>>((acc, res, i) => {
-          const week = i + 1;
-          acc[week] = res.data
-            .filter((g: any) => g.nfl_year === league.year)
-            .reduce((ga: any, g: any) => { ga[g.id] = g; return ga; }, {});
-          return acc;
-        }, {});
+        const [gamesRes, selectionsRes] = await Promise.all([
+          axios.get(`${apiUrl}/games/season/${league.year}`),
+          axios.get(`${apiUrl}/userselections/${leagueId}`),
+        ]);
+
+        const allGames: Record<number, Record<number, any>> = {};
+        for (const g of gamesRes.data) {
+          if (!allGames[g.week]) allGames[g.week] = {};
+          allGames[g.week][g.id] = g;
+        }
         setGames(allGames);
 
-        const fetchedUsers = usersRes.data;
-        setUsers(fetchedUsers);
-
-        const selectionResults = await Promise.all(
-          fetchedUsers.flatMap((u: any) =>
-            Array.from({ length: 18 }, (_, i) =>
-              axios.get(`${apiUrl}/userselections/${leagueId}/${u.user_id}/${i + 1}`)
-                .then((res) => ({ userId: u.user_id, week: i + 1, selections: res.data.league || [] }))
-                .catch(() => ({ userId: u.user_id, week: i + 1, selections: [] }))
-            )
-          )
-        );
-
-        const organized = selectionResults.reduce<Record<number, Record<number, any[]>>>((acc, { userId, week, selections }) => {
-          if (!acc[userId]) acc[userId] = {};
-          acc[userId][week] = selections;
-          return acc;
-        }, {});
+        const organized: Record<number, Record<number, any[]>> = {};
+        for (const s of selectionsRes.data) {
+          if (!organized[s.user_id]) organized[s.user_id] = {};
+          if (!organized[s.user_id][s.week]) organized[s.user_id][s.week] = [];
+          organized[s.user_id][s.week].push(s);
+        }
         setUserSelections(organized);
       } catch (err) {
         console.error('Error fetching pickgrid data:', err);
