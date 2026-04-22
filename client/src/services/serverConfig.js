@@ -1,15 +1,3 @@
-let apiUrl;
-
-console.log('mode', import.meta.env.MODE);
-
-if (import.meta.env.MODE === 'production') {
-  // When running in production mode (vite preview)
-  apiUrl = 'https://nodejs-production-c255.up.railway.app';
-} else {
-  // When running in dev mode (npm run dev)
-  apiUrl = 'http://localhost:3000';
-}
-
-// console.log('apiUrl at serverConfig:', apiUrl);
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 export default apiUrl;
