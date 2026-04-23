@@ -25,15 +25,22 @@ const CreateLeague = lazy(() => import('./pages/CreateLeague.tsx'));
 const UserProfile = lazy(() => import('./pages/UserProfile.tsx'));
 const Commissioner = lazy(() => import('./pages/Commissioner.tsx'));
 
+const AUTH_PATHS = ['/login', '/register', '/updatepassword'];
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const showNavbar = ['/', '/league'].some((path) => location.pathname.startsWith(path));
+  const isAuthPage = AUTH_PATHS.includes(location.pathname);
+  const isLeaguePage = location.pathname.startsWith('/league/');
 
+  // Auth pages and league pages manage their own full-screen layout
+  if (isAuthPage || isLeaguePage) return <>{children}</>;
+
+  // Home, JoinLeague, CreateLeague, UserProfile get the Navbar
   return (
     <>
-      {showNavbar && <Navbar />}
-      <div className="content">
-        <div className="main">{children}</div>
+      <Navbar />
+      <div style={{ background: '#0c1628', minHeight: 'calc(100vh - 56px)' }}>
+        {children}
       </div>
     </>
   );

@@ -1,23 +1,40 @@
 import { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext.jsx';
-import LeagueDropdown from './LeagueDropdown.jsx';
+import { AuthContext } from '../context/AuthContext.tsx';
+import LeagueDropdown from './LeagueDropdown.tsx';
 import Logo from '../assets/STL_Logo.webp';
+
+const FF = "'Barlow Condensed', sans-serif";
 
 const Navbar = () => {
   const { logout } = useContext(AuthContext);
 
   return (
-    <div className="navbar">
-      <div className="container">
-        <div className="logo">
-          <Link to="/"><img src={Logo} alt="Logo" /></Link>
-        </div>
-        <div className="links">
-          <LeagueDropdown />
-          <span onClick={() => { logout(); }}>LOGOUT</span>
-          <span className="home"><Link className="link" to="/">HOME</Link></span>
-        </div>
+    <div style={{
+      background: '#152540', borderBottom: '1px solid #1e3354',
+      height: 56, display: 'flex', alignItems: 'center',
+      padding: '0 20px', position: 'sticky', top: 0, zIndex: 200,
+      justifyContent: 'space-between',
+    }}>
+      <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none' }}>
+        <img src={Logo} alt="STL" style={{ width: 36, height: 36, objectFit: 'contain' }} />
+        <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+          Slam the Line
+        </span>
+      </Link>
+      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        <LeagueDropdown />
+        <button
+          onClick={logout}
+          style={{
+            background: 'none', border: '1px solid #1e3354', color: '#475569',
+            fontFamily: FF, fontSize: 13, fontWeight: 700, letterSpacing: 1,
+            padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
+            textTransform: 'uppercase',
+          }}
+        >
+          Logout
+        </button>
       </div>
     </div>
   );
