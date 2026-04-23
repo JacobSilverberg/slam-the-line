@@ -89,7 +89,8 @@ export async function evaluateUserScores() {
       const [leagueInfo] = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [leagueId]);
       const leagueWeeklyPoints = leagueInfo[0]?.weekly_points;
       if (!leagueWeeklyPoints) {
-        throw new Error(`League info not found for league_id ${leagueId}`);
+        console.error(`League info not found for league_id ${leagueId}, skipping`);
+        continue;
       }
 
       // If the user's total points aren't equal to the weekly_points, it's not a perfect week
@@ -135,14 +136,6 @@ export async function evaluateUserScores() {
         // If the user did not have a perfect week, reset curr_streak
         userScore.curr_streak = 0;
         userScore.max_streak = lastWeekMaxStreak; // max_streak remains unchanged if no perfect week
-      }
-
-      // Now, calculate max_streak
-      const potentialMaxStreak = lastWeekCurrStreak + userScore.points;
-      if (potentialMaxStreak > lastWeekMaxStreak) {
-        userScore.max_streak = potentialMaxStreak;
-      } else {
-        userScore.max_streak = lastWeekMaxStreak;
       }
 
       // Insert or update the user's score for the current week
