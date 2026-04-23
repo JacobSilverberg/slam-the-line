@@ -27,7 +27,7 @@ const Navbar = () => {
           <button
             onClick={logout}
             style={{
-              background: 'none', border: '1px solid #1e3354', color: '#475569',
+              background: 'none', border: '1px solid #1e3354', color: '#94a3b8',
               fontFamily: FF, fontSize: 13, fontWeight: 700, letterSpacing: 1,
               padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
               textTransform: 'uppercase',

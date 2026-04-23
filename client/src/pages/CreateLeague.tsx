@@ -8,7 +8,7 @@ const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2025', 10);
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
-  amb: '#f59e0b', txt: '#e2e8f0', mut: '#475569', bor: '#1e3354',
+  amb: '#f59e0b', txt: '#e2e8f0', mut: '#94a3b8', bor: '#1e3354',
 } as const;
 const FF = "'Barlow Condensed', sans-serif";
 const FFb = "'Barlow', sans-serif";

@@ -9,7 +9,7 @@ import apiUrl from '../services/serverConfig.ts';
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
   amb: '#f59e0b', ind: '#818cf8', txt: '#e2e8f0',
-  mut: '#475569', bor: '#1e3354', grn: '#10b981', red: '#ef4444',
+  mut: '#94a3b8', bor: '#1e3354', grn: '#10b981', red: '#ef4444',
 } as const;
 
 const FF = "'Barlow Condensed', sans-serif";

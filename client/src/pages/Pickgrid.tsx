@@ -7,7 +7,7 @@ import apiUrl from '../services/serverConfig.ts';
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
-  amb: '#f59e0b', txt: '#e2e8f0', mut: '#475569', bor: '#1e3354',
+  amb: '#f59e0b', txt: '#e2e8f0', mut: '#94a3b8', bor: '#1e3354',
   grn: '#10b981', red: '#ef4444',
 } as const;
 const FF = "'Barlow Condensed', sans-serif";
@@ -103,6 +103,14 @@ const Pickgrid = () => {
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+      <style>{`
+        .pg-team { min-width: 72px; max-width: 72px; white-space: normal; word-break: break-word; }
+        .pg-week { min-width: 78px; }
+        @media (min-width: 500px) {
+          .pg-team { min-width: 90px; max-width: 110px; }
+          .pg-week { min-width: 100px; }
+        }
+      `}</style>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '20px', position: 'relative', overflow: 'hidden',
@@ -141,19 +149,19 @@ const Pickgrid = () => {
           <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
             <thead>
               <tr style={{ background: C.card }}>
-                <th style={{
+                <th className="pg-team" style={{
                   position: 'sticky', left: 0, top: 0, background: C.card, zIndex: 15,
-                  padding: '10px 14px', fontFamily: FF, fontSize: 12, color: C.mut,
+                  padding: '10px 10px', fontFamily: FF, fontSize: 12, color: C.mut,
                   textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700,
                   textAlign: 'left', borderBottom: `1px solid ${C.bor}`,
-                  borderRight: `1px solid ${C.bor}`, minWidth: 110,
+                  borderRight: `1px solid ${C.bor}`,
                 }}>Team</th>
                 {Array.from({ length: 18 }, (_, i) => (
-                  <th key={i + 1} style={{
+                  <th key={i + 1} className="pg-week" style={{
                     position: 'sticky', top: 0, background: C.card, zIndex: 10,
                     padding: '10px 8px', fontFamily: FF, fontSize: 12, color: C.mut,
                     textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700,
-                    borderBottom: `1px solid ${C.bor}`, minWidth: 90,
+                    borderBottom: `1px solid ${C.bor}`,
                   }}>
                     Wk {i + 1}
                   </th>
@@ -165,20 +173,20 @@ const Pickgrid = () => {
                 const isMe = u.user_id === user?.userId;
                 return (
                   <tr key={u.user_id} style={{ borderBottom: `1px solid ${C.bor}` }}>
-                    <td style={{
+                    <td className="pg-team" style={{
                       position: 'sticky', left: 0, zIndex: 5,
                       background: isMe ? C.d2 : C.bg,
-                      padding: '8px 14px', fontFamily: FF, fontSize: 13,
+                      padding: '8px 10px', fontFamily: FF, fontSize: 12,
                       color: isMe ? C.amb : C.txt, fontWeight: 900,
                       textTransform: 'uppercase', letterSpacing: 0.3,
-                      borderRight: `1px solid ${C.bor}`,
+                      borderRight: `1px solid ${C.bor}`, lineHeight: 1.3,
                     }}>
                       {u.team_name}
                     </td>
                     {Array.from({ length: 18 }, (_, i) => {
                       const wkPicks = getPicksForWeek(u.user_id, i + 1);
                       return (
-                        <td key={i + 1} style={{ padding: '5px', verticalAlign: 'top', minWidth: 90, background: isMe ? 'rgba(26,45,74,0.3)' : 'transparent' }}>
+                        <td key={i + 1} className="pg-week" style={{ padding: '5px', verticalAlign: 'top', background: isMe ? 'rgba(26,45,74,0.3)' : 'transparent' }}>
                           <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                             {wkPicks.length > 0 ? wkPicks.map((pick, idx) => (
                               <div key={idx} style={{ padding: '3px 6px', borderRadius: 5, fontFamily: FF, fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 0.3, ...pickStyle(pick.status) }}>
