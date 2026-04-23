@@ -222,16 +222,16 @@ const Picksheet = () => {
                     <div key={team.id}
                       onClick={() => handleSelectTeam(game.id, team.id)}
                       style={{
-                        flex: 1, padding: '10px 12px', borderRadius: 8,
+                        flex: 1, padding: '8px 10px', borderRadius: 8,
                         cursor: locked ? 'default' : 'pointer',
                         background: on ? `${C.amb}1a` : C.d2,
                         border: `2px solid ${on ? C.amb : 'transparent'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                         userSelect: 'none', gap: 6, minWidth: 0,
                       }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 2, minWidth: 0 }}>
-                        <span style={{ fontSize: 13, fontWeight: 700, color: on ? C.amb : C.mut, letterSpacing: 1.2, textTransform: 'uppercase', lineHeight: 1 }}>{team.abbr}</span>
-                        <span style={{ fontSize: 26, fontWeight: 900, color: on ? C.amb : C.txt, lineHeight: 1, letterSpacing: -0.5 }}>{fmt(team.spread)}</span>
+                      <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, minWidth: 0 }}>
+                        <span style={{ fontSize: 20, fontWeight: 900, color: on ? C.amb : C.txt, lineHeight: 1, letterSpacing: -0.3 }}>{team.abbr}</span>
+                        <span style={{ fontSize: 20, fontWeight: 700, color: on ? C.amb : C.txt, lineHeight: 1 }}>{fmt(team.spread)}</span>
                       </div>
                       {on && (
                         <div style={{ flexShrink: 0, width: 20, height: 20, borderRadius: 99, background: C.amb, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
