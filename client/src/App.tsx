@@ -27,21 +27,28 @@ const Commissioner = lazy(() => import('./pages/Commissioner.tsx'));
 
 const AUTH_PATHS = ['/login', '/register', '/updatepassword'];
 
+// Center content on desktop while staying full-width on mobile
+const PageCenter = ({ children, fullScreen }: { children: React.ReactNode; fullScreen?: boolean }) => (
+  <div style={{ background: '#0c1628', minHeight: fullScreen ? '100vh' : 'calc(100vh - 56px)', display: 'flex', justifyContent: 'center' }}>
+    <div style={{ width: '100%', maxWidth: 720 }}>
+      {children}
+    </div>
+  </div>
+);
+
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isAuthPage = AUTH_PATHS.includes(location.pathname);
   const isLeaguePage = location.pathname.startsWith('/league/');
 
-  // Auth pages and league pages manage their own full-screen layout
-  if (isAuthPage || isLeaguePage) return <>{children}</>;
+  if (isAuthPage || isLeaguePage) {
+    return <PageCenter fullScreen>{children}</PageCenter>;
+  }
 
-  // Home, JoinLeague, CreateLeague, UserProfile get the Navbar
   return (
     <>
       <Navbar />
-      <div style={{ background: '#0c1628', minHeight: 'calc(100vh - 56px)' }}>
-        {children}
-      </div>
+      <PageCenter>{children}</PageCenter>
     </>
   );
 };
