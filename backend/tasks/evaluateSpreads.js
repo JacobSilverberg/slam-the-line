@@ -24,6 +24,11 @@ export async function evaluateSpreads() {
       home_points = parseFloat(home_points);
       away_points = parseFloat(away_points);
 
+      if (isNaN(home_curr_spread) || isNaN(home_points) || isNaN(away_points)) {
+        console.error(`Skipping game ${api_id}: missing spread or score data (spread=${home_curr_spread}, home=${home_points}, away=${away_points})`);
+        continue;
+      }
+
       // Calculate the adjusted home points
       const adjustedHomePoints = home_points + home_curr_spread;
 
