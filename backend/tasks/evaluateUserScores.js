@@ -1,23 +1,29 @@
 import pool from '../config/db.js';
+import { calculateNFLWeekAndDay } from './nflWeekCalculator.js';
 
 export async function evaluateUserScores() {
   try {
+    const { week: currentWeek } = calculateNFLWeekAndDay(new Date());
+    // Process only the current and previous week — earlier weeks are already finalized in users_have_scores
+    const minWeek = Math.max(1, currentWeek - 1);
+
     // Fetch completed games from the database that also have spread_winner calculated
     const [games] = await pool.query(`
       SELECT id, spread_winner, home_curr_spread, home_team_id, away_team_id, week
       FROM games
-      WHERE game_completed = 1 AND spread_winner IS NOT NULL
-    `);
-    
-    console.log(`Found ${games.length} completed games with spread_winner calculated`);
+      WHERE game_completed = 1 AND spread_winner IS NOT NULL AND week >= ?
+      ORDER BY week ASC
+    `, [minWeek]);
+
+    console.log(`Found ${games.length} completed games with spread_winner calculated (week >= ${minWeek})`);
 
     // Fetch user selections with game details
     const [userSelections] = await pool.query(`
       SELECT usg.id AS selection_id, usg.user_id, usg.league_id, usg.game_id, usg.points, usg.team_id, g.week
       FROM users_select_games usg
       JOIN games g ON usg.game_id = g.id
-      WHERE g.game_completed = 1
-    `);
+      WHERE g.game_completed = 1 AND g.week >= ?
+    `, [minWeek]);
 
     const userScores = {};
 
@@ -82,7 +88,8 @@ export async function evaluateUserScores() {
       }
     }
 
-    for (const scoreKey of Object.keys(userScores)) {
+    const sortedScoreKeys = Object.keys(userScores).sort((a, b) => userScores[a].week - userScores[b].week);
+    for (const scoreKey of sortedScoreKeys) {
       const userScore = userScores[scoreKey];
       const leagueId = userScore.league_id;
 

@@ -10,7 +10,7 @@ export async function checkAndUpdateGameStatus() {
     `);
 
     if (!games || games.length === 0) {
-      throw new Error('No games found in the database.');
+      return;
     }
 
     for (const game of games) {
