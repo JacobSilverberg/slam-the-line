@@ -5,23 +5,21 @@ import { AuthContext } from '../context/AuthContext.tsx';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
 import apiUrl from '../services/serverConfig.ts';
 
-type SortKey = 'total_points' | 'picks_correct' | 'max_streak' | 'curr_streak' | 'perfect_weeks' | 'overdog_correct' | 'underdog_correct';
+type SortKey = 'total_points' | 'picks_correct' | 'max_streak' | 'curr_streak' | 'perfect_weeks';
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
-  amb: '#f59e0b', txt: '#e2e8f0', mut: '#475569', bor: '#1e3354',
+  amb: '#f59e0b', txt: '#e2e8f0', mut: '#94a3b8', bor: '#1e3354',
 } as const;
 const FF = "'Barlow Condensed', sans-serif";
 const FFb = "'Barlow', sans-serif";
 
 const SORT_OPTS: { key: SortKey; label: string }[] = [
   { key: 'total_points', label: 'Points' },
-  { key: 'picks_correct', label: 'Correct' },
-  { key: 'curr_streak', label: 'Streak' },
-  { key: 'max_streak', label: 'Best' },
-  { key: 'perfect_weeks', label: 'Perfect' },
-  { key: 'overdog_correct', label: 'Favs' },
-  { key: 'underdog_correct', label: 'Dogs' },
+  { key: 'picks_correct', label: 'Total Correct' },
+  { key: 'curr_streak', label: 'Curr Streak' },
+  { key: 'max_streak', label: 'Max Streak' },
+  { key: 'perfect_weeks', label: 'Perfect Wks' },
 ];
 
 const Standings = () => {
@@ -43,7 +41,6 @@ const Standings = () => {
       .catch((err) => console.error('Error fetching standings:', err));
   }, [leagueId]);
 
-  // Re-attach observer after standings load so the ref is populated
   useEffect(() => {
     const el = userCardRef.current;
     if (!el) return;
@@ -167,20 +164,25 @@ const Standings = () => {
                     {s.team_name}
                   </span>
                 </div>
-                <span style={{ fontFamily: FF, fontSize: 22, fontWeight: 900, color: C.amb }}>
-                  {fmt(s.total_points)}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                  <span style={{ fontFamily: FF, fontSize: 22, fontWeight: 900, color: C.amb, lineHeight: 1 }}>
+                    {fmt(s.total_points)}
+                  </span>
+                  <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 1 }}>
+                    points
+                  </span>
+                </div>
               </div>
               <div style={{ display: 'flex', borderTop: `1px solid ${C.bor}`, paddingTop: 10 }}>
                 {[
-                  { label: 'Correct', val: s.picks_correct },
-                  { label: 'Streak', val: s.curr_streak },
-                  { label: 'Best', val: s.max_streak },
-                  { label: 'Perfect', val: s.perfect_weeks },
+                  { label: 'Total Correct', val: s.picks_correct },
+                  { label: 'Curr Streak', val: s.curr_streak },
+                  { label: 'Max Streak', val: s.max_streak },
+                  { label: 'Perfect Wks', val: s.perfect_weeks },
                 ].map((stat) => (
                   <div key={stat.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <span style={{ fontFamily: FF, fontSize: 16, fontWeight: 900, color: C.txt }}>{stat.val}</span>
-                    <span style={{ fontFamily: FFb, fontSize: 10, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5 }}>{stat.label}</span>
+                    <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' }}>{stat.label}</span>
                   </div>
                 ))}
               </div>

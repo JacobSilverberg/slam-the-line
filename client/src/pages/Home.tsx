@@ -12,7 +12,7 @@ const DEFAULT_LEAGUE_ID = import.meta.env.VITE_DEFAULT_LEAGUE_ID || null;
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
   amb: '#f59e0b', ind: '#818cf8', txt: '#e2e8f0',
-  mut: '#475569', bor: '#1e3354',
+  mut: '#94a3b8', bor: '#1e3354',
 } as const;
 const FF = "'Barlow Condensed', sans-serif";
 const FFb = "'Barlow', sans-serif";
