@@ -83,26 +83,45 @@ const Standings = () => {
           borderTop: bannerPos === 'bottom' ? `2px solid ${C.amb}` : 'none',
           borderBottom: bannerPos === 'top' ? `2px solid ${C.amb}` : 'none',
         }}>
-          <div style={{ maxWidth: 720, margin: '0 auto', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{
-              width: 26, height: 26, borderRadius: 99,
-              background: myRank === 1 ? C.amb : C.d2,
-              border: `1px solid ${myRank === 1 ? 'transparent' : C.bor}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontFamily: FF, fontSize: 12, fontWeight: 900,
-              color: myRank === 1 ? '#000' : C.mut, flexShrink: 0,
-            }}>
-              {myRank}
+          <div style={{ maxWidth: 720, margin: '0 auto', padding: '8px 16px 10px' }}>
+            {/* Rank + name + points */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+              <div style={{
+                width: 24, height: 24, borderRadius: 99,
+                background: myRank === 1 ? C.amb : C.d2,
+                border: `1px solid ${myRank === 1 ? 'transparent' : C.bor}`,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontFamily: FF, fontSize: 11, fontWeight: 900,
+                color: myRank === 1 ? '#000' : C.mut, flexShrink: 0,
+              }}>
+                {myRank}
+              </div>
+              <span style={{ fontFamily: FF, fontSize: 15, fontWeight: 900, color: C.txt, textTransform: 'uppercase', flex: 1, letterSpacing: 0.3 }}>
+                {myEntry.team_name}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
+                <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: C.amb, lineHeight: 1 }}>
+                  {fmt(myEntry.total_points)}
+                </span>
+                <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                  pts
+                </span>
+              </div>
             </div>
-            <span style={{ fontFamily: FF, fontSize: 15, fontWeight: 900, color: C.txt, textTransform: 'uppercase', flex: 1, letterSpacing: 0.3 }}>
-              {myEntry.team_name}
-            </span>
-            <span style={{ fontFamily: FF, fontSize: 11, fontWeight: 700, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-              {SORT_OPTS.find((o) => o.key === sortKey)?.label}
-            </span>
-            <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: C.amb, minWidth: 40, textAlign: 'right' }}>
-              {fmt(myEntry[sortKey])}
-            </span>
+            {/* All stats */}
+            <div style={{ display: 'flex', borderTop: `1px solid ${C.bor}`, paddingTop: 8 }}>
+              {[
+                { label: 'Total Correct', val: myEntry.picks_correct },
+                { label: 'Curr Streak', val: myEntry.curr_streak },
+                { label: 'Max Streak', val: myEntry.max_streak },
+                { label: 'Perfect Wks', val: myEntry.perfect_weeks },
+              ].map((stat) => (
+                <div key={stat.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                  <span style={{ fontFamily: FF, fontSize: 14, fontWeight: 900, color: C.txt }}>{stat.val}</span>
+                  <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' }}>{stat.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -116,7 +135,11 @@ const Standings = () => {
         <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: -0.5, position: 'relative', zIndex: 1 }}>Standings</div>
       </div>
 
-      <div style={{ padding: '12px 16px', background: C.card, borderBottom: `1px solid ${C.bor}`, display: 'flex', gap: 6, overflowX: 'auto' }}>
+      <div style={{ padding: '10px 16px 12px', background: C.card, borderBottom: `1px solid ${C.bor}` }}>
+        <span style={{ fontFamily: FFb, fontSize: 10, color: C.mut, textTransform: 'uppercase', letterSpacing: 1.2, display: 'block', marginBottom: 8 }}>
+          Sort by
+        </span>
+        <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
         {SORT_OPTS.map((opt) => (
           <button
             key={opt.key}
@@ -133,6 +156,7 @@ const Standings = () => {
             {opt.label}
           </button>
         ))}
+        </div>
       </div>
 
       <div style={{ padding: '12px 16px 88px', display: 'flex', flexDirection: 'column', gap: 8 }}>
