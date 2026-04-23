@@ -1,10 +1,5 @@
-import UpdatePassword from './UpdatePassword.jsx';
+import UpdatePassword from './UpdatePassword.tsx';
 
-const UserProfile = () => (
-  <div>
-    <h1>User Profile</h1>
-    <UpdatePassword />
-  </div>
-);
+const UserProfile = () => <UpdatePassword />;
 
 export default UserProfile;
