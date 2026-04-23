@@ -28,17 +28,6 @@ const triggerRoutes = async (routes) => {
   }
 };
 
-// One time Tuesday update.
-cron.schedule(
-  '51 * * * *',
-  () => {
-    triggerRoutes([evaluateGameStart, evaluateSpreads, evaluateUserScores]);
-  },
-  { timezone: TIMEZONE }
-);
-
-// REAL SCHEDULE IS HERE
-
 // Odds Update Schedule:
 // Tue-Mon at 8am EST (which is 1pm UTC)
 cron.schedule(

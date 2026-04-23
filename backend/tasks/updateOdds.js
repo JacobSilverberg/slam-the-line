@@ -48,7 +48,7 @@ export async function fetchAndSaveOdds() {
       );
       
       // Determine if we should update open spreads (Tuesday or if they don't exist)
-      const shouldUpdateOpenSpreads = isTuesday || (!existingSpreads[0]?.home_open_spread && !existingSpreads[0]?.away_open_spread);
+      const shouldUpdateOpenSpreads = isTuesday || (existingSpreads[0]?.home_open_spread == null && existingSpreads[0]?.away_open_spread == null);
 
       // Parse the API response into variables
       for (const bookmaker of game.bookmakers) {
