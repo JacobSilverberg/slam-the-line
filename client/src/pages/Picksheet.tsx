@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
@@ -13,6 +13,7 @@ const C = {
 } as const;
 
 const FF = "'Barlow Condensed', sans-serif";
+const FFb = "'Barlow', sans-serif";
 
 const Picksheet = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
@@ -145,6 +146,12 @@ const Picksheet = () => {
     </div>
   );
 
+  // Status text for the submit bar button
+  const submitLabel = isSubmitting ? 'Saving…'
+    : isReady ? (hasExistingSelections ? 'Update ✓' : 'Submit ✓')
+    : ptsLeft > 0 ? `${ptsLeft} pts left`
+    : 'Pick more';
+
   return (
     <div style={{ minHeight: '100vh', background: C.bg, fontFamily: FF, display: 'flex', flexDirection: 'column' }}>
 
@@ -161,29 +168,15 @@ const Picksheet = () => {
         <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: -0.5, lineHeight: 1, textTransform: 'uppercase' }}>
           Week {week} Picks
         </div>
-        <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(255,255,255,0.07)', borderRadius: 99, border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div style={{ width: 6, height: 6, borderRadius: 99, background: totalUsed === totalPts ? C.grn : totalUsed > totalPts ? C.red : C.amb }} />
-            <span style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.85)' }}>{totalUsed} / {totalPts} pts</span>
+        {hasExistingSelections && (
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px', background: `${C.grn}22`, borderRadius: 99, border: `1px solid ${C.grn}44` }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: C.grn }}>✓ Picks submitted</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: 'rgba(255,255,255,0.07)', borderRadius: 99, border: '1px solid rgba(255,255,255,0.1)' }}>
-            <span style={{ fontSize: 11, fontWeight: 700, color: pickCount >= minPicks ? C.grn : C.amb }}>{pickCount} picks · need {minPicks}–{maxPicks}</span>
-          </div>
-          {hasExistingSelections && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '4px 10px', background: `${C.grn}22`, borderRadius: 99, border: `1px solid ${C.grn}44` }}>
-              <span style={{ fontSize: 11, fontWeight: 700, color: C.grn }}>✓ Submitted</span>
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
-      {/* Progress bar */}
-      <div style={{ height: 3, background: C.bor }}>
-        <div style={{ height: '100%', width: `${Math.min(100, (totalUsed / totalPts) * 100)}%`, background: totalUsed > totalPts ? C.red : C.ind, transition: 'width 0.2s' }} />
-      </div>
-
-      {/* Games list */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px 0', display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {/* Games list — extra bottom padding for submit bar + tab bar */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px', paddingBottom: 132, display: 'flex', flexDirection: 'column', gap: 6 }}>
         {games.length === 0 && (
           <p style={{ color: C.mut, fontSize: 16, textAlign: 'center', marginTop: 32 }}>No games available for this week.</p>
         )}
@@ -193,8 +186,8 @@ const Picksheet = () => {
           const p = weeklyPoints[game.id] || 5;
 
           const teams = [
-            { id: game.away_team_id, abbr: game.away_team_abbr, name: game.away_team_name, spread: game.away_curr_spread },
-            { id: game.home_team_id, abbr: game.home_team_abbr, name: game.home_team_name, spread: game.home_curr_spread },
+            { id: game.away_team_id, abbr: game.away_team_abbr, spread: game.away_curr_spread },
+            { id: game.home_team_id, abbr: game.home_team_abbr, spread: game.home_curr_spread },
           ];
 
           return (
@@ -205,10 +198,14 @@ const Picksheet = () => {
               borderRadius: 12, overflow: 'hidden',
               opacity: locked ? 0.55 : 1,
             }}>
-              {/* Date / time row */}
+              {/* Date / time / open spreads */}
               <div style={{ padding: '4px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: C.d2 }}>
-                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: C.mut }}>{fmtDate(game.game_start_time)}</span>
-                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1, color: locked ? C.red : C.mut }}>{locked ? 'LOCKED' : fmtTime(game.game_start_time)}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.5, color: locked ? C.red : C.mut }}>
+                  {fmtDate(game.game_start_time)} · {locked ? 'LOCKED' : fmtTime(game.game_start_time)}
+                </span>
+                <span style={{ fontSize: 10, fontWeight: 600, color: C.mut, letterSpacing: 0.3 }}>
+                  Open: {game.away_team_abbr} {fmt(game.away_open_spread)} / {game.home_team_abbr} {fmt(game.home_open_spread)}
+                </span>
               </div>
 
               {/* Team buttons */}
@@ -241,7 +238,7 @@ const Picksheet = () => {
               </div>
 
               {/* Points stepper */}
-              <div style={{ padding: '6px 10px 8px', display: 'flex', alignItems: 'center', borderTop: `1px solid ${C.bor}`, gap: 10 }}>
+              <div style={{ padding: '5px 10px 7px', display: 'flex', alignItems: 'center', borderTop: `1px solid ${C.bor}`, gap: 10 }}>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   {isSel
                     ? <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.5, color: C.amb, textTransform: 'uppercase' }}>
@@ -252,35 +249,53 @@ const Picksheet = () => {
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', background: C.d2, borderRadius: 8, overflow: 'hidden', border: `1px solid ${C.bor}`, opacity: isSel && !locked ? 1 : 0.3 }}>
                   <button onClick={(e) => { e.stopPropagation(); adj(game.id, -1); }}
-                    style={{ width: 36, height: 34, background: 'transparent', border: 'none', borderRight: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>−</button>
-                  <span style={{ width: 40, textAlign: 'center', fontSize: 20, fontWeight: 900, color: C.amb, lineHeight: 1 }}>{isSel ? p : '—'}</span>
+                    style={{ width: 36, height: 32, background: 'transparent', border: 'none', borderRight: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>−</button>
+                  <span style={{ width: 38, textAlign: 'center', fontSize: 18, fontWeight: 900, color: C.amb, lineHeight: 1 }}>{isSel ? p : '—'}</span>
                   <button onClick={(e) => { e.stopPropagation(); adj(game.id, 1); }}
-                    style={{ width: 36, height: 34, background: 'transparent', border: 'none', borderLeft: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>+</button>
+                    style={{ width: 36, height: 32, background: 'transparent', border: 'none', borderLeft: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>+</button>
                 </div>
               </div>
             </div>
           );
         })}
-        <div style={{ height: 4 }} />
       </div>
 
-      {/* Submit button — sits above the fixed LeagueTabBar */}
-      <div style={{ background: C.card, borderTop: `1px solid ${C.bor}`, padding: '10px 14px', paddingBottom: 78 }}>
-        <button onClick={handleSubmit} disabled={isSubmitting}
-          style={{
-            width: '100%', padding: '14px', borderRadius: 12,
-            background: isReady ? C.amb : '#162035',
-            border: `1px solid ${isReady ? 'transparent' : C.bor}`,
-            color: isReady ? '#000' : C.mut,
-            fontSize: 17, fontWeight: 900, fontFamily: FF,
-            letterSpacing: 1, cursor: isReady ? 'pointer' : 'default', textTransform: 'uppercase',
-            opacity: isSubmitting ? 0.6 : 1,
-          }}>
-          {isSubmitting ? 'Submitting…'
-            : isReady ? `✓  ${hasExistingSelections ? 'UPDATE PICKS' : 'SUBMIT PICKS'}`
-            : ptsLeft > 0 ? `DISTRIBUTE ${ptsLeft} MORE PTS`
-            : 'SELECT MORE GAMES'}
-        </button>
+      {/* Fixed submit bar — always visible above LeagueTabBar */}
+      <div style={{ position: 'fixed', bottom: 64, left: 0, right: 0, zIndex: 50, background: C.card, borderTop: `1px solid ${C.bor}` }}>
+        {/* Thin progress bar */}
+        <div style={{ height: 2, background: C.bor }}>
+          <div style={{ height: '100%', width: `${Math.min(100, (totalUsed / totalPts) * 100)}%`, background: totalUsed > totalPts ? C.red : totalUsed === totalPts ? C.grn : C.ind, transition: 'width 0.2s' }} />
+        </div>
+        <div style={{ maxWidth: 720, margin: '0 auto', padding: '8px 14px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* Points status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+            <div style={{ width: 7, height: 7, borderRadius: 99, flexShrink: 0, background: totalUsed === totalPts ? C.grn : totalUsed > totalPts ? C.red : C.amb }} />
+            <span style={{ fontFamily: FF, fontSize: 16, fontWeight: 900, color: C.txt, letterSpacing: 0.3 }}>{totalUsed}<span style={{ color: C.mut }}>/{totalPts}</span></span>
+            <span style={{ fontFamily: FFb, fontSize: 11, color: C.mut }}>pts</span>
+          </div>
+          <div style={{ width: 1, height: 16, background: C.bor }} />
+          {/* Picks status */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 5, flex: 1 }}>
+            <span style={{ fontFamily: FF, fontSize: 16, fontWeight: 900, color: pickCount >= minPicks ? C.grn : C.txt, letterSpacing: 0.3 }}>{pickCount}<span style={{ color: C.mut }}>/{maxPicks}</span></span>
+            <span style={{ fontFamily: FFb, fontSize: 11, color: C.mut }}>picks</span>
+          </div>
+          {/* Submit button */}
+          <button
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+            style={{
+              padding: '8px 18px', borderRadius: 9, flexShrink: 0,
+              background: isReady ? C.amb : C.d2,
+              border: `1px solid ${isReady ? 'transparent' : C.bor}`,
+              color: isReady ? '#000' : C.mut,
+              fontFamily: FF, fontSize: 14, fontWeight: 900, letterSpacing: 0.8,
+              cursor: isReady ? 'pointer' : 'default', textTransform: 'uppercase',
+              opacity: isSubmitting ? 0.6 : 1,
+            }}
+          >
+            {submitLabel}
+          </button>
+        </div>
       </div>
 
       <LeagueTabBar leagueId={leagueId} />

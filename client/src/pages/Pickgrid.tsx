@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
@@ -29,6 +29,7 @@ const Pickgrid = () => {
   const [games, setGames] = useState<Record<number, Record<number, any>>>({});
   const [leagueInfo, setLeagueInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const fetchAllData = async () => {
@@ -96,6 +97,10 @@ const Pickgrid = () => {
       });
   };
 
+  const scrollGrid = (dir: number) => {
+    gridRef.current?.scrollBy({ left: dir * 220, behavior: 'smooth' });
+  };
+
   return (
     <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
       <div style={{
@@ -109,21 +114,43 @@ const Pickgrid = () => {
         <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: -0.5, position: 'relative', zIndex: 1 }}>Pick Grid</div>
       </div>
 
+      {/* Scroll controls — useful on desktop where there's no swipe */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', padding: '6px 14px', background: C.card, borderBottom: `1px solid ${C.bor}`, gap: 6 }}>
+        <span style={{ fontFamily: FFb, fontSize: 11, color: C.mut, marginRight: 'auto', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+          Scroll
+        </span>
+        <button
+          onClick={() => scrollGrid(-1)}
+          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 15, fontWeight: 700, padding: '4px 14px', borderRadius: 6, cursor: 'pointer', lineHeight: 1.2 }}
+        >
+          ←
+        </button>
+        <button
+          onClick={() => scrollGrid(1)}
+          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 15, fontWeight: 700, padding: '4px 14px', borderRadius: 6, cursor: 'pointer', lineHeight: 1.2 }}
+        >
+          →
+        </button>
+      </div>
+
       {isLoading ? (
         <div style={{ padding: 32, color: C.mut, fontFamily: FFb, fontSize: 14 }}>Loading…</div>
       ) : (
-        <div style={{ overflowX: 'auto', paddingBottom: 88 }}>
+        /* Both axes scroll so sticky top on thead + sticky left on first column both work */
+        <div ref={gridRef} style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 'calc(100vh - 185px)' }}>
           <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
             <thead>
               <tr style={{ background: C.card }}>
                 <th style={{
-                  position: 'sticky', left: 0, background: C.card, zIndex: 10,
+                  position: 'sticky', left: 0, top: 0, background: C.card, zIndex: 15,
                   padding: '10px 14px', fontFamily: FF, fontSize: 12, color: C.mut,
                   textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700,
-                  textAlign: 'left', borderBottom: `1px solid ${C.bor}`, minWidth: 110,
+                  textAlign: 'left', borderBottom: `1px solid ${C.bor}`,
+                  borderRight: `1px solid ${C.bor}`, minWidth: 110,
                 }}>Team</th>
                 {Array.from({ length: 18 }, (_, i) => (
                   <th key={i + 1} style={{
+                    position: 'sticky', top: 0, background: C.card, zIndex: 10,
                     padding: '10px 8px', fontFamily: FF, fontSize: 12, color: C.mut,
                     textTransform: 'uppercase', letterSpacing: 1, fontWeight: 700,
                     borderBottom: `1px solid ${C.bor}`, minWidth: 90,

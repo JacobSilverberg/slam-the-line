@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useRef, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
@@ -29,6 +29,8 @@ const Standings = () => {
   const { user } = useContext(AuthContext);
   const [standings, setStandings] = useState<any[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>('total_points');
+  const [bannerPos, setBannerPos] = useState<'top' | 'bottom' | null>(null);
+  const userCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     axios.get(`${apiUrl}/getleaguestandings/${leagueId}`)
@@ -41,7 +43,29 @@ const Standings = () => {
       .catch((err) => console.error('Error fetching standings:', err));
   }, [leagueId]);
 
+  // Re-attach observer after standings load so the ref is populated
+  useEffect(() => {
+    const el = userCardRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setBannerPos(null);
+        } else {
+          setBannerPos(entry.boundingClientRect.top < 0 ? 'top' : 'bottom');
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [standings]);
+
   const sorted = [...standings].sort((a, b) => Number(b[sortKey]) - Number(a[sortKey]));
+  const myRank = sorted.findIndex((s) => s.user_id === user?.userId) + 1;
+  const myEntry = sorted.find((s) => s.user_id === user?.userId);
 
   const fmt = (v: any) => {
     const n = Number(v);
@@ -50,6 +74,42 @@ const Standings = () => {
 
   return (
     <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+
+      {/* Sticky "you are here" banner */}
+      {bannerPos && myEntry && (
+        <div style={{
+          position: 'fixed',
+          top: bannerPos === 'top' ? 0 : 'auto',
+          bottom: bannerPos === 'bottom' ? 64 : 'auto',
+          left: 0, right: 0, zIndex: 90,
+          background: C.card,
+          borderTop: bannerPos === 'bottom' ? `2px solid ${C.amb}` : 'none',
+          borderBottom: bannerPos === 'top' ? `2px solid ${C.amb}` : 'none',
+        }}>
+          <div style={{ maxWidth: 720, margin: '0 auto', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 26, height: 26, borderRadius: 99,
+              background: myRank === 1 ? C.amb : C.d2,
+              border: `1px solid ${myRank === 1 ? 'transparent' : C.bor}`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontFamily: FF, fontSize: 12, fontWeight: 900,
+              color: myRank === 1 ? '#000' : C.mut, flexShrink: 0,
+            }}>
+              {myRank}
+            </div>
+            <span style={{ fontFamily: FF, fontSize: 15, fontWeight: 900, color: C.txt, textTransform: 'uppercase', flex: 1, letterSpacing: 0.3 }}>
+              {myEntry.team_name}
+            </span>
+            <span style={{ fontFamily: FF, fontSize: 11, fontWeight: 700, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+              {SORT_OPTS.find((o) => o.key === sortKey)?.label}
+            </span>
+            <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: C.amb, minWidth: 40, textAlign: 'right' }}>
+              {fmt(myEntry[sortKey])}
+            </span>
+          </div>
+        </div>
+      )}
+
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '20px', position: 'relative', overflow: 'hidden',
@@ -84,6 +144,7 @@ const Standings = () => {
           return (
             <div
               key={s.user_id}
+              ref={isMe ? userCardRef : undefined}
               style={{
                 background: isMe ? C.d2 : C.card,
                 border: `1px solid ${isMe ? C.amb : C.bor}`,
