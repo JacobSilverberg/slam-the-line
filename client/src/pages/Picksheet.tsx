@@ -204,7 +204,13 @@ const Picksheet = () => {
                   {fmtDate(game.game_start_time)} · {locked ? 'LOCKED' : fmtTime(game.game_start_time)}
                 </span>
                 <span style={{ fontSize: 10, fontWeight: 600, color: C.mut, letterSpacing: 0.3 }}>
-                  Open: {game.away_team_abbr} {fmt(game.away_open_spread)} / {game.home_team_abbr} {fmt(game.home_open_spread)}
+                  {(() => {
+                    const a = Number(game.away_open_spread);
+                    const h = Number(game.home_open_spread);
+                    if (a < 0) return `Open: ${game.away_team_abbr} ${fmt(a)}`;
+                    if (h < 0) return `Open: ${game.home_team_abbr} ${fmt(h)}`;
+                    return 'Open: EVEN';
+                  })()}
                 </span>
               </div>
 
