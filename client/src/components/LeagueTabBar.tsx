@@ -29,28 +29,29 @@ const LeagueTabBar = ({ leagueId }: { leagueId: string | undefined }) => {
 
   return (
     <div style={{
-      position: 'fixed', bottom: 0, left: 0, right: 0, height: 64,
-      background: C.bg, borderTop: `1px solid ${C.bor}`,
-      display: 'flex', alignItems: 'stretch', zIndex: 100,
+      position: 'fixed', bottom: 0, left: 0, right: 0,
+      background: C.bg, borderTop: `1px solid ${C.bor}`, zIndex: 100,
     }}>
-      {tabs.map((tab) => {
-        const isActive = location.pathname === tab.path;
-        return (
-          <Link
-            key={tab.path}
-            to={tab.path}
-            style={{
-              flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
-              textDecoration: 'none', fontFamily: FF, fontSize: 13, fontWeight: 700,
-              letterSpacing: 0.5, textTransform: 'uppercase',
-              color: isActive ? C.amb : C.mut,
-              borderTop: isActive ? `2px solid ${C.amb}` : '2px solid transparent',
-            }}
-          >
-            {tab.label}
-          </Link>
-        );
-      })}
+      <div style={{ maxWidth: 720, margin: '0 auto', height: 64, display: 'flex', alignItems: 'stretch' }}>
+        {tabs.map((tab) => {
+          const isActive = location.pathname === tab.path;
+          return (
+            <Link
+              key={tab.path}
+              to={tab.path}
+              style={{
+                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                textDecoration: 'none', fontFamily: FF, fontSize: 13, fontWeight: 700,
+                letterSpacing: 0.5, textTransform: 'uppercase',
+                color: isActive ? C.amb : C.mut,
+                borderTop: isActive ? `2px solid ${C.amb}` : '2px solid transparent',
+              }}
+            >
+              {tab.label}
+            </Link>
+          );
+        })}
+      </div>
     </div>
   );
 };
