@@ -27,7 +27,8 @@ export const updatePassword = async (req: Request, res: Response): Promise<void>
   try {
     const [users] = await pool.query('SELECT * FROM users WHERE email = ?', [email]) as any[];
     if (users.length === 0) {
-      res.status(400).json({ msg: 'User not found' });
+      // Return success to avoid revealing whether the email is registered
+      res.status(200).json({ msg: 'Password updated successfully' });
       return;
     }
 
