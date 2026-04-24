@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
 import apiUrl from '../services/serverConfig.ts';
@@ -48,6 +48,14 @@ const League = () => {
 
       {!isLoading && leagueInfo && (
         <div style={{ padding: '16px 20px 88px' }}>
+          <Link to="/" style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            marginBottom: 14, textDecoration: 'none',
+            fontFamily: FFb, fontSize: 13, fontWeight: 700,
+            color: C.mut, textTransform: 'uppercase', letterSpacing: 0.8,
+          }}>
+            ‹ My Leagues
+          </Link>
           <div style={{ background: C.card, borderRadius: 12, padding: '0 16px', border: `1px solid ${C.bor}` }}>
             <InfoRow label="Sport" value={leagueInfo.sport?.toUpperCase()} />
             <InfoRow label="Season" value={leagueInfo.year} />

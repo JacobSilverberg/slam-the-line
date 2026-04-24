@@ -2,8 +2,11 @@ import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
+import fetchUserLeagues from '../services/fetchUserLeagues.ts';
 import apiUrl from '../services/serverConfig.ts';
 import logo from '../assets/STL_Logo.webp';
+
+const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2025', 10);
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
@@ -37,7 +40,13 @@ const Login = () => {
     try {
       const res = await axios.post(`${apiUrl}/auth/login`, formData);
       login(res.data);
-      navigate('/');
+      const leagues = await fetchUserLeagues(res.data.userId);
+      const active = leagues.filter((l: any) => l.year === CURRENT_NFL_YEAR);
+      if (active.length === 1) {
+        navigate(`/league/${active[0].league_id}/picksheet`);
+      } else {
+        navigate('/');
+      }
     } catch (err: any) {
       setError(err.response?.data?.msg || 'Login failed');
     }
