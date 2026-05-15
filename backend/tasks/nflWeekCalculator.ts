@@ -7,6 +7,7 @@ interface NFLWeekResult {
 // NFL seasons config — update each year
 const NFL_SEASONS = [
   { year: 2025, start: '2025-09-02T00:00:00-04:00', end: '2026-01-05T00:00:00-05:00' },
+  { year: 2026, start: '2026-09-08T00:00:00-04:00', end: '2027-01-13T00:00:00-05:00' },
 ];
 
 export function calculateNFLWeekAndDay(currentDate: Date): NFLWeekResult {

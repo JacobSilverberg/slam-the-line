@@ -6,7 +6,7 @@ import fetchUserLeagues from '../services/fetchUserLeagues.ts';
 import apiUrl from '../services/serverConfig.ts';
 import logo from '../assets/STL_Logo.webp';
 
-const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2025', 10);
+const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2026', 10);
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
