@@ -38,8 +38,6 @@ export async function fetchAndSaveOdds() {
       // Initialize variables for SQL update
       let last_update, last_update_unformatted;
       let homeOpenSpread, awayOpenSpread, homeCurrSpread, awayCurrSpread;
-      let homeMlOdds, awayMlOdds;
-      let gameOpenTotal, gameCurrTotal, gameOverOdds, gameUnderOdds;
 
       // Fetch existing spreads from the database
       const [existingSpreads] = await pool.execute(
@@ -53,48 +51,20 @@ export async function fetchAndSaveOdds() {
       // Parse the API response into variables
       for (const bookmaker of game.bookmakers) {
         for (const market of bookmaker.markets) {
-          switch (market.key) {
-            case 'h2h':
-              homeMlOdds = market.outcomes.find(
-                (o) => o.name === game.home_team
-              )?.price;
-              awayMlOdds = market.outcomes.find(
-                (o) => o.name === game.away_team
-              )?.price;
-              break;
-            case 'spreads':
-              last_update_unformatted = market.last_update;
-              const homeSpread = market.outcomes.find(
-                (o) => o.name === game.home_team
-              );
-              const awaySpread = market.outcomes.find(
-                (o) => o.name === game.away_team
-              );
+          if (market.key === 'spreads') {
+            last_update_unformatted = market.last_update;
+            const homeSpread = market.outcomes.find((o) => o.name === game.home_team);
+            const awaySpread = market.outcomes.find((o) => o.name === game.away_team);
 
-              if (shouldUpdateOpenSpreads) {
-                homeOpenSpread = homeSpread?.point;
-                awayOpenSpread = awaySpread?.point;
-                homeCurrSpread = homeOpenSpread;
-                awayCurrSpread = awayOpenSpread;
-              } else {
-                homeCurrSpread = homeSpread?.point;
-                awayCurrSpread = awaySpread?.point;
-              }
-              break;
-            case 'totals':
-              const totalOutcome = market.outcomes.find(
-                (o) => o.name === 'Over'
-              );
-              if (!gameOpenTotal) {
-                gameOpenTotal = totalOutcome?.point;
-              } else {
-                gameCurrTotal = totalOutcome?.point;
-              }
-              gameOverOdds = totalOutcome?.price;
-              gameUnderOdds = market.outcomes.find(
-                (o) => o.name === 'Under'
-              )?.price;
-              break;
+            if (shouldUpdateOpenSpreads) {
+              homeOpenSpread = homeSpread?.point;
+              awayOpenSpread = awaySpread?.point;
+              homeCurrSpread = homeOpenSpread;
+              awayCurrSpread = awayOpenSpread;
+            } else {
+              homeCurrSpread = homeSpread?.point;
+              awayCurrSpread = awaySpread?.point;
+            }
           }
         }
       }
@@ -139,12 +109,6 @@ export async function fetchAndSaveOdds() {
               away_open_spread = ?,
               home_curr_spread = ?,
               away_curr_spread = ?,
-              home_ml_odds = ?,
-              away_ml_odds = ?,
-              game_open_total = COALESCE(game_open_total, ?),
-              game_curr_total = ?,
-              game_over_odds = ?,
-              game_under_odds = ?,
               week = ?,
               nfl_year = ?,
               game_started = ?,
@@ -159,12 +123,6 @@ export async function fetchAndSaveOdds() {
           shouldUpdateOpenSpreads ? awayOpenSpread : existingSpreads[0]?.away_open_spread,
           homeCurrSpread || homeOpenSpread,
           awayCurrSpread || awayOpenSpread,
-          homeMlOdds,
-          awayMlOdds,
-          gameOpenTotal,
-          gameCurrTotal || gameOpenTotal,
-          gameOverOdds,
-          gameUnderOdds,
           gameWeek,
           nflYear,
           gameStarted,
@@ -176,25 +134,25 @@ export async function fetchAndSaveOdds() {
       } else {
         // Insert a new game
         const insertQuery = `
-          INSERT INTO games (api_id, 
-            updated_at, 
-            home_team_id, 
-            away_team_id, 
-            home_open_spread, 
-            away_open_spread, 
-            home_curr_spread, 
-            away_curr_spread, 
-            home_ml_odds, 
-            away_ml_odds, 
-            game_open_total, 
-            game_curr_total, 
-            game_over_odds, 
-            game_under_odds, 
-            week, 
+          INSERT INTO games (api_id,
+            updated_at,
+            home_team_id,
+            away_team_id,
+            home_open_spread,
+            away_open_spread,
+            home_curr_spread,
+            away_curr_spread,
+            home_ml_odds,
+            away_ml_odds,
+            game_open_total,
+            game_curr_total,
+            game_over_odds,
+            game_under_odds,
+            week,
             nfl_year,
             game_started,
             game_start_time)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, 0, 0, 0, 0, 0, ?, ?, ?, ?)
         `;
         const insertValues = [
           game.id,
@@ -205,12 +163,6 @@ export async function fetchAndSaveOdds() {
           awayOpenSpread,
           homeCurrSpread || homeOpenSpread,
           awayCurrSpread || awayOpenSpread,
-          homeMlOdds,
-          awayMlOdds,
-          gameOpenTotal,
-          gameCurrTotal || gameOpenTotal,
-          gameOverOdds,
-          gameUnderOdds,
           gameWeek,
           nflYear,
           gameStarted,

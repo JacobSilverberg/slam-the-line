@@ -12,7 +12,7 @@ const API_KEY = process.env.API_KEY;
 
 const sport = 'americanfootball_nfl';
 const regions = 'us';
-const markets = 'h2h,spreads,totals';
+const markets = 'spreads';
 const oddsFormat = 'american';
 const bookmakers = 'draftkings';
 
