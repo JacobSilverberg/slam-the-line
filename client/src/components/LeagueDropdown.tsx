@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext.tsx';
 import fetchUserLeagues from '../services/fetchUserLeagues.ts';
 
-const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2025', 10);
+const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2026', 10);
 
 const C = {
   d2: '#1a2d4a', amb: '#f59e0b', ind: '#818cf8',

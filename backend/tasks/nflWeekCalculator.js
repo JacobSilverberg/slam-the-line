@@ -1,6 +1,6 @@
 export function calculateNFLWeekAndDay(currentDate) {
-  const nflYear = parseInt(process.env.VITE_NFL_YEAR) || 2025;
-  const seasonStartStr = process.env.VITE_NFL_SEASON_START || `${nflYear}-09-04`;
+  const nflYear = parseInt(process.env.VITE_NFL_YEAR) || 2026;
+  const seasonStartStr = process.env.VITE_NFL_SEASON_START || '2026-09-08';
 
   // If only a date string is provided (no time), treat it as midnight Eastern time.
   // Season always opens in EDT (UTC-4), so midnight ET = 04:00 UTC.

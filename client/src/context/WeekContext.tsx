@@ -7,7 +7,7 @@ interface WeekContextValue {
 
 export const WeekContext = createContext<WeekContextValue>({ week: 1, setWeek: () => {} });
 
-const NFL_SEASON_START = import.meta.env.VITE_NFL_SEASON_START || '2025-09-02';
+const NFL_SEASON_START = import.meta.env.VITE_NFL_SEASON_START || '2026-09-08';
 const NFL_SEASON_WEEKS = 18;
 
 export const WeekProvider = ({ children }: { children: React.ReactNode }) => {

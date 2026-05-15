@@ -6,7 +6,7 @@ import fetchUserLeagues from '../services/fetchUserLeagues.ts';
 import apiUrl from '../services/serverConfig.ts';
 import logo from '../assets/STL_Logo.webp';
 
-const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2025', 10);
+const CURRENT_NFL_YEAR = parseInt(import.meta.env.VITE_NFL_YEAR || '2026', 10);
 const DEFAULT_LEAGUE_ID = import.meta.env.VITE_DEFAULT_LEAGUE_ID || null;
 
 const C = {
@@ -88,7 +88,7 @@ const Home = () => {
 
           {DEFAULT_LEAGUE_ID && (
             <div style={{ background: C.card, borderRadius: 12, padding: '20px 18px', border: `1px solid ${C.bor}`, display: 'flex', flexDirection: 'column', gap: 12 }}>
-              <div style={{ fontSize: 18, fontWeight: 900, color: C.txt, textTransform: 'uppercase', letterSpacing: 0.5 }}>Joining Year 7?</div>
+              <div style={{ fontSize: 18, fontWeight: 900, color: C.txt, textTransform: 'uppercase', letterSpacing: 0.5 }}>Joining Year 8?</div>
               <div style={{ fontSize: 14, color: C.mut, fontFamily: FFb }}>Enter your team name to register.</div>
               <input style={INP} type="text" value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder="Your team name" />
               <button
