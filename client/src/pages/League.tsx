@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
+import { Spinner, ErrorState } from '../components/LoadState.tsx';
 import apiUrl from '../services/serverConfig.ts';
 
 const C = {
@@ -25,16 +26,22 @@ const League = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
   const [leagueInfo, setLeagueInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
 
-  useEffect(() => {
+  const fetchLeague = () => {
+    setIsLoading(true);
+    setLoadError(false);
     axios.get(`${apiUrl}/leagueinfo/${leagueId}`)
-      .then((res) => setLeagueInfo(res.data.league[0]))
-      .catch((err) => console.error('Error fetching league:', err))
+      .then((res) => setLeagueInfo(res.data.league[0] ?? null))
+      .catch((err) => { console.error('Error fetching league:', err); setLoadError(true); })
       .finally(() => setIsLoading(false));
-  }, [leagueId]);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchLeague(); }, [leagueId]);
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '20px', position: 'relative', overflow: 'hidden',
@@ -46,8 +53,10 @@ const League = () => {
         </div>
       </div>
 
+      {isLoading && <Spinner />}
+      {!isLoading && (loadError || !leagueInfo) && <ErrorState onRetry={fetchLeague} />}
       {!isLoading && leagueInfo && (
-        <div style={{ padding: '16px 20px 88px' }}>
+        <div style={{ padding: '16px 20px', paddingBottom: 'calc(88px + env(safe-area-inset-bottom))' }}>
           <Link to="/" style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             marginBottom: 14, textDecoration: 'none',

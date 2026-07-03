@@ -72,6 +72,7 @@ const LeagueTabBar = ({ leagueId }: { leagueId: string | undefined }) => {
     <div style={{
       position: 'fixed', bottom: 0, left: 0, right: 0,
       background: C.bg, borderTop: `1px solid ${C.bor}`, zIndex: 100,
+      paddingBottom: 'env(safe-area-inset-bottom)',
     }}>
       <div style={{ maxWidth: 720, margin: '0 auto', height: 64, display: 'flex', alignItems: 'stretch' }}>
         {tabs.map((tab) => {

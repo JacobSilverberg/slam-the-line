@@ -26,29 +26,36 @@ const JoinLeague = () => {
   const [selectedLeagueId, setSelectedLeagueId] = useState<number | null>(null);
   const [teamName, setTeamName] = useState('');
   const [error, setError] = useState('');
+  const [isRegistering, setIsRegistering] = useState(false);
   const navigate = useNavigate();
 
+  // Debounced search — waits for a typing pause instead of firing per keystroke
   useEffect(() => {
     if (!searchTerm) { setLeagues([]); return; }
-    axios.get(`${apiUrl}/searchleagues?query=${searchTerm}`)
-      .then((res) => setLeagues(res.data))
-      .catch(() => setLeagues([]));
+    const t = setTimeout(() => {
+      axios.get(`${apiUrl}/searchleagues?query=${encodeURIComponent(searchTerm)}`)
+        .then((res) => setLeagues(res.data))
+        .catch(() => setLeagues([]));
+    }, 300);
+    return () => clearTimeout(t);
   }, [searchTerm]);
 
   const handleRegistration = () => {
-    if (!selectedLeagueId || !teamName || !user) { setError('Please enter a team name.'); return; }
+    if (!selectedLeagueId || !teamName || !user || isRegistering) { if (!teamName) setError('Please enter a team name.'); return; }
+    setIsRegistering(true);
     setError('');
     axios.post(`${apiUrl}/leagueregistration/${selectedLeagueId}/users/${user.userId}`, {
       league_role: 'owner', team_name: teamName,
     })
       .then(() => navigate(`/league/${selectedLeagueId}/picksheet`))
-      .catch((err) => setError(err.response?.data?.msg || 'Error registering for the league.'));
+      .catch((err) => setError(err.response?.data?.msg || 'Error registering for the league.'))
+      .finally(() => setIsRegistering(false));
   };
 
   const selectedLeague = leagues.find((l) => l.id === selectedLeagueId);
 
   return (
-    <div style={{ background: C.bg, minHeight: 'calc(100vh - 56px)', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '24px 20px 20px', position: 'relative', overflow: 'hidden',
@@ -69,7 +76,7 @@ const JoinLeague = () => {
             {error && <p style={{ color: '#ef4444', fontFamily: FFb, fontSize: 14, margin: 0 }}>{error}</p>}
             <button
               onClick={handleRegistration}
-              disabled={!teamName.trim()}
+              disabled={!teamName.trim() || isRegistering}
               style={{
                 padding: '16px', borderRadius: 12,
                 background: teamName.trim() ? C.amb : C.d2,
@@ -77,9 +84,10 @@ const JoinLeague = () => {
                 color: teamName.trim() ? '#000' : C.mut,
                 fontFamily: FF, fontSize: 20, fontWeight: 900, letterSpacing: 1.5,
                 textTransform: 'uppercase', cursor: teamName.trim() ? 'pointer' : 'default',
+                opacity: isRegistering ? 0.6 : 1,
               }}
             >
-              Register
+              {isRegistering ? 'Registering…' : 'Register'}
             </button>
             <button
               onClick={() => setSelectedLeagueId(null)}

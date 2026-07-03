@@ -53,7 +53,7 @@ const Login = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: C.bg, fontFamily: FF }}>
+    <div className="vh-full" style={{ display: 'flex', flexDirection: 'column', background: C.bg, fontFamily: FF }}>
 
       {/* branded top panel */}
       <div style={{

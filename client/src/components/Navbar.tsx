@@ -29,7 +29,7 @@ const Navbar = () => {
             style={{
               background: 'none', border: '1px solid #1e3354', color: '#94a3b8',
               fontFamily: FF, fontSize: 13, fontWeight: 700, letterSpacing: 1,
-              padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
+              padding: '10px 16px', minHeight: 40, borderRadius: 8, cursor: 'pointer',
               textTransform: 'uppercase',
             }}
           >

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
+import { Spinner, ErrorState } from '../components/LoadState.tsx';
 import apiUrl from '../services/serverConfig.ts';
 
 const C = {
@@ -29,11 +30,13 @@ const Pickgrid = () => {
   const [games, setGames] = useState<Record<number, Record<number, any>>>({});
   const [leagueInfo, setLeagueInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const fetchAllData = async () => {
-      try {
+  const fetchAllData = async () => {
+    setIsLoading(true);
+    setLoadError(false);
+    try {
         const [leagueRes, usersRes] = await Promise.all([
           axios.get(`${apiUrl}/leagueinfo/${leagueId}`),
           axios.get(`${apiUrl}/getusersinleague/${leagueId}`),
@@ -61,13 +64,17 @@ const Pickgrid = () => {
           organized[s.user_id][s.week].push(s);
         }
         setUserSelections(organized);
-      } catch (err) {
-        console.error('Error fetching pickgrid data:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    } catch (err) {
+      console.error('Error fetching pickgrid data:', err);
+      setLoadError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchAllData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leagueId]);
 
   const getPicksForWeek = (userId: number, week: number) => {
@@ -102,7 +109,7 @@ const Pickgrid = () => {
   };
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
       <style>{`
         .pg-team { min-width: 72px; max-width: 72px; white-space: normal; word-break: break-word; }
         .pg-week { min-width: 78px; }
@@ -129,23 +136,27 @@ const Pickgrid = () => {
         </span>
         <button
           onClick={() => scrollGrid(-1)}
-          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 15, fontWeight: 700, padding: '4px 14px', borderRadius: 6, cursor: 'pointer', lineHeight: 1.2 }}
+          aria-label="Scroll grid left"
+          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 17, fontWeight: 700, minWidth: 52, minHeight: 40, borderRadius: 8, cursor: 'pointer', lineHeight: 1.2 }}
         >
           ←
         </button>
         <button
           onClick={() => scrollGrid(1)}
-          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 15, fontWeight: 700, padding: '4px 14px', borderRadius: 6, cursor: 'pointer', lineHeight: 1.2 }}
+          aria-label="Scroll grid right"
+          style={{ background: C.d2, border: `1px solid ${C.bor}`, color: C.txt, fontFamily: FF, fontSize: 17, fontWeight: 700, minWidth: 52, minHeight: 40, borderRadius: 8, cursor: 'pointer', lineHeight: 1.2 }}
         >
           →
         </button>
       </div>
 
       {isLoading ? (
-        <div style={{ padding: 32, color: C.mut, fontFamily: FFb, fontSize: 14 }}>Loading…</div>
+        <Spinner />
+      ) : loadError ? (
+        <ErrorState onRetry={fetchAllData} />
       ) : (
         /* Both axes scroll so sticky top on thead + sticky left on first column both work */
-        <div ref={gridRef} style={{ overflowX: 'auto', overflowY: 'auto', maxHeight: 'calc(100vh - 185px)' }}>
+        <div ref={gridRef} className="pg-scroll">
           <table style={{ borderCollapse: 'collapse', minWidth: '100%' }}>
             <thead>
               <tr style={{ background: C.card }}>

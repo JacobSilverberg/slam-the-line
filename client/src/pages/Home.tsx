@@ -28,6 +28,8 @@ const Home = () => {
   const { isAuthenticated, user } = useContext(AuthContext);
   const [leagues, setLeagues] = useState<any[]>([]);
   const [teamName, setTeamName] = useState('');
+  const [joinError, setJoinError] = useState('');
+  const [isJoining, setIsJoining] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -38,13 +40,16 @@ const Home = () => {
   }, [isAuthenticated, user]);
 
   const handleJoinDefault = () => {
-    if (!teamName.trim() || !DEFAULT_LEAGUE_ID || !user) return;
+    if (!teamName.trim() || !DEFAULT_LEAGUE_ID || !user || isJoining) return;
+    setIsJoining(true);
+    setJoinError('');
     axios
       .post(`${apiUrl}/leagueregistration/${DEFAULT_LEAGUE_ID}/users/${user.userId}`, {
         league_role: 'owner', team_name: teamName,
       })
       .then(() => navigate(`/league/${DEFAULT_LEAGUE_ID}/picksheet`))
-      .catch((err) => alert(err.response?.data?.msg || 'Error registering for the league.'));
+      .catch((err) => setJoinError(err.response?.data?.msg || 'Error registering for the league.'))
+      .finally(() => setIsJoining(false));
   };
 
   if (isAuthenticated) {
@@ -91,9 +96,10 @@ const Home = () => {
               <div style={{ fontSize: 18, fontWeight: 900, color: C.txt, textTransform: 'uppercase', letterSpacing: 0.5 }}>Joining Year 8?</div>
               <div style={{ fontSize: 14, color: C.mut, fontFamily: FFb }}>Enter your team name to register.</div>
               <input style={INP} type="text" value={teamName} onChange={(e) => setTeamName(e.target.value)} placeholder="Your team name" />
+              {joinError && <p style={{ color: '#ef4444', fontFamily: FFb, fontSize: 14, margin: 0 }}>{joinError}</p>}
               <button
                 onClick={handleJoinDefault}
-                disabled={!teamName.trim()}
+                disabled={!teamName.trim() || isJoining}
                 style={{
                   padding: '14px', borderRadius: 10,
                   background: teamName.trim() ? C.amb : C.d2,
@@ -103,7 +109,7 @@ const Home = () => {
                   textTransform: 'uppercase', cursor: teamName.trim() ? 'pointer' : 'default',
                 }}
               >
-                Join the Betting League
+                {isJoining ? 'Joining…' : 'Join the Betting League'}
               </button>
             </div>
           )}

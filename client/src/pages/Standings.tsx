@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
+import { Spinner, ErrorState } from '../components/LoadState.tsx';
 import apiUrl from '../services/serverConfig.ts';
 
 type SortKey = 'total_points' | 'picks_correct' | 'max_streak' | 'curr_streak' | 'perfect_weeks';
@@ -22,15 +23,27 @@ const SORT_OPTS: { key: SortKey; label: string }[] = [
   { key: 'perfect_weeks', label: 'Perfect Wks' },
 ];
 
+const STAT_COLS: { key: SortKey; label: string }[] = [
+  { key: 'total_points', label: 'Points' },
+  { key: 'picks_correct', label: 'Correct' },
+  { key: 'curr_streak', label: 'Curr Streak' },
+  { key: 'max_streak', label: 'Max Streak' },
+  { key: 'perfect_weeks', label: 'Perfect Wks' },
+];
+
 const Standings = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
   const { user } = useContext(AuthContext);
   const [standings, setStandings] = useState<any[]>([]);
   const [sortKey, setSortKey] = useState<SortKey>('total_points');
   const [bannerPos, setBannerPos] = useState<'top' | 'bottom' | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const userCardRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const fetchStandings = () => {
+    setIsLoading(true);
+    setLoadError(false);
     axios.get(`${apiUrl}/getleaguestandings/${leagueId}`)
       .then((res) => {
         setStandings(res.data.map((s: any) => ({
@@ -38,8 +51,12 @@ const Standings = () => {
           picks_correct: Number(s.overdog_correct) + Number(s.underdog_correct),
         })));
       })
-      .catch((err) => console.error('Error fetching standings:', err));
-  }, [leagueId]);
+      .catch((err) => { console.error('Error fetching standings:', err); setLoadError(true); })
+      .finally(() => setIsLoading(false));
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { fetchStandings(); }, [leagueId]);
 
   useEffect(() => {
     const el = userCardRef.current;
@@ -60,24 +77,28 @@ const Standings = () => {
     return () => observer.disconnect();
   }, [standings]);
 
-  const sorted = [...standings].sort((a, b) => Number(b[sortKey]) - Number(a[sortKey]));
+  // Secondary sort on points keeps ties stable
+  const sorted = [...standings].sort((a, b) =>
+    (Number(b[sortKey]) - Number(a[sortKey])) || (Number(b.total_points) - Number(a.total_points))
+  );
   const myRank = sorted.findIndex((s) => s.user_id === user?.userId) + 1;
   const myEntry = sorted.find((s) => s.user_id === user?.userId);
 
   const fmt = (v: any) => {
     const n = Number(v);
+    if (Number.isNaN(n)) return '0';
     return Number.isInteger(n) ? n : n.toFixed(1);
   };
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
 
-      {/* Sticky "you are here" banner */}
+      {/* Sticky "you are here" banner (mobile card view only) */}
       {bannerPos && myEntry && (
-        <div style={{
+        <div className="mobile-only" style={{
           position: 'fixed',
           top: bannerPos === 'top' ? 0 : 'auto',
-          bottom: bannerPos === 'bottom' ? 64 : 'auto',
+          bottom: bannerPos === 'bottom' ? 'calc(64px + env(safe-area-inset-bottom))' : 'auto',
           left: 0, right: 0, zIndex: 90,
           background: C.card,
           borderTop: bannerPos === 'bottom' ? `2px solid ${C.amb}` : 'none',
@@ -135,85 +156,142 @@ const Standings = () => {
         <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', textTransform: 'uppercase', letterSpacing: -0.5, position: 'relative', zIndex: 1 }}>Standings</div>
       </div>
 
-      <div style={{ padding: '10px 16px 12px', background: C.card, borderBottom: `1px solid ${C.bor}` }}>
-        <span style={{ fontFamily: FFb, fontSize: 10, color: C.mut, textTransform: 'uppercase', letterSpacing: 1.2, display: 'block', marginBottom: 8 }}>
-          Sort by
-        </span>
-        <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
-        {SORT_OPTS.map((opt) => (
-          <button
-            key={opt.key}
-            onClick={() => setSortKey(opt.key)}
-            style={{
-              flexShrink: 0, padding: '6px 14px', borderRadius: 20,
-              background: sortKey === opt.key ? C.amb : C.d2,
-              border: `1px solid ${sortKey === opt.key ? 'transparent' : C.bor}`,
-              color: sortKey === opt.key ? '#000' : C.mut,
-              fontFamily: FF, fontSize: 13, fontWeight: 700, cursor: 'pointer',
-              textTransform: 'uppercase', letterSpacing: 0.5,
-            }}
-          >
-            {opt.label}
-          </button>
-        ))}
-        </div>
-      </div>
-
-      <div style={{ padding: '12px 16px 88px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {sorted.map((s, i) => {
-          const isMe = s.user_id === user?.userId;
-          return (
-            <div
-              key={s.user_id}
-              ref={isMe ? userCardRef : undefined}
-              style={{
-                background: isMe ? C.d2 : C.card,
-                border: `1px solid ${isMe ? C.amb : C.bor}`,
-                borderRadius: 12, padding: '14px 16px',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{
-                    width: 28, height: 28, borderRadius: 99,
-                    background: i === 0 ? C.amb : C.d2,
-                    border: `1px solid ${i === 0 ? 'transparent' : C.bor}`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: FF, fontSize: 13, fontWeight: 900,
-                    color: i === 0 ? '#000' : C.mut,
-                  }}>
-                    {i + 1}
-                  </div>
-                  <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: C.txt, textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                    {s.team_name}
-                  </span>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-                  <span style={{ fontFamily: FF, fontSize: 22, fontWeight: 900, color: C.amb, lineHeight: 1 }}>
-                    {fmt(s.total_points)}
-                  </span>
-                  <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 1 }}>
-                    points
-                  </span>
-                </div>
-              </div>
-              <div style={{ display: 'flex', borderTop: `1px solid ${C.bor}`, paddingTop: 10 }}>
-                {[
-                  { label: 'Total Correct', val: s.picks_correct },
-                  { label: 'Curr Streak', val: s.curr_streak },
-                  { label: 'Max Streak', val: s.max_streak },
-                  { label: 'Perfect Wks', val: s.perfect_weeks },
-                ].map((stat) => (
-                  <div key={stat.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                    <span style={{ fontFamily: FF, fontSize: 16, fontWeight: 900, color: C.txt }}>{stat.val}</span>
-                    <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' }}>{stat.label}</span>
-                  </div>
-                ))}
+      {isLoading ? (
+        <Spinner />
+      ) : loadError ? (
+        <ErrorState onRetry={fetchStandings} />
+      ) : (
+        <>
+          {/* Mobile: sort chips + stat cards */}
+          <div className="mobile-only">
+            <div style={{ padding: '10px 16px 12px', background: C.card, borderBottom: `1px solid ${C.bor}` }}>
+              <span style={{ fontFamily: FFb, fontSize: 10, color: C.mut, textTransform: 'uppercase', letterSpacing: 1.2, display: 'block', marginBottom: 8 }}>
+                Sort by
+              </span>
+              <div style={{ display: 'flex', gap: 6, overflowX: 'auto' }}>
+              {SORT_OPTS.map((opt) => (
+                <button
+                  key={opt.key}
+                  onClick={() => setSortKey(opt.key)}
+                  style={{
+                    flexShrink: 0, padding: '10px 16px', borderRadius: 22, minHeight: 40,
+                    background: sortKey === opt.key ? C.amb : C.d2,
+                    border: `1px solid ${sortKey === opt.key ? 'transparent' : C.bor}`,
+                    color: sortKey === opt.key ? '#000' : C.mut,
+                    fontFamily: FF, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                    textTransform: 'uppercase', letterSpacing: 0.5,
+                  }}
+                >
+                  {opt.label}
+                </button>
+              ))}
               </div>
             </div>
-          );
-        })}
-      </div>
+
+            <div style={{ padding: '12px 16px', paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {sorted.map((s, i) => {
+                const isMe = s.user_id === user?.userId;
+                return (
+                  <div
+                    key={s.user_id}
+                    ref={isMe ? userCardRef : undefined}
+                    style={{
+                      background: isMe ? C.d2 : C.card,
+                      border: `1px solid ${isMe ? C.amb : C.bor}`,
+                      borderRadius: 12, padding: '14px 16px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div style={{
+                          width: 28, height: 28, borderRadius: 99,
+                          background: i === 0 ? C.amb : C.d2,
+                          border: `1px solid ${i === 0 ? 'transparent' : C.bor}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: FF, fontSize: 13, fontWeight: 900,
+                          color: i === 0 ? '#000' : C.mut,
+                        }}>
+                          {i + 1}
+                        </div>
+                        <span style={{ fontFamily: FF, fontSize: 18, fontWeight: 900, color: C.txt, textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                          {s.team_name}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+                        <span style={{ fontFamily: FF, fontSize: 22, fontWeight: 900, color: C.amb, lineHeight: 1 }}>
+                          {fmt(s.total_points)}
+                        </span>
+                        <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.8, marginTop: 1 }}>
+                          points
+                        </span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', borderTop: `1px solid ${C.bor}`, paddingTop: 10 }}>
+                      {[
+                        { label: 'Total Correct', val: s.picks_correct },
+                        { label: 'Curr Streak', val: s.curr_streak },
+                        { label: 'Max Streak', val: s.max_streak },
+                        { label: 'Perfect Wks', val: s.perfect_weeks },
+                      ].map((stat) => (
+                        <div key={stat.label} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                          <span style={{ fontFamily: FF, fontSize: 16, fontWeight: 900, color: C.txt }}>{stat.val}</span>
+                          <span style={{ fontFamily: FFb, fontSize: 9, color: C.mut, textTransform: 'uppercase', letterSpacing: 0.5, textAlign: 'center' }}>{stat.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Desktop: full sortable table */}
+          <div className="desktop-only" style={{ padding: '16px 20px 88px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', background: C.card, borderRadius: 12, overflow: 'hidden' }}>
+              <thead>
+                <tr style={{ background: C.d2 }}>
+                  <th style={{ padding: '12px 16px', fontFamily: FF, fontSize: 12, fontWeight: 700, color: C.mut, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'left', width: 50 }}>#</th>
+                  <th style={{ padding: '12px 16px', fontFamily: FF, fontSize: 12, fontWeight: 700, color: C.mut, textTransform: 'uppercase', letterSpacing: 1, textAlign: 'left' }}>Team</th>
+                  {STAT_COLS.map((col) => (
+                    <th
+                      key={col.key}
+                      onClick={() => setSortKey(col.key)}
+                      style={{
+                        padding: '12px 16px', fontFamily: FF, fontSize: 12, fontWeight: 700,
+                        color: sortKey === col.key ? C.amb : C.mut, textTransform: 'uppercase',
+                        letterSpacing: 1, textAlign: 'center', cursor: 'pointer', userSelect: 'none',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {col.label}{sortKey === col.key ? ' ▾' : ''}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map((s, i) => {
+                  const isMe = s.user_id === user?.userId;
+                  return (
+                    <tr key={s.user_id} style={{
+                      background: isMe ? C.d2 : 'transparent',
+                      borderTop: `1px solid ${C.bor}`,
+                      boxShadow: isMe ? `inset 3px 0 0 ${C.amb}` : undefined,
+                    }}>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 15, fontWeight: 900, color: i === 0 ? C.amb : C.mut }}>{i + 1}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 16, fontWeight: 900, color: isMe ? C.amb : C.txt, textTransform: 'uppercase', letterSpacing: 0.3 }}>{s.team_name}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 17, fontWeight: 900, color: C.amb, textAlign: 'center' }}>{fmt(s.total_points)}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 15, fontWeight: 700, color: C.txt, textAlign: 'center' }}>{s.picks_correct}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 15, fontWeight: 700, color: C.txt, textAlign: 'center' }}>{s.curr_streak}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 15, fontWeight: 700, color: C.txt, textAlign: 'center' }}>{s.max_streak}</td>
+                      <td style={{ padding: '12px 16px', fontFamily: FF, fontSize: 15, fontWeight: 700, color: C.txt, textAlign: 'center' }}>{s.perfect_weeks}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <LeagueTabBar leagueId={leagueId} />
     </div>
