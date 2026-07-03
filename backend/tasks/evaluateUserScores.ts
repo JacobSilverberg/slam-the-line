@@ -1,5 +1,6 @@
 import pool from '../config/db.js';
 import logger from '../utils/logger.js';
+import { calculateNFLWeekAndDay } from './nflWeekCalculator.js';
 
 interface UserScore {
   user_id: number;
@@ -17,19 +18,25 @@ interface UserScore {
 export async function evaluateUserScores(): Promise<void> {
   logger.info('Starting evaluateUserScores');
 
+  // Only reprocess the current and previous week — earlier weeks are already
+  // finalized in users_have_scores and reprocessing all history grows unbounded.
+  const { week: currentWeek } = calculateNFLWeekAndDay(new Date());
+  const minWeek = Math.max(1, currentWeek - 1);
+
   const [games] = await pool.query(`
     SELECT id, spread_winner, home_curr_spread, home_team_id, away_team_id, week
     FROM games
-    WHERE game_completed = 1 AND spread_winner IS NOT NULL
-  `) as any[];
+    WHERE game_completed = 1 AND spread_winner IS NOT NULL AND week >= ?
+    ORDER BY week ASC
+  `, [minWeek]) as any[];
 
   const [userSelections] = await pool.query(`
     SELECT usg.id AS selection_id, usg.user_id, usg.league_id, usg.game_id,
            usg.points, usg.team_id, g.week
     FROM users_select_games usg
     JOIN games g ON usg.game_id = g.id
-    WHERE g.game_completed = 1
-  `) as any[];
+    WHERE g.game_completed = 1 AND g.week >= ?
+  `, [minWeek]) as any[];
 
   const userScores: Record<string, UserScore> = {};
 
@@ -80,7 +87,9 @@ export async function evaluateUserScores(): Promise<void> {
     }
   }
 
-  for (const key of Object.keys(userScores)) {
+  // Process in week order so streak math reads the prior week's already-written row
+  const sortedKeys = Object.keys(userScores).sort((a, b) => userScores[a].week - userScores[b].week);
+  for (const key of sortedKeys) {
     const score = userScores[key];
 
     const [leagueInfo] = await pool.query('SELECT weekly_points FROM leagues WHERE id = ?', [score.league_id]) as any[];

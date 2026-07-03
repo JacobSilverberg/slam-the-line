@@ -35,9 +35,9 @@ async function runScoreEvaluation(): Promise<void> {
   }
 }
 
-// Daily 8am: fetch latest odds and game schedule.
-// This is the only hardcoded time — it's intentional and deliberate.
-cron.schedule('0 8 * * *', async () => {
+// Tue/Thu/Sat/Sun 8am: fetch latest odds and game schedule.
+// Tue = open-spread reset day, Thu = TNF prep, Sat/Sun = weekend slate.
+cron.schedule('0 8 * * 0,2,4,6', async () => {
   logger.info('Running scheduled odds update');
   try {
     await fetchAndSaveOdds();

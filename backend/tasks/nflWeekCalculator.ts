@@ -10,6 +10,13 @@ const NFL_SEASONS = [
   { year: 2026, start: '2026-09-08T00:00:00-04:00', end: '2027-01-13T00:00:00-05:00' },
 ];
 
+// Convert a Date to its Eastern calendar date string "YYYY-MM-DD".
+// Intl with America/New_York handles EDT/EST transitions automatically, so
+// day/week boundaries stay aligned to Eastern midnight across the November
+// DST change (raw millisecond math drifts by an hour there).
+const toEasternDay = (date: Date): string =>
+  date.toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+
 export function calculateNFLWeekAndDay(currentDate: Date): NFLWeekResult {
   const season = NFL_SEASONS.find((s) => {
     const start = new Date(s.start);
@@ -21,8 +28,12 @@ export function calculateNFLWeekAndDay(currentDate: Date): NFLWeekResult {
     return { week: 0, day: 0 };
   }
 
-  const seasonStart = new Date(season.start);
-  const diffInDays = Math.floor((currentDate.getTime() - seasonStart.getTime()) / (1000 * 3600 * 24));
+  // Diff the UTC-midnight representations of the Eastern calendar days so the
+  // subtraction itself is DST-free.
+  const currentEtMs = new Date(toEasternDay(currentDate) + 'T00:00:00Z').getTime();
+  const startEtMs = new Date(toEasternDay(new Date(season.start)) + 'T00:00:00Z').getTime();
+
+  const diffInDays = Math.floor((currentEtMs - startEtMs) / (1000 * 3600 * 24));
   const nflWeek = Math.floor(diffInDays / 7) + 1;
   const nflDay = (diffInDays % 7) + 1;
 
