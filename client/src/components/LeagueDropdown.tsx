@@ -62,7 +62,7 @@ const LeagueDropdown = ({ renderType = 'dropdown' }: { renderType?: 'dropdown' |
           background: 'none', border: '1px solid #1e3354',
           color: open ? C.amb : C.mut,
           fontFamily: FF, fontSize: 13, fontWeight: 700, letterSpacing: 1,
-          padding: '6px 14px', borderRadius: 8, cursor: 'pointer',
+          padding: '10px 16px', minHeight: 40, borderRadius: 8, cursor: 'pointer',
           textTransform: 'uppercase',
         }}
       >

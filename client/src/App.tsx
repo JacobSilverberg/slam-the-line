@@ -9,7 +9,8 @@ import {
 
 import Navbar from './components/Navbar.tsx';
 import { AuthContext } from './context/AuthContext.tsx';
-import './style.scss';
+import { Spinner } from './components/LoadState.tsx';
+import './style.css';
 
 // Code-split all pages — each loads only when navigated to
 const Home = lazy(() => import('./pages/Home.tsx'));
@@ -27,10 +28,11 @@ const Commissioner = lazy(() => import('./pages/Commissioner.tsx'));
 
 const AUTH_PATHS = ['/login', '/register', '/updatepassword'];
 
-// Center content on desktop while staying full-width on mobile
-const PageCenter = ({ children, fullScreen }: { children: React.ReactNode; fullScreen?: boolean }) => (
-  <div style={{ background: '#0c1628', minHeight: fullScreen ? '100vh' : 'calc(100vh - 56px)', display: 'flex', justifyContent: 'center' }}>
-    <div style={{ width: '100%', maxWidth: 720 }}>
+// Center content on desktop while staying full-width on mobile.
+// League pages widen to 1100px on large screens (.page-center--wide).
+const PageCenter = ({ children, fullScreen, wide }: { children: React.ReactNode; fullScreen?: boolean; wide?: boolean }) => (
+  <div className={fullScreen ? 'vh-full' : 'vh-nav'} style={{ background: '#0c1628', display: 'flex', justifyContent: 'center' }}>
+    <div className={`page-center${wide ? ' page-center--wide' : ''}`}>
       {children}
     </div>
   </div>
@@ -41,8 +43,17 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   const isAuthPage = AUTH_PATHS.includes(location.pathname);
   const isLeaguePage = location.pathname.startsWith('/league/');
 
-  if (isAuthPage || isLeaguePage) {
+  if (isAuthPage) {
     return <PageCenter fullScreen>{children}</PageCenter>;
+  }
+
+  if (isLeaguePage) {
+    return (
+      <>
+        <Navbar />
+        <PageCenter wide>{children}</PageCenter>
+      </>
+    );
   }
 
   return (
@@ -53,10 +64,16 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
+const FullScreenSpinner = () => (
+  <div className="vh-full" style={{ background: '#0c1628', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Spinner />
+  </div>
+);
+
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  if (isLoading) return null;
+  if (isLoading) return <FullScreenSpinner />;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
   return <>{children}</>;
 };
@@ -64,12 +81,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const App = () => {
   const { isAuthenticated, isLoading } = useContext(AuthContext);
 
-  if (isLoading) return null;
+  if (isLoading) return <FullScreenSpinner />;
 
   return (
     <Router>
       <Layout>
-        <Suspense fallback={null}>
+        <Suspense fallback={<Spinner full />}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route

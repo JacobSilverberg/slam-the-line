@@ -50,7 +50,7 @@ const UpdatePassword = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', background: C.bg, fontFamily: FF }}>
+    <div className="vh-full" style={{ display: 'flex', flexDirection: 'column', background: C.bg, fontFamily: FF }}>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '32px 28px', display: 'flex', flexDirection: 'column',

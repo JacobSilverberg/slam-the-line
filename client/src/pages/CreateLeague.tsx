@@ -35,13 +35,16 @@ const CreateLeague = () => {
   const [weeklyPoints, setWeeklyPoints] = useState('');
   const [teamName, setTeamName] = useState('');
   const [error, setError] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isCreating) return;
     setError('');
     const max = Number(gamesSelectMax);
     const min = Number(gamesSelectMin);
     if (max < min) { setError('Max picks must be ≥ min picks.'); return; }
+    setIsCreating(true);
     try {
       const res = await axios.post(`${apiUrl}/createleague`, {
         gamesSelectMax: max, gamesSelectMin: min, name,
@@ -54,13 +57,15 @@ const CreateLeague = () => {
       navigate(`/league/${leagueId}/picksheet`);
     } catch (err: any) {
       setError(err.response?.data?.msg || err.message || 'Error creating league.');
+    } finally {
+      setIsCreating(false);
     }
   };
 
   const allFilled = name && teamName && gamesSelectMax && gamesSelectMin && weeklyPoints;
 
   return (
-    <div style={{ background: C.bg, minHeight: 'calc(100vh - 56px)', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '24px 20px 20px', position: 'relative', overflow: 'hidden',
@@ -103,7 +108,7 @@ const CreateLeague = () => {
 
         <button
           type="submit"
-          disabled={!allFilled}
+          disabled={!allFilled || isCreating}
           style={{
             padding: '16px', borderRadius: 12,
             background: allFilled ? C.amb : C.d2,
@@ -111,9 +116,10 @@ const CreateLeague = () => {
             color: allFilled ? '#000' : C.mut,
             fontFamily: FF, fontSize: 20, fontWeight: 900, letterSpacing: 1.5,
             textTransform: 'uppercase', cursor: allFilled ? 'pointer' : 'default',
+            opacity: isCreating ? 0.6 : 1,
           }}
         >
-          Create League
+          {isCreating ? 'Creating…' : 'Create League'}
         </button>
       </form>
     </div>

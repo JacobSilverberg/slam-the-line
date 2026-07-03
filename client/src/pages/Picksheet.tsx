@@ -4,7 +4,10 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext.tsx';
 import { WeekContext } from '../context/WeekContext.tsx';
 import LeagueTabBar from '../components/LeagueTabBar.tsx';
+import { Spinner, ErrorState } from '../components/LoadState.tsx';
 import apiUrl from '../services/serverConfig.ts';
+
+const NFL_WEEKS = 18;
 
 const C = {
   bg: '#0c1628', card: '#152540', d2: '#1a2d4a',
@@ -17,7 +20,7 @@ const FFb = "'Barlow', sans-serif";
 
 const Picksheet = () => {
   const { leagueId } = useParams<{ leagueId: string }>();
-  const { week } = useContext(WeekContext) as { week: number };
+  const { week, setWeek } = useContext(WeekContext) as { week: number; setWeek: (w: number) => void };
   const { user } = useContext(AuthContext);
   const userId = user?.userId;
 
@@ -27,7 +30,16 @@ const Picksheet = () => {
   const [selectedTeam, setSelectedTeam] = useState<Record<number, number>>({});
   const [weeklyPoints, setWeeklyPoints] = useState<Record<number, number>>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
   const [hasExistingSelections, setHasExistingSelections] = useState(false);
+  const [notice, setNotice] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
+  const noticeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const showNotice = (kind: 'ok' | 'err', text: string) => {
+    if (noticeTimer.current) clearTimeout(noticeTimer.current);
+    setNotice({ kind, text });
+    noticeTimer.current = setTimeout(() => setNotice(null), 3500);
+  };
 
   const totalPts: number = leagueInfo.weekly_points || 40;
   const minPicks: number = leagueInfo.games_select_min || 3;
@@ -37,31 +49,40 @@ const Picksheet = () => {
   const ptsLeft = totalPts - totalUsed;
   const isReady = totalUsed === totalPts && pickCount >= minPicks;
 
+  const fetchGames = async () => {
+    setIsLoading(true);
+    setLoadError(false);
+    try {
+      const [leagueRes, gamesRes] = await Promise.all([
+        axios.get(`${apiUrl}/leagueinfo/${leagueId}`),
+        axios.get(`${apiUrl}/games/${week}`),
+      ]);
+      const league = leagueRes.data.league[0];
+      setLeagueInfo(league);
+      setGames(
+        gamesRes.data
+          .filter((g: any) => g.nfl_year === league.year)
+          .sort((a: any, b: any) => new Date(a.game_start_time).getTime() - new Date(b.game_start_time).getTime())
+      );
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      setLoadError(true);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const [leagueRes, gamesRes] = await Promise.all([
-          axios.get(`${apiUrl}/leagueinfo/${leagueId}`),
-          axios.get(`${apiUrl}/games/${week}`),
-        ]);
-        const league = leagueRes.data.league[0];
-        setLeagueInfo(league);
-        setGames(
-          gamesRes.data
-            .filter((g: any) => g.nfl_year === league.year)
-            .sort((a: any, b: any) => new Date(a.game_start_time).getTime() - new Date(b.game_start_time).getTime())
-        );
-      } catch (err) {
-        console.error('Error fetching data:', err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetch();
+    fetchGames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [leagueId, week]);
 
   useEffect(() => {
     if (!week || week <= 0 || !userId) return;
+    // Always clear state first so picks never bleed across league/week switches
+    setSelectedTeam({});
+    setWeeklyPoints({});
+    setHasExistingSelections(false);
     const fetchSelections = async () => {
       try {
         const res = await axios.get(`${apiUrl}/userselections/${leagueId}/${userId}/${week}`);
@@ -92,7 +113,10 @@ const Picksheet = () => {
         setWeeklyPoints((p) => { const n = { ...p }; delete n[gameId]; return n; });
         return next;
       }
-      if (Object.keys(prev).length >= maxPicks) return prev;
+      if (Object.keys(prev).length >= maxPicks) {
+        showNotice('err', `Max ${maxPicks} picks — deselect a game first`);
+        return prev;
+      }
       if (!weeklyPoints[gameId]) {
         setWeeklyPoints((p) => ({ ...p, [gameId]: 5 }));
       }
@@ -103,27 +127,29 @@ const Picksheet = () => {
   const adj = (gameId: number, d: number) => {
     const game = games.find((g) => g.id === gameId);
     if (game?.game_started) return;
+    if (!selectedTeam[gameId]) return; // no orphan point entries without a team
     setWeeklyPoints((p) => ({ ...p, [gameId]: Math.max(1, (p[gameId] || 5) + d) }));
   };
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
-    if (totalUsed !== totalPts) { alert(`Distribute exactly ${totalPts} points.`); return; }
-    if (pickCount < minPicks) { alert(`Select at least ${minPicks} games.`); return; }
+    if (totalUsed !== totalPts) { showNotice('err', `Distribute exactly ${totalPts} points (${ptsLeft > 0 ? `${ptsLeft} left` : `${-ptsLeft} over`})`); return; }
+    if (pickCount < minPicks) { showNotice('err', `Select at least ${minPicks} games`); return; }
     setIsSubmitting(true);
+    const wasUpdate = hasExistingSelections;
     const ts = new Date().toISOString().slice(0, 19).replace('T', ' ');
     const picks = games
-      .filter((g) => weeklyPoints[g.id] !== undefined)
+      .filter((g) => weeklyPoints[g.id] !== undefined && selectedTeam[g.id] !== undefined)
       .map((g) => ({ gameId: g.id, teamId: selectedTeam[g.id], points: weeklyPoints[g.id], createdAt: ts, updatedAt: ts, week }));
     try {
-      if (hasExistingSelections) {
+      if (wasUpdate) {
         await axios.delete(`${apiUrl}/removeuserselections/${leagueId}/${userId}/${week}`);
       }
       await axios.post(`${apiUrl}/submitpicks/`, { picks, userId, leagueId });
       setHasExistingSelections(true);
-      alert(hasExistingSelections ? 'Picks updated!' : 'Picks submitted!');
+      showNotice('ok', wasUpdate ? 'Picks updated ✓' : 'Picks submitted ✓');
     } catch (err: any) {
-      alert(err.response?.data?.message || 'Failed to submit picks.');
+      showNotice('err', err.response?.data?.message || 'Failed to submit picks — try again');
     } finally {
       setIsSubmitting(false);
     }
@@ -141,8 +167,15 @@ const Picksheet = () => {
     new Date(dt).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
 
   if (isLoading) return (
-    <div style={{ height: '100vh', background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF, fontSize: 20, color: C.mut }}>
-      Loading…
+    <div className="vh-nav" style={{ background: C.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <Spinner />
+    </div>
+  );
+
+  if (loadError) return (
+    <div className="vh-nav" style={{ background: C.bg }}>
+      <ErrorState onRetry={fetchGames} />
+      <LeagueTabBar leagueId={leagueId} />
     </div>
   );
 
@@ -152,8 +185,25 @@ const Picksheet = () => {
     : ptsLeft > 0 ? `${ptsLeft} pts left`
     : 'Pick more';
 
+  const weekBtn = (dir: number, disabled: boolean) => (
+    <button
+      onClick={() => !disabled && setWeek(week + dir)}
+      disabled={disabled}
+      aria-label={dir < 0 ? 'Previous week' : 'Next week'}
+      style={{
+        width: 44, height: 44, borderRadius: 10, flexShrink: 0,
+        background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)',
+        color: disabled ? 'rgba(255,255,255,0.25)' : '#fff', fontSize: 20, fontWeight: 900,
+        cursor: disabled ? 'default' : 'pointer', fontFamily: FF, lineHeight: 1,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    >
+      {dir < 0 ? '‹' : '›'}
+    </button>
+  );
+
   return (
-    <div style={{ minHeight: '100vh', background: C.bg, fontFamily: FF, display: 'flex', flexDirection: 'column' }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF, display: 'flex', flexDirection: 'column' }}>
 
       {/* Header */}
       <div style={{
@@ -162,21 +212,29 @@ const Picksheet = () => {
       }}>
         <div style={{ position: 'absolute', top: -50, right: -50, width: 150, height: 150, borderRadius: 99, background: 'rgba(99,102,241,0.12)', pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: -30, left: -20, width: 80, height: 80, borderRadius: 99, background: 'rgba(245,158,11,0.08)', pointerEvents: 'none' }} />
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 2 }}>
-          {leagueInfo.name}
-        </div>
-        <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: -0.5, lineHeight: 1, textTransform: 'uppercase' }}>
-          Week {week} Picks
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, position: 'relative', zIndex: 1 }}>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 3, color: 'rgba(255,255,255,0.35)', textTransform: 'uppercase', marginBottom: 2, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {leagueInfo.name}
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 900, color: '#fff', letterSpacing: -0.5, lineHeight: 1, textTransform: 'uppercase' }}>
+              Week {week} Picks
+            </div>
+          </div>
+          <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+            {weekBtn(-1, week <= 1)}
+            {weekBtn(1, week >= NFL_WEEKS)}
+          </div>
         </div>
         {hasExistingSelections && (
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px', background: `${C.grn}22`, borderRadius: 99, border: `1px solid ${C.grn}44` }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8, padding: '4px 10px', background: `${C.grn}22`, borderRadius: 99, border: `1px solid ${C.grn}44`, position: 'relative', zIndex: 1 }}>
             <span style={{ fontSize: 11, fontWeight: 700, color: C.grn }}>✓ Picks submitted</span>
           </div>
         )}
       </div>
 
-      {/* Games list — extra bottom padding for submit bar + tab bar */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px', paddingBottom: 132, display: 'flex', flexDirection: 'column', gap: 6 }}>
+      {/* Games list — extra bottom padding for submit bar + tab bar + safe area */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '8px 12px', paddingBottom: 'calc(132px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: 6 }}>
         {games.length === 0 && (
           <p style={{ color: C.mut, fontSize: 16, textAlign: 'center', marginTop: 32 }}>No games available for this week.</p>
         )}
@@ -253,12 +311,12 @@ const Picksheet = () => {
                     : <span style={{ fontSize: 11, fontWeight: 600, letterSpacing: 0.8, color: C.mut, textTransform: 'uppercase' }}>Select a team</span>
                   }
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', background: C.d2, borderRadius: 8, overflow: 'hidden', border: `1px solid ${C.bor}`, opacity: isSel && !locked ? 1 : 0.3 }}>
-                  <button onClick={(e) => { e.stopPropagation(); adj(game.id, -1); }}
-                    style={{ width: 36, height: 32, background: 'transparent', border: 'none', borderRight: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>−</button>
-                  <span style={{ width: 38, textAlign: 'center', fontSize: 18, fontWeight: 900, color: C.amb, lineHeight: 1 }}>{isSel ? p : '—'}</span>
-                  <button onClick={(e) => { e.stopPropagation(); adj(game.id, 1); }}
-                    style={{ width: 36, height: 32, background: 'transparent', border: 'none', borderLeft: `1px solid ${C.bor}`, color: C.amb, fontSize: 20, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>+</button>
+                <div style={{ display: 'flex', alignItems: 'center', background: C.d2, borderRadius: 8, overflow: 'hidden', border: `1px solid ${C.bor}`, opacity: isSel && !locked ? 1 : 0.3, pointerEvents: isSel && !locked ? 'auto' : 'none' }}>
+                  <button onClick={(e) => { e.stopPropagation(); adj(game.id, -1); }} aria-label="Decrease points"
+                    style={{ width: 44, height: 44, background: 'transparent', border: 'none', borderRight: `1px solid ${C.bor}`, color: C.amb, fontSize: 22, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>−</button>
+                  <span style={{ width: 40, textAlign: 'center', fontSize: 18, fontWeight: 900, color: C.amb, lineHeight: 1 }}>{isSel ? p : '—'}</span>
+                  <button onClick={(e) => { e.stopPropagation(); adj(game.id, 1); }} aria-label="Increase points"
+                    style={{ width: 44, height: 44, background: 'transparent', border: 'none', borderLeft: `1px solid ${C.bor}`, color: C.amb, fontSize: 22, fontWeight: 800, cursor: isSel ? 'pointer' : 'default', lineHeight: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: FF }}>+</button>
                 </div>
               </div>
             </div>
@@ -266,8 +324,25 @@ const Picksheet = () => {
         })}
       </div>
 
+      {/* Inline notice toast — replaces blocking alert() dialogs */}
+      {notice && (
+        <div style={{
+          position: 'fixed', bottom: 'calc(118px + env(safe-area-inset-bottom))', left: 0, right: 0, zIndex: 60,
+          display: 'flex', justifyContent: 'center', pointerEvents: 'none', padding: '0 16px',
+        }}>
+          <div style={{
+            padding: '10px 18px', borderRadius: 10, maxWidth: 400,
+            background: notice.kind === 'ok' ? 'rgba(16,185,129,0.95)' : 'rgba(239,68,68,0.95)',
+            color: '#fff', fontFamily: FFb, fontSize: 14, fontWeight: 600, textAlign: 'center',
+            boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
+          }}>
+            {notice.text}
+          </div>
+        </div>
+      )}
+
       {/* Fixed submit bar — always visible above LeagueTabBar */}
-      <div style={{ position: 'fixed', bottom: 64, left: 0, right: 0, zIndex: 50, background: C.card, borderTop: `1px solid ${C.bor}` }}>
+      <div style={{ position: 'fixed', bottom: 'calc(64px + env(safe-area-inset-bottom))', left: 0, right: 0, zIndex: 50, background: C.card, borderTop: `1px solid ${C.bor}` }}>
         {/* Thin progress bar */}
         <div style={{ height: 2, background: C.bor }}>
           <div style={{ height: '100%', width: `${Math.min(100, (totalUsed / totalPts) * 100)}%`, background: totalUsed > totalPts ? C.red : totalUsed === totalPts ? C.grn : C.ind, transition: 'width 0.2s' }} />

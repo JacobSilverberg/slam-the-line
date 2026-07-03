@@ -15,7 +15,7 @@ const FFb = "'Barlow', sans-serif";
 const SEL: React.CSSProperties = {
   width: '100%', padding: '13px 14px',
   background: C.d2, border: `1px solid ${C.bor}`,
-  borderRadius: 10, color: C.txt, fontSize: 15,
+  borderRadius: 10, color: C.txt, fontSize: 16,
   fontFamily: FFb, outline: 'none', appearance: 'none',
   WebkitAppearance: 'none', boxSizing: 'border-box',
 };
@@ -76,7 +76,7 @@ const Commissioner = () => {
   };
 
   return (
-    <div style={{ background: C.bg, minHeight: '100vh', fontFamily: FF }}>
+    <div className="vh-nav" style={{ background: C.bg, fontFamily: FF }}>
       <div style={{
         background: 'linear-gradient(160deg, #1a3a7a 0%, #0e1e3d 100%)',
         padding: '20px', position: 'relative', overflow: 'hidden',
@@ -89,7 +89,7 @@ const Commissioner = () => {
       </div>
 
       {!isLoading && (
-        <form onSubmit={handleSubmit} style={{ padding: '16px 20px 88px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <form onSubmit={handleSubmit} style={{ padding: '16px 20px', paddingBottom: 'calc(88px + env(safe-area-inset-bottom))', display: 'flex', flexDirection: 'column', gap: 16 }}>
           <div style={{ background: C.card, borderRadius: 12, padding: '16px', border: `1px solid ${C.bor}`, display: 'flex', flexDirection: 'column', gap: 12 }}>
             <div style={{ fontSize: 12, fontWeight: 700, color: C.mut, letterSpacing: 1.5, textTransform: 'uppercase', fontFamily: FFb }}>Select User & Week</div>
             <select style={SEL} value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
@@ -122,7 +122,8 @@ const Commissioner = () => {
                 <button
                   type="button"
                   onClick={() => setPicks(picks.filter((_, i) => i !== index))}
-                  style={{ width: 36, height: 36, flexShrink: 0, borderRadius: 8, background: C.d2, border: `1px solid ${C.bor}`, color: C.red, fontFamily: FF, fontSize: 18, fontWeight: 900, cursor: 'pointer' }}
+                  aria-label="Remove pick"
+                  style={{ width: 44, height: 44, flexShrink: 0, borderRadius: 8, background: C.d2, border: `1px solid ${C.bor}`, color: C.red, fontFamily: FF, fontSize: 18, fontWeight: 900, cursor: 'pointer' }}
                 >
                   ×
                 </button>
