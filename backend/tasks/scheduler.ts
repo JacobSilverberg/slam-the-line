@@ -14,12 +14,15 @@ const TIMEZONE = process.env.TASK_TIMEZONE || 'America/New_York';
 const GAME_COMPLETION_BUFFER_MINUTES = 210;
 
 async function hasPendingCompletedGames(): Promise<boolean> {
+  // Lower bound of 7 days: the scores API (daysFrom=3) can never resolve games
+  // older than that, so stale incomplete rows must not trigger hourly API calls.
   const [rows] = await pool.query(`
     SELECT COUNT(*) AS cnt
     FROM games
     WHERE game_completed = 0
       AND game_start_time IS NOT NULL
       AND game_start_time <= DATE_SUB(NOW(), INTERVAL ${GAME_COMPLETION_BUFFER_MINUTES} MINUTE)
+      AND game_start_time >= DATE_SUB(NOW(), INTERVAL 7 DAY)
       AND week > 0
   `) as any[];
   return rows[0].cnt > 0;
