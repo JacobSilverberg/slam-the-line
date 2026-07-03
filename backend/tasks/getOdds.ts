@@ -8,7 +8,7 @@ dotenv.config({ path: resolve(__dirname, '../.env') });
 
 const sport = 'americanfootball_nfl';
 const regions = 'us';
-const markets = 'h2h,spreads,totals';
+const markets = 'spreads';
 const oddsFormat = 'american';
 const bookmakers = 'draftkings';
 
