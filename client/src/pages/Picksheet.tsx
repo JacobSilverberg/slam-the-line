@@ -182,7 +182,8 @@ const Picksheet = () => {
   // Status text for the submit bar button
   const submitLabel = isSubmitting ? 'Saving…'
     : isReady ? (hasExistingSelections ? 'Update ✓' : 'Submit ✓')
-    : ptsLeft > 0 ? `${ptsLeft} pts left`
+    : ptsLeft > 0 ? `${ptsLeft} ${ptsLeft === 1 ? 'pt' : 'pts'} left`
+    : ptsLeft < 0 ? `${-ptsLeft} ${-ptsLeft === 1 ? 'pt' : 'pts'} over`
     : 'Pick more';
 
   const weekBtn = (dir: number, disabled: boolean) => (
